@@ -1,0 +1,11 @@
+,,DCT,,PCA,,HOG,
+Classifier,Setting,Accuracy,Processing Time,Accuracy,Processing Time,Accuracy,Processing Time
+K-means Clustering,1,78.10%,4.8000 s,85.20%,2.4646 s,89.50%,34.9320 s
+,4,84.40%,5.0773 s,82.60%,3.6085 s,92.00%,42.1938 s
+,16,88.75%,12.0725 s,85.70%,5.8008 s,94.35%,81.4935 s
+,32,89.65%,38.3444 s,85.60%,8.7011 s,93.95%,211.3056 s
+SVM,Linear,90.25%,11.4875 s,90.65%,10.6268 s,97.45%,58.1034 s
+,nonlinear*,95.55%,20.5602 s,95.15%,21.0544 s,97.15%,120.9442 s
+
+Note,"nonlinear kernel = RBF, gamma=scale"
+Note,Processing Time = feature extraction + training + testing

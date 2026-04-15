@@ -42,3 +42,47 @@ missfont.log
 *~
 .DS_Store
 Thumbs.db
+
+# Python (global)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb
+
+# System
+.env
+.env.local
+
+# Assignment 1 Problem 2 - Large datasets
+Assignment\ 1/Problem\ 2/ReducedMNIST_generated/
+Assignment\ 1/Problem\ 2/ReducedMNIST/
+Assignment\ 1/Problem\ 2/mnist_cache/
+Assignment\ 1/Problem\ 2/*.pkl
+Assignment\ 1/Problem\ 2/*.pickle
+
+# Keep results in Problem 2
+!Assignment\ 1/Problem\ 2/part2_results/
+

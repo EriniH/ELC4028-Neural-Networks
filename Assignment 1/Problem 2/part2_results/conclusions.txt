@@ -1,0 +1,9 @@
+Assignment Part 2 Conclusions
+
+1. Best overall result: SVM_linear with HOG (97.45% accuracy, 58.1034 s total).
+2. Best K-means result: KMeans_per_class_K=16 with HOG (94.35% accuracy, 81.4935 s total).
+3. Best SVM result: SVM_linear with HOG (97.45% accuracy, 58.1034 s total).
+4. Classifier comparison: the best SVM result was 3.10 percentage points higher than the best K-means result.
+5. Feature comparison: DCT -> SVM_rbf with DCT (95.55% accuracy, 20.5602 s total); PCA -> SVM_rbf with PCA (95.15% accuracy, 21.0544 s total); HOG -> SVM_linear with HOG (97.45% accuracy, 58.1034 s total).
+6. Fastest overall experiment: KMeans_per_class_K=1 with PCA (85.20% accuracy, 2.4646 s total).
+7. Final takeaway: HOG features with SVM_linear gave the strongest overall result on this ReducedMNIST task.
