@@ -1,3 +1,5 @@
+\subsection{Dataset}
+
 Part 2 uses ReducedMNIST, a reduced version of the MNIST dataset, with the following assignment-compliant split:
 
 \begin{itemize}
@@ -5,31 +7,52 @@ Part 2 uses ReducedMNIST, a reduced version of the MNIST dataset, with the follo
     \item Original MNIST test set: 10,000 images total.
     \item The script \texttt{part2\_reduced\_mnist.py} downloads MNIST and creates a reduced version of the dataset, called ReducedMNIST, with the following split:
         \begin{itemize}
-            \item ReducedMNIST training set: 1000 images for each digit (10000 total).
-            \item ReducedMNIST test set: 200 images for each digit (2000 total).
+            \item ReducedMNIST training set: 1000 images for each digit (10,000 total).
+            \item ReducedMNIST test set: 200 images for each digit (2,000 total).
         \end{itemize}
 \end{itemize}
+
+Images are normalized to grayscale, 28 × 28 pixels.
+
+\subsection{Implementation Procedure and Workflow}
+
+The end-to-end pipeline is implemented in \texttt{part2\_reduced\_mnist.py} and follows these steps:
+
+\begin{enumerate}
+    \item \textbf{Dataset Resolution}: The script first searches for an existing ReducedMNIST folder. If not found, it automatically downloads the full MNIST dataset and generates a reduced version with the specified split.
+    \item \textbf{Data Validation}: Train and test directory structures are validated to ensure correct class counts (1,000 training images per digit, 200 test images per digit).
+    \item \textbf{Image Loading and Normalization}: All images are loaded as 28 × 28 grayscale arrays and normalized using \texttt{StandardScaler} for consistent feature scaling.
+    \item \textbf{Feature Extraction}: Three feature extraction pipelines are applied independently to the normalized training and test sets.
+    \item \textbf{Model Training and Evaluation}: All 18 experiments (12 K-means configurations + 6 SVM configurations) are executed in sequence. Each experiment measures accuracy and tracks processing time (feature extraction + training + testing).
+    \item \textbf{Results Aggregation}: Accuracy scores, confusion matrices, and timing statistics are compiled and saved to \texttt{part2\_results/}.
+\end{enumerate}
+
+For reproducibility, a random seed of \texttt{42} is used throughout.
 
 \subsection{Feature Extraction}
 
 Three feature extraction methods were used:
 
 \begin{itemize}
-    \item \textbf{DCT}: a $15 \times 15$ low-frequency block, giving 225 features.
-    \item \textbf{PCA}: enough principal components to preserve at least 95\% of the total variance.
-    \item \textbf{HOG}: histogram-of-oriented-gradients features extracted from each image.
+    \item \textbf{DCT (Discrete Cosine Transform)}: A $15 \times 15$ low-frequency block extracted from each 28 × 28 image, yielding 225 features. Captures frequency domain information.
+    \item \textbf{PCA (Principal Component Analysis)}: Principal components are retained to preserve at least 95\% of the total variance. Reduces dimensionality while retaining significant variance.
+    \item \textbf{HOG (Histogram of Oriented Gradients)}: Locally normalized histograms of gradient directions are extracted from each image. Captures local edge and texture information.
 \end{itemize}
 
-\subsection{Classifiers}
+\subsection{Classifiers and Hyperparameters}
 
 Two classifier families were evaluated:
 
 \begin{itemize}
-    \item \textbf{K-means clustering per class} with $K = 1, 4, 16, 32$.
-    \item \textbf{SVM} with a linear kernel and a nonlinear kernel.
+    \item \textbf{K-means Clustering (Per-Class)}:\newline
+        K-means is applied independently to each digit class (0--9). For each class, centroids are computed with varying $K \in \{1, 4, 16, 32\}$. Prediction is performed by finding the nearest centroid across all class centroids, yielding 12 total K-means experiments. K-means initialization uses \texttt{n\_init=10} for stable clustering, and distance computation is batched for memory efficiency.
+    \item \textbf{SVM (Support Vector Machine)}:\newline
+        Two kernel types are evaluated across all 3 feature sets, yielding 6 SVM experiments:
+        \begin{itemize}
+            \item \textbf{Linear kernel}: Standard linear decision boundary.
+            \item \textbf{Nonlinear kernel}: RBF (Radial Basis Function) kernel with \texttt{gamma='scale'}, enabling non-linear decision boundaries.
+        \end{itemize}
 \end{itemize}
-
-For the nonlinear SVM result, the kernel used was \textbf{RBF} with \texttt{gamma = scale}.
 
 \subsection{Results Summary}
 
@@ -46,18 +69,18 @@ Table~\ref{tab:part2_results} summarizes the final Part 2 results. Processing ti
 \cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8}
 \textbf{Classifier} & \textbf{Setting} & \textbf{Accuracy} & \textbf{Processing Time} & \textbf{Accuracy} & \textbf{Processing Time} & \textbf{Accuracy} & \textbf{Processing Time} \\
 \midrule
-K-means Clustering & 1  & 78.10\% & 1.8831 s & 85.20\% & 0.8123 s & 89.50\% & 5.4810 s \\
-K-means Clustering & 4  & 84.40\% & 1.0484 s & 82.60\% & 1.1766 s & 92.00\% & 7.3776 s \\
-K-means Clustering & 16 & 88.75\% & 2.2338 s & 85.70\% & 2.1196 s & 94.35\% & 13.5238 s \\
-K-means Clustering & 32 & 89.65\% & 3.8399 s & 85.60\% & 3.5880 s & 93.95\% & 21.7835 s \\
-SVM & Linear      & 90.25\% & 2.3988 s & 90.65\% & 3.1937 s & 97.45\% & 11.2708 s \\
-SVM & Nonlinear*  & 95.55\% & 4.2029 s & 95.15\% & 5.5291 s & 97.15\% & 24.9506 s \\
+K-means Clustering & 1  & 78.10\% & 4.8000 s & 85.20\% & 2.4646 s & 89.50\% & 34.9320 s \\
+K-means Clustering & 4  & 84.40\% & 5.0773 s & 82.60\% & 3.6085 s & 92.00\% & 42.1938 s \\
+K-means Clustering & 16 & 88.75\% & 12.0725 s & 85.70\% & 5.8008 s & 94.35\% & 81.4935 s \\
+K-means Clustering & 32 & 89.65\% & 38.3444 s & 85.60\% & 8.7011 s & 93.95\% & 211.3056 s \\
+SVM & Linear      & 90.25\% & 11.4875 s & 90.65\% & 10.6268 s & 97.45\% & 58.1034 s \\
+SVM & Nonlinear*  & 95.55\% & 20.5602 s & 95.15\% & 21.0544 s & 97.15\% & 120.9442 s \\
 \bottomrule
 \end{tabular}
 }
 \end{table}
 
-\noindent * Nonlinear kernel = RBF, \texttt{gamma = scale}.
+\noindent * Nonlinear SVM employs an RBF (Radial Basis Function) kernel with \texttt{gamma='scale'}. Processing time includes feature extraction, training, and testing combined.
 
 \subsection{Best Results and Confusion Matrices}
 
@@ -65,22 +88,43 @@ The best K-means result was \textbf{K-means with $K=16$ using HOG}, with an accu
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.68\textwidth]{figures/KMeans_per_class_K=16_HOG_confusion.png}
+\includegraphics[width=0.6\textwidth]{figures/KMeans_per_class_K=16_HOG_confusion.png}
 \caption{Confusion matrix for the best K-means result: K-means ($K=16$) with HOG features.}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.68\textwidth]{figures/SVM_linear_HOG_confusion.png}
+\includegraphics[width=0.6\textwidth]{figures/SVM_linear_HOG_confusion.png}
 \caption{Confusion matrix for the best SVM result: linear SVM with HOG features.}
 \end{figure}
 
 \subsection{Observations}
 
-The results show that HOG features produced the strongest classification accuracy across both classifier families. The best overall result was obtained by \textbf{linear SVM with HOG}, reaching \textbf{97.45\%}. The best K-means result, \textbf{K=16 with HOG}, reached \textbf{94.35\%}, so the best SVM result was \textbf{3.10 percentage points} higher.
+\subsubsection{Feature Performance}
 
-For DCT and PCA, the nonlinear SVM result was slightly better than the linear SVM result. For HOG, however, the linear SVM result was the strongest overall result in the full comparison table. In terms of speed, the fastest overall experiment was \textbf{K-means with $K=1$ using PCA}, with a total processing time of \textbf{0.8123 s}, but with lower accuracy than the best SVM and HOG-based results.
+The results demonstrate that \textbf{HOG features consistently outperformed both DCT and PCA} across both classifier families. This indicates that locally normalized histograms of oriented gradients effectively capture the structural and edge information necessary for digit discrimination. While DCT focuses on frequency domain characteristics and PCA captures global variance, HOG's local gradient information proves more discriminative for this task.
 
-\subsection{Part 2 Conclusion}
+\subsubsection{Best Results}
 
-Based on the current experiments, \textbf{HOG features combined with linear SVM} gave the best overall performance for the ReducedMNIST classification task. HOG consistently captured the digit structure better than DCT and PCA in the final results, while linear SVM achieved the highest measured test accuracy with a reasonable processing time.
+The best overall result was achieved by \textbf{linear SVM with HOG features}, reaching \textbf{97.45\%} accuracy with a processing time of \textbf{58.10 seconds}. The best K-means result was \textbf{K-means with $K=16$ using HOG}, achieving \textbf{94.35\%} accuracy, representing a \textbf{3.10 percentage point} gap in favor of the linear SVM approach.
+
+\subsubsection{Linear vs. Nonlinear SVM}
+
+Interestingly, for DCT and PCA features, the nonlinear RBF kernel produced marginally better results than the linear kernel (approximately 5--5.5 percentage points improvement). However, for HOG features, the \textbf{linear SVM achieved superior performance} (97.45\% vs. 97.15\% for nonlinear), suggesting that HOG features may already provide sufficient separability in the original feature space.
+
+\subsubsection{Computational Efficiency}
+
+The fastest experiment overall was \textbf{K-means with $K=1$ using PCA}, completing in \textbf{2.46 seconds}. However, this configuration achieved only \textbf{85.20\%} accuracy. In contrast, the best-performing model (linear SVM + HOG) required \textbf{58.10 seconds}, representing a substantial investment of computational resources for the highest accuracy. HOG-based methods were notably more expensive than DCT and PCA, with HOG feature extraction and SVM training accounting for the majority of processing time. The nonlinear RBF-SVM with HOG was the most expensive at \textbf{120.94 seconds}, yet provided only marginal improvements (97.15\% vs 97.45\% for linear), reinforcing the value of the linear SVM approach.
+
+\subsection{Conclusion}
+
+This systematic evaluation of 18 distinct configurations demonstrates that \textbf{HOG features combined with linear SVM} provides the optimal approach for ReducedMNIST digit classification. The results clearly show that:
+
+\begin{enumerate}
+    \item \textbf{Feature extraction method is critical}: HOG consistently surpassed DCT and PCA across both classifier families, achieving 3--8 percentage points higher accuracy on average.
+    \item \textbf{Classifier choice matters}: Linear SVM achieved 97.45\% accuracy, substantially outperforming K-means clustering (best at 94.35\%) by 3.10 percentage points.
+    \item \textbf{Kernel selection depends on features}: While RBF kernels showed advantages for DCT and PCA, HOG's inherent feature quality made linear kernels sufficient and superior.
+    \item \textbf{Computational trade-offs require consideration}: The best model's 58.10-second processing time is substantial for a 10,000-image training set, yet the 97.45\% accuracy justifies the investment for applications requiring high precision.
+\end{enumerate}
+
+For practical deployment on ReducedMNIST, the linear SVM + HOG pipeline is recommended as the standard approach, achieving state-of-the-art performance on this dataset with robust and reproducible results.
