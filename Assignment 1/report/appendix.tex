@@ -1,0 +1,105 @@
+\section{Appendix}
+\subsection{Using OpenCLIP}
+\subsubsection*{What Are OpenCLIP Models? Are They LLMs?}
+
+OpenCLIP models are \textbf{vision-language encoders} trained to align images and text in a shared embedding space using contrastive-style objectives. In practice, an image encoder (for example ViT or ConvNeXt) and a text encoder are trained so matching image-text pairs have high similarity and non-matching pairs have low similarity. This makes OpenCLIP strong for zero-shot image classification, retrieval, and feature extraction.
+
+OpenCLIP models are \textbf{not LLMs}. LLMs are autoregressive language generators trained to predict the next token and produce long-form text. By contrast, OpenCLIP is primarily an alignment model that returns embeddings/similarity scores rather than free-form language generation.
+
+In short: OpenCLIP answers ``which label/text best matches this image?'' while LLMs answer ``what text should come next?'' Some modern systems combine both, where OpenCLIP-like encoders provide visual grounding and an LLM provides generative reasoning and explanation.
+
+\subsubsection{Step 1: Benchmarking on the Practical Ground Truth Set}
+In Step 1, we benchmarked several OpenCLIP-compatible vision-language models on the same \texttt{PracticalGroundTruth500} setup (500 images, 10 classes). For each model, we report:
+\begin{itemize}
+	\item zero-shot accuracy (text-prompt classification),
+	\item few-shot accuracy (prototype-based adaptation using class support examples),
+	\item model family,
+	\item pretraining dataset/checkpoint tag,
+	\item and the main training objective (loss function).
+\end{itemize}
+
+\subsubsection*{Model Information}
+\begin{enumerate}
+    \item \texttt{convnext\_xxlarge} 
+        \begin{itemize}
+            \item Pretrained tag: \texttt{laion2b\_s34b\_b82k\_augreg\_soup} (LAION-2B).
+            \item Family: OpenCLIP ConvNeXt-XXL.
+            \item Main objective: CLIP contrastive loss (symmetric image-text cross-entropy).
+        \end{itemize}
+    \item \texttt{MobileCLIP-S2} 
+        \begin{itemize}
+            \item Pretrained tag: \texttt{datacompdr\_s12m\_b5m} (DataCompDR).
+            \item Family: MobileCLIP.
+            \item Main objective: CLIP-style contrastive training within the MobileCLIP reinforced/distillation pipeline.
+        \end{itemize}
+    \item \textbf{\texttt{coca\_ViT-L-14}.}
+        \begin{itemize}
+            \item Pretrained tag: \texttt{mscoco\_finetuned\_laion2b\_s13b\_b90k} (LAION-2B with MSCOCO fine-tuning).
+            \item Family: CoCa (Contrastive Captioner).
+            \item Main objective: weighted contrastive loss plus captioning cross-entropy.
+        \end{itemize}
+
+    \item \textbf{\texttt{ViT-bigG-14}.}
+        \begin{itemize}
+            \item Pretrained tag: \texttt{laion2b\_s39b\_b160k} (LAION-2B).
+            \item Family: OpenCLIP ViT-bigG.
+            \item Main objective: CLIP contrastive loss.
+        \end{itemize}
+
+    \item \textbf{\texttt{ViT-SO400M-16-SigLIP2-384}.}
+        \begin{itemize}
+            \item Pretrained tag: \texttt{webli} (WebLI).
+            \item Family: SigLIP2.
+            \item Main objective: pairwise sigmoid loss (SigLIP objective).
+        \end{itemize}
+
+    \item \textbf{\texttt{ViT-g-14}.}
+        \begin{itemize}
+            \item Pretrained tag: \texttt{laion2b\_s34b\_b88k} (LAION-2B).
+            \item Family: OpenCLIP ViT-g.
+            \item Main objective: CLIP contrastive loss.
+        \end{itemize}
+
+    \item \textbf{\texttt{ViT-H-14}.}
+        \begin{itemize}
+            \item Pretrained tag: \texttt{laion2b\_s32b\_b79k} (LAION-2B).
+            \item Family: OpenCLIP ViT-H.
+            \item Main objective: CLIP contrastive loss.
+        \end{itemize}
+
+    \item \textbf{\texttt{ViT-H-14-CLIPA-336}.}
+        \begin{itemize}
+            \item Pretrained tag: \texttt{datacomp\_1b\_s13b\_b145k} (DataComp-1B).
+            \item Family: CLIPA / OpenCLIP.
+            \item Main objective: CLIP-style contrastive loss.
+        \end{itemize}
+
+    \item \textbf{\texttt{ViT-H-14-quickgelu}.}
+        \begin{itemize}
+            \item Pretrained tag: \texttt{dfn5b} (DFN-5B).
+            \item Family: DFN / OpenCLIP QuickGELU variant.
+            \item Main objective: CLIP contrastive loss.
+        \end{itemize}
+\end{enumerate}
+
+\subsubsection*{Accuracy Table (500-Image Practical Set)}
+\begin{table}[H]
+\centering
+\caption{Pipeline 4 accuracy comparison on \texttt{PracticalGroundTruth500} (500 images)}
+\label{tab:part3_pipeline4_zerofewshot}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.58\textwidth}cc}
+\toprule
+\textbf{Model} & \textbf{Zero-shot (\%)} & \textbf{Few-shot (\%)} \\
+\midrule
+\texttt{convnext\_xxlarge} & 45.2 & 91.4 \\
+\texttt{MobileCLIP-S2} & 54.4 & 94.2 \\
+\texttt{coca\_ViT-L-14} & 46.2 & 87.4 \\
+\texttt{ViT-bigG-14} & 16.03 & 93.30 \\
+\texttt{ViT-SO400M-16-SigLIP2-384} & 7.4 & 93.40 \\
+\texttt{ViT-g-14} & 16.05 & 93.45 \\
+\texttt{ViT-H-14} & 16.03 & 93.10 \\
+\texttt{ViT-H-14-CLIPA-336} & 16.03 & 93.21 \\
+\texttt{ViT-H-14-quickgelu} & 16.35 & 93.07 \\
+\bottomrule
+\end{tabular}
+\end{table}
