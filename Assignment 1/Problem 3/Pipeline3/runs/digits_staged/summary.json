@@ -1,0 +1,19 @@
+{
+  "dataset": "C:\\Users\\Moheb\\ELC4028-Neural-Networks\\Assignment 1\\Problem 3\\Pipeline3\\AHDBase_TrainingSet",
+  "output_dir": "C:\\Users\\Moheb\\ELC4028-Neural-Networks\\Assignment 1\\Problem 3\\Pipeline3\\runs\\digits_staged",
+  "resume_from": null,
+  "best_val_acc": 0.98125,
+  "test_loss": null,
+  "test_acc": null,
+  "target_acc": 0.98,
+  "stages": [
+    100,
+    300,
+    600,
+    900,
+    1000,
+    1003
+  ],
+  "val_ratio": 0.1,
+  "test_ratio": 0.0
+}

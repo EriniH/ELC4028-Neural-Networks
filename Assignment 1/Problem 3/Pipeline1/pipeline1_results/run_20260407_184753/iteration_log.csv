@@ -1,0 +1,4 @@
+iteration,train_size,boundary_labeled_this_iter,total_boundary_labeled,total_manual_images,total_manual_time_s,measured_accuracy,accuracy_scope,improvement
+1,9202,11,11,411,1110.00,,none,
+2,9207,8,19,419,1190.00,,none,
+3,9210,5,24,424,1240.00,,none,

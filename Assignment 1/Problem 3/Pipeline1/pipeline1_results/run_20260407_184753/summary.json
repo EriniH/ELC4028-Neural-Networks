@@ -1,0 +1,90 @@
+{
+  "timestamp": "2026-04-07 19:03:09",
+  "config": {
+    "data_dir": "D:\\EECE4\\NeuralNetworks\\Assignment1\\assignmnet_materials\\Indian_Digits_Train",
+    "feature": "hog",
+    "k_clusters": 50,
+    "boundary_batch": 30,
+    "max_iters": 8,
+    "target_accuracy": 0.99,
+    "min_improvement": 0.001,
+    "cluster_weight": 1.0,
+    "trusted_weight": 100.0,
+    "random_seed": 42,
+    "ground_truth_csv": null,
+    "practical_annotated_csv": null,
+    "use_practical_for_training": false
+  },
+  "feature_meta": {
+    "feature": "hog",
+    "dims": 1296,
+    "orientations": 9,
+    "pixels_per_cell": [
+      4,
+      4
+    ],
+    "cells_per_block": [
+      2,
+      2
+    ],
+    "feature_time_s": 3.617817600024864
+  },
+  "dataset": {
+    "images": 10000
+  },
+  "cluster_step": {
+    "clusters_reviewed": 50,
+    "manual_images_viewed": 400,
+    "manual_time_s": 1000.0,
+    "mixed_clusters": 6
+  },
+  "boundary_step": {
+    "total_boundary_labeled": 24,
+    "manual_time_s": 240.0
+  },
+  "totals": {
+    "manual_images": 424,
+    "manual_time_s": 1240.0,
+    "manual_time_h": 0.34444444444444444,
+    "iterations_completed": 3
+  },
+  "final_accuracy": {
+    "value": null,
+    "scope": "none"
+  },
+  "iteration_metrics": [
+    {
+      "iteration": 1,
+      "train_size": 9202,
+      "boundary_labeled_this_iter": 11,
+      "total_boundary_labeled": 11,
+      "total_manual_images": 411,
+      "total_manual_time_s": 1110.0,
+      "measured_accuracy": null,
+      "accuracy_scope": "none",
+      "improvement": null
+    },
+    {
+      "iteration": 2,
+      "train_size": 9207,
+      "boundary_labeled_this_iter": 8,
+      "total_boundary_labeled": 19,
+      "total_manual_images": 419,
+      "total_manual_time_s": 1190.0,
+      "measured_accuracy": null,
+      "accuracy_scope": "none",
+      "improvement": null
+    },
+    {
+      "iteration": 3,
+      "train_size": 9210,
+      "boundary_labeled_this_iter": 5,
+      "total_boundary_labeled": 24,
+      "total_manual_images": 424,
+      "total_manual_time_s": 1240.0,
+      "measured_accuracy": null,
+      "accuracy_scope": "none",
+      "improvement": null
+    }
+  ]
+}

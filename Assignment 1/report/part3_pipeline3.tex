@@ -7,27 +7,23 @@ Therefore, we moved to a local reproducible pipeline. The finalized method in th
 \subsubsection{Pipeline 3 Stages (Final Local Workflow)}
 
 \begin{enumerate}
-    \item \textbf{Initial staged training of the local CNN-based hybrid model on \texttt{AHDBase\_TrainingSet}.}
-    The script \path{train_digits_staged.py} produced \path{runs/digits_staged}. The summary file reports best validation accuracy of \textbf{0.98125}.
+    \item \textbf{Initial staged training on \texttt{AHDBase\_TrainingSet}.}
+    The script \path{train_digits_staged.py} produced \path{runs/ahd_base}. The summary file reports best validation accuracy of \textbf{0.98125}.
 
-    \item \textbf{Transfer evaluation on \texttt{PracticalGroundTruth500}.}
-    The script \path{predict_digits_cnn.py} was used to compare transfer checkpoints; \path{stage_05.pt} transferred better than \path{best_model.pt} (43.00\% vs 41.20\%).
+    \item \textbf{Domain adaptation fine-tuning on \texttt{PracticalGroundTruth500}.}
+    Fine-tuning started from \path{runs/ahd_base/best_model.pt} and produced \path{runs/ahd_plus_practical_ft/best_model.pt}. The summary file reports best validation accuracy of \textbf{1.0}.
 
-    \item \textbf{Support/query prototype adaptation on practical subset.}
-    Using 3 support images per class (seed 7), autocontrast, and shape prior, the measured query accuracy reached \textbf{413/470 = 87.87\%}.
+    \item \textbf{Practical-set tuning with support prototypes + shape prior.}
+    Inference on \texttt{PracticalGroundTruth500\_Unlabeled} used support images from \texttt{PracticalGroundTruth500}, autocontrast, and shape prior. The first attempt failed due to a wrong labels path (\path{labels.csv} in project root), then succeeded after using \path{.\PracticalGroundTruth500\labels.csv}.
 
-    \item \textbf{Fine-tuning on \texttt{PracticalGroundTruth500}.}
-    Starting from \path{runs/digits_staged/stage_05.pt}, fine-tuning produced \path{runs/practical500_finetune/best_model.pt} with:
-    \begin{itemize}
-        \item best validation accuracy = \textbf{0.94}
-        \item held-out test accuracy = \textbf{0.84}
-    \end{itemize}
+    \item \textbf{Measured practical tuning result.}
+    The corrected run produced \path{runs/practical_tuning.csv} with \textbf{298/300 = 99.33\%} on the scored practical subset.
 
     \item \textbf{Full prediction on \texttt{Indian\_Digits\_Train}.}
-    The final full run used \path{runs/practical500_finetune/best_model.pt} and produced predictions for all \textbf{10,000} images with no empty \texttt{predicted\_label} values.
+    The final full run used \path{runs/ahd_plus_practical_ft/best_model.pt} and produced predictions for all \textbf{10,000} images in \path{runs/indian_final_predictions.csv}.
 
-    \item \textbf{Submission ordering correction.}
-    Final predictions were sorted by numeric image ID (1,2,3,...) to avoid lexicographic-order mismatch during oracle-style evaluation.
+    \item \textbf{Oracle scoring and ordering alignment.}
+    Oracle-style scoring aligned predictions using numeric IDs parsed from path and reported \textbf{9722/10000 = 97.22\%}.
 \end{enumerate}
 
 \subsubsection{Key Commands Used}
@@ -36,26 +32,39 @@ Therefore, we moved to a local reproducible pipeline. The finalized method in th
 \begin{lstlisting}[language=bash]
 python .\train_digits_staged.py \
     --data-dir .\PracticalGroundTruth500 \
-    --resume-from .\runs\digits_staged\stage_05.pt \
+    --resume-from .\runs\ahd_base\best_model.pt \
     --stage-sizes 5,10,20,30,40 \
     --epochs-per-stage 20 \
     --patience 5 \
-    --lr 1e-4 \
-    --val-ratio 0.10 \
-    --test-ratio 0.10 \
-    --output-dir .\runs\practical500_finetune
+    --target-acc 1.0 \
+    --output-dir .\runs\ahd_plus_practical_ft
+\end{lstlisting}
+
+\noindent\textbf{Practical tuning command (corrected labels path).}
+\begin{lstlisting}[language=bash]
+python .\predict_digits_cnn.py \
+    --checkpoint .\runs\ahd_plus_practical_ft\best_model.pt \
+    --input-dir .\PracticalGroundTruth500_Unlabeled \
+    --labels-csv .\PracticalGroundTruth500\labels.csv \
+    --support-dir .\PracticalGroundTruth500 \
+    --support-per-class 20 \
+    --autocontrast \
+    --use-shape-prior \
+    --shape-prior-weight 0.2 \
+    --output-csv .\runs\practical_tuning.csv
 \end{lstlisting}
 
 \noindent\textbf{Final full prediction command.}
 \begin{lstlisting}[language=bash]
 python .\predict_digits_cnn.py \
-    --checkpoint .\runs\practical500_finetune\best_model.pt \
+    --checkpoint .\runs\ahd_plus_practical_ft\best_model.pt \
     --input-dir .\Indian_Digits_Train \
     --support-dir .\PracticalGroundTruth500 \
+    --support-per-class 20 \
     --autocontrast \
     --use-shape-prior \
-    --shape-prior-weight 0.3 \
-    --output-csv .\runs\indian_digits_cnn_finetuned_predictions.csv
+    --shape-prior-weight 0.2 \
+    --output-csv .\runs\indian_final_predictions.csv
 \end{lstlisting}
 
 \subsubsection{MATLAB Online Oracle Scoring (\texttt{check\_accuracy.p})}
@@ -130,13 +139,16 @@ Scoring predictions_final.csv
 Aligned predictions using numeric ID parsed from path.
 
 ===== Classification Results =====
-  Correct : 9339 / 10000
-  Accuracy: 93.39%
+    Correct : 9722 / 10000
+    Accuracy: 97.22%
 ==================================
+
+accuracy=0.972200
+correct=9722/10000
 \end{lstlisting}
 
 \paragraph{Consistency note across Part 3 pipelines.}
-The 93.39\% value above is the oracle score for the specific file \texttt{predictions\_final.csv} in this CNN run. It is reported independently from Pipeline 1 (99.09\%) and Pipeline 2 (99.07\%) results, since each pipeline uses different training/adaptation procedures and run configurations.
+The 97.22\% value above is the oracle score for the final CNN-hybrid prediction run in this pipeline. It is reported independently from Pipeline 1 (99.09\%) and Pipeline 2 (99.07\%) results, since each pipeline uses different training/adaptation procedures and run configurations.
 
 \subsubsection{Final Artifacts and Results}
 
@@ -148,13 +160,14 @@ The 93.39\% value above is the oracle score for the specific file \texttt{predic
 \toprule
 \textbf{Item} & \textbf{Value} \\
 \midrule
-Final checkpoint & \path{runs/practical500_finetune/best_model.pt} \\
-Full prediction file & \path{runs/indian_digits_cnn_finetuned_predictions.csv} \\
-Numeric-sorted prediction file & \path{runs/indian_digits_cnn_finetuned_predictions_numeric.csv} \\
-Recommended submission file & \path{runs/indian_digits_cnn_finetuned_submission.csv} \\
-Labels-only alternative & \path{runs/indian_digits_cnn_finetuned_labels_only.txt} \\
-Practical subset match check (diagnostic) & 470/500 = 94.0\% \\
-Oracle score for shown \texttt{predictions\_final.csv} & 9339/10000 = 93.39\% \\
+Base checkpoint & \path{runs/ahd_base/best_model.pt} \\
+Final checkpoint & \path{runs/ahd_plus_practical_ft/best_model.pt} \\
+Practical tuning output & \path{runs/practical_tuning.csv} \\
+Final prediction file & \path{runs/indian_final_predictions.csv} \\
+Base best validation accuracy & 0.98125 (98.125\%) \\
+Fine-tuned best validation accuracy & 1.0 (100.0\%) \\
+Practical tuning score & 298/300 = 99.33\% \\
+Oracle score (final run) & 9722/10000 = 97.22\% \\
 Predictions generated in final run & 10,000 / 10,000 \\
 \bottomrule
 \end{tabular}
@@ -162,6 +175,7 @@ Predictions generated in final run & 10,000 / 10,000 \\
 
 \paragraph{Manual effort note.}
 For the 10,000-image final inference stage, no additional per-image manual labeling was needed; the pipeline relied on the already available labeled practical subset (\path{PracticalGroundTruth500}) plus local model inference.
+The practical tuning stage used labels from \path{PracticalGroundTruth500/labels.csv} for 300 aligned practical samples.
 
 \subsubsection{Additional Pipeline 3 Baseline: Qwen2-VL (Practical 500 Set)}
 
@@ -194,7 +208,7 @@ Prediction distribution note (final) & Strong class bias remained (e.g., class 2
 \end{table}
 
 \paragraph{Assignment reporting note.}
-This Qwen2-VL result is reported as an additional practical-set baseline inside Pipeline 3. Since this run was evaluated on the practical 500-sample set (not full oracle scoring on 10,000 predictions), it is used for methodology comparison and debugging evidence, while the official Pipeline 3 full-dataset oracle figure remains the local-model result (93.39\%).
+This Qwen2-VL result is reported as an additional practical-set baseline inside Pipeline 3. Since this run was evaluated on the practical 500-sample set (not full oracle scoring on 10,000 predictions), it is used for methodology comparison and debugging evidence, while the official Pipeline 3 full-dataset oracle figure remains the local-model result (97.22\%).
 
 \subsection{Part 3 Cross-Pipeline Comparison}
 
@@ -210,7 +224,7 @@ Table~\ref{tab:part3_cross_pipeline} consolidates the finalized outcomes, includ
 \midrule
 Pipeline 1 (K-means bootstrapping + HITL SVM) & 99.09\% & 3 & 424 handled images, 1240.0 s & Highest oracle accuracy with the lowest estimated manual time among the two HITL-SVM pipelines. \\ \\
 Pipeline 2 (active learning + pseudo-labeling SVM) & 99.07\% & 8 & 460 labels, 4600 s & Reached the 99\% target with stable gains, but required more manual actions and time than Pipeline 1. \\ \\
-Pipeline 3 (Moondream prototyping -> local CNN-based hybrid) & 93.39\% & N/A & No additional per-image labels during final inference; reused \path{PracticalGroundTruth500} & Started from VLM prototyping, then shifted to a local CNN-based hybrid baseline; lower oracle accuracy under this run setup. \\ \\
+Pipeline 3 (Moondream prototyping -> local CNN-based hybrid) & 97.22\% & N/A & No additional per-image labels during final inference; reused \path{PracticalGroundTruth500} & Started from VLM prototyping, then shifted to a local CNN-based hybrid domain-adaptation run with practical support prototypes and shape prior. \\ \\
 Pipeline 3 add-on (Qwen2-VL prompt/inference baseline) & N/A (practical: 22.40\%) & N/A & No new labels; evaluated using existing 500 practical labels & Stable end-to-end after debugging (invalid=0), but strong class-bias limited final practical accuracy. \\ \\
 \bottomrule
 \end{tabular}
@@ -220,6 +234,6 @@ Pipeline 3 add-on (Qwen2-VL prompt/inference baseline) & N/A (practical: 22.40\%
 \begin{itemize}
     \item Pipeline 1 and Pipeline 2 are nearly tied in oracle accuracy (difference = 0.02 percentage points).
     \item Pipeline 1 achieved this with less estimated manual effort than Pipeline 2 in the reported runs.
-    \item Pipeline 3's local CNN-based hybrid run (93.39\% oracle) substantially outperformed the Qwen practical-set baseline (22.40\% practical).
+    \item Pipeline 3's local CNN-based hybrid run (97.22\% oracle) substantially outperformed the Qwen practical-set baseline (22.40\% practical).
     \item The Qwen baseline demonstrates a working VLM path, but practical-only scoring and class-bias behavior make it a supplementary reference, not the primary Pipeline 3 result.
 \end{itemize}

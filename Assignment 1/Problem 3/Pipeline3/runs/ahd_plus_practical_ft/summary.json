@@ -1,0 +1,19 @@
+{
+  "dataset": "C:\\Users\\Moheb\\ELC4028-Neural-Networks\\Assignment 1\\Problem 3\\Pipeline3\\PracticalGroundTruth500",
+  "output_dir": "C:\\Users\\Moheb\\ELC4028-Neural-Networks\\Assignment 1\\Problem 3\\Pipeline3\\runs\\ahd_plus_practical_ft",
+  "resume_from": "C:\\Users\\Moheb\\ELC4028-Neural-Networks\\Assignment 1\\Problem 3\\Pipeline3\\runs\\ahd_base\\best_model.pt",
+  "best_val_acc": 1.0,
+  "test_loss": null,
+  "test_acc": null,
+  "target_acc": 1.0,
+  "stages": [
+    5,
+    10,
+    20,
+    30,
+    40,
+    45
+  ],
+  "val_ratio": 0.1,
+  "test_ratio": 0.0
+}
