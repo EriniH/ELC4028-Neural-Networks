@@ -1,77 +1,75 @@
-# Problem 2 — Convolutional Neural Network (CNN) on ReducedMNIST
+# Problem 2 - CNN on ReducedMNIST
 
-## 🎯 Objective
+This folder contains a baseline LeNet-style CNN and multiple hyperparameter variations to satisfy Assignment 2, Problem 2.
 
-Train a **Convolutional Neural Network (CNN)** to classify handwritten digits (0–9) using the ReducedMNIST dataset **directly from raw images** — no manual feature extraction needed.
+## What is implemented
 
-## 📋 Requirements
+1. Baseline CNN for 28x28 grayscale images with ReLU activation.
+2. At least two CNN variations (plus one optional extra):
+	- `Variation1_Wider`: more convolution filters and wider fully connected layers.
+	- `Variation2_LeakyReLU`: activation changed from ReLU to LeakyReLU.
+	- `Variation3_Dropout`: dropout regularization added before the last FC layers.
+3. End-to-end training script that records:
+	- Accuracy (%)
+	- Training time (ms)
+	- Testing time (ms)
+4. CSV and JSON output files ready to copy into your assignment table.
 
-### Part (a) — Base CNN Architecture
+## Files
 
-Use a **LeNet-5-style** architecture as the starting point. You must adjust the network to work with **28×28 grayscale images** (the original LeNet-5 was designed for 32×32).
+- `LoadData.py`: ReducedMNIST image loader (`train/` and `test/` folders).
+- `model.py`: baseline CNN and variation model definitions.
+- `train_cnn_variations.py`: experiment runner for all models.
+- `requirements.txt`: minimal dependencies.
 
-**Key hints from the assignment:**
-- Adjust parameters to fit 28×28 images instead of 32×32
-- Use **ReLU** activation function
+## Dataset path
 
-**Typical LeNet-5 structure (to adapt):**
+Default dataset location expected by the script:
+
+`../../Materials/ReducedMNIST_generated`
+
+The directory must contain:
+
+- `train/0..9`
+- `test/0..9`
+
+## Quick start
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
 ```
-Input (28×28×1)
-→ Conv Layer 1 (filters, kernel size, activation=ReLU)
-→ Pooling Layer 1
-→ Conv Layer 2 (filters, kernel size, activation=ReLU)
-→ Pooling Layer 2
-→ Flatten
-→ Fully Connected Layer 1
-→ Fully Connected Layer 2
-→ Output Layer (10 classes, softmax)
+
+Run a fast smoke test:
+
+```bash
+python train_cnn_variations.py --epochs 1 --max-train-batches 2 --max-test-batches 2
 ```
 
-### Part (b) — Hyperparameter Variations
+Run full experiment set:
 
-Make **at least two variations** in the hyperparameters and analyze the effect on performance. Possible variations include:
-- Number of filters in convolutional layers
-- Activation function (e.g., ReLU vs. Tanh vs. LeakyReLU)
-- Adding or removing layers
-- Changing kernel sizes
-- Adding dropout or batch normalization
-- Changing the optimizer or learning rate
+```bash
+python train_cnn_variations.py --epochs 6 --batch-size 64
+```
 
-### Part (c) — Comparison with Assignment 1
+Optional custom dataset path:
 
-Fill in the comprehensive comparison table that includes results from:
-- **Assignment 1**: K-means clustering, SVM (linear & nonlinear) with DCT/PCA/AutoEncoder features
-- **This assignment**: MLP (Problem 1) and CNN (this problem)
+```bash
+python train_cnn_variations.py --data-dir "d:/EECE4/NeuralNetworks/repo-clone/Materials/ReducedMNIST_generated"
+```
 
-## 📊 Results to Collect
+## Output files
 
-### CNN Variations Table
+Generated under `part2_results/`:
 
-| Variation | Description | Accuracy (%) | Training Time (ms) | Testing Time (ms) |
-|-----------|-------------|-------------|--------------------|--------------------|
-| Variation 1 | (describe changes) | | | |
-| Variation 2 | (describe changes) | | | |
-| Variation 3 | (describe changes — optional) | | | |
-| Variation 4 | (describe changes — optional) | | | |
+- `cnn_variations_results.csv`
+- `cnn_variations_results.json`
 
-> **Note**: The CNN does NOT require a separate feature extraction step — it learns features directly from images.
+The CSV is formatted for your Problem 2 table (variation description + accuracy + training/testing timing).
 
-## 🔧 Steps to Complete
+## Assignment mapping
 
-1. [ ] Load ReducedMNIST (raw 28×28 images, no feature extraction)
-2. [ ] Build the base CNN model (adapted LeNet-5 for 28×28, ReLU activation)
-3. [ ] Train the base model and record accuracy + timing
-4. [ ] Create at least 2 variations by changing hyperparameters
-5. [ ] Train each variation and record results
-6. [ ] Create the full comparison table including Assignment 1 results
-7. [ ] Write comments analyzing the differences in performance
-
-## 📝 Notes
-
-- CNN works on raw pixel data — no DCT/PCA features needed
-- Compare training time, testing time, and accuracy across all methods
-- The comparison table is a key deliverable — make sure to include ALL methods from both assignments
-
-## ✅ Status
-
-- ⬜ Not started
+- Problem 2(a): baseline CNN from raw images with ReLU and 28x28 input.
+- Problem 2(b): hyperparameter variations and performance comparison.
+- Problem 2(c): use the generated CNN results with your Assignment 1 results in the final report table.

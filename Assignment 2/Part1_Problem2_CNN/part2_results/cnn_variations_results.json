@@ -1,0 +1,41 @@
+{
+  "generated_at": "2026-04-27T19:18:50",
+  "results": [
+    {
+      "variation": "BaseCNN",
+      "description": "Baseline LeNet-style CNN with ReLU",
+      "accuracy_percent": 95.0,
+      "training_time_ms": 74032.0,
+      "testing_time_ms": 11554.2,
+      "raw_test_accuracy": 94.95,
+      "raw_test_loss": 0.15990317533910275
+    },
+    {
+      "variation": "Variation1_Wider",
+      "description": "Increased filters and FC widths",
+      "accuracy_percent": 97.3,
+      "training_time_ms": 18493.0,
+      "testing_time_ms": 521.1,
+      "raw_test_accuracy": 97.3,
+      "raw_test_loss": 0.09831558163743466
+    },
+    {
+      "variation": "Variation2_LeakyReLU",
+      "description": "ReLU replaced by LeakyReLU",
+      "accuracy_percent": 96.2,
+      "training_time_ms": 16089.9,
+      "testing_time_ms": 490.3,
+      "raw_test_accuracy": 96.15,
+      "raw_test_loss": 0.1148327735811472
+    },
+    {
+      "variation": "Variation3_Dropout",
+      "description": "Added dropout regularization before FC2/FC3",
+      "accuracy_percent": 96.7,
+      "training_time_ms": 16424.0,
+      "testing_time_ms": 453.8,
+      "raw_test_accuracy": 96.65,
+      "raw_test_loss": 0.10842287293076515
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+% =====================================================
+% style.tex  (Formatting & Style Only)
+% =====================================================
+
+% ================= Basic packages =================
+\usepackage{booktabs}
+\usepackage[colorlinks=true, urlcolor=blue,linkcolor=black]{hyperref}
+\usepackage{float}
+\usepackage{dashrule}
+\usepackage{tocloft}   % optional, for formatting control
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{fontspec}
+\usepackage{bidi}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage[a4paper, margin=2cm]{geometry}
+
+% ================= Fonts =================
+\setmainfont{Times New Roman}
+\IfFontExistsTF{Amiri}{
+  \newfontfamily\arabicfont[Script=Arabic,Scale=0.8]{Amiri}
+}{
+  \IfFontExistsTF{Traditional Arabic}{
+    \newfontfamily\arabicfont[Script=Arabic,Scale=1.1]{Traditional Arabic}
+  }{
+    \newfontfamily\arabicfont[Script=Arabic,Scale=1.1]{Times New Roman}
+  }
+}
+\newcommand{\textarabic}[1]{{\arabicfont\RL{#1}}}
+
+% Improve global line breaking and reduce overfull boxes in dense technical text.
+\setlength{\emergencystretch}{2em}
+
+% ================= Colors =================
+\definecolor{mainblue}{RGB}{0,60,120}
+\definecolor{lightgray}{RGB}{245,245,245}
+\definecolor{softgray}{RGB}{240,240,240}
+
+% ================= Custom blocks =================
+\newtcolorbox{reportblock}[1]{
+  colback=lightgray,
+  colframe=mainblue,
+  boxrule=0pt,
+  leftrule=4pt,
+  sharp corners,
+  enhanced,
+  title=\textbf{#1},
+  fonttitle=\bfseries,
+  coltitle=black,
+  before skip=1.2em,
+  after skip=1.2em
+}
+
+% ================= Lists =================
+\setlist[itemize]{
+  leftmargin=1.5em,
+  itemsep=0.4em,
+  topsep=0.4em
+}
+% ================= Listings =================
+% --- MATLAB colors ---
+\definecolor{mlblue}{rgb}{0,0,1}
+\definecolor{mlgreen}{rgb}{0,0.5,0}
+\definecolor{mlpurple}{rgb}{0.58,0,0.82}
+\definecolor{mlgray}{rgb}{0.95,0.95,0.95}
+
+% --- MATLAB language definition (IMPORTANT) ---
+\lstdefinelanguage{MyMatlab}{
+  language=Matlab,
+  morekeywords={parfor,spmd,endfor,endwhile,endif},
+  keywordstyle=\color{mlblue},
+  commentstyle=\color{mlgreen},
+  stringstyle=\color{mlpurple},
+  sensitive=true
+}
+
+% --- Global MATLAB style ---
+\lstset{
+  language=MyMatlab,
+  backgroundcolor=\color{mlgray},
+  basicstyle=\ttfamily\footnotesize,
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  numbersep=8pt,
+  frame=single,
+  breaklines=true,
+  showstringspaces=false,
+  tabsize=4
+}

@@ -1,0 +1,37 @@
+\subsection{Problem 2: Convolutional Neural Network (CNN) on ReducedMNIST}
+
+In this problem, we switch to working with the raw $28\times 28$ image pixels to train a Convolutional Neural Network. We adapted a LeNet-5 style architecture with ReLU activations to suit the ReducedMNIST dataset characteristics without explicit manual feature extraction.
+
+\subsubsection{Baseline Architecture}
+The baseline CNN directly takes image pixels through two convolutional layers (with $5\times 5$ kernels) followed by Maximum Pooling, and then propagates features through three fully connected layers to output class predictions.
+
+\subsubsection{Hyperparameter Variations}
+To explore model performance dynamically, we made the following major variations to the baseline model:
+\begin{itemize}
+    \item \textbf{Variation 1 (Wider):} Increased the number of convolutional filters and the width of the fully connected nodes to provide excessive capacity.
+    \item \textbf{Variation 2 (LeakyReLU):} Swapped the ReLU activation functions out for LeakyReLU models to check the impact of non-zero gradient limits on inactive regions.
+    \item \textbf{Variation 3 (Dropout):} Added Dropout probabilities to fully connected layers to test its regularization effect. 
+\end{itemize}
+
+\subsubsection{Results and Comparison}
+
+Table \ref{tab:prob2_results} illustrates the accuracy and computing times for the tested configurations.
+
+\begin{table}[h]
+    \centering
+    \caption{CNN Variation Results for Problem 2}
+    \label{tab:prob2_results}
+    \begin{tabular}{|l|p{6cm}|r|r|r|}
+        \hline
+        \textbf{Variation} & \textbf{Description} & \textbf{Acc. (\%)} & \textbf{Train (ms)} & \textbf{Test (ms)} \\
+        \hline
+        BaseCNN & Baseline LeNet-style CNN with ReLU & 95.0 & 74032.0 & 11554.2 \\
+        Variation 1 & Increased filters and FC widths & 97.3 & 18493.0 & 521.1 \\
+        Variation 2 & ReLU replaced by LeakyReLU & 96.2 & 16089.9 & 490.3 \\
+        Variation 3 & Added dropout before FC2/FC3 & 96.7 & 16424.0 & 453.8 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\paragraph{Discussion}
+% Detailed comments comparing the results internally and against Classical ML in Part 1.

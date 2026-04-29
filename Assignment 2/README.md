@@ -66,8 +66,8 @@ Navigate to each problem's folder and follow the instructions in its `README.md`
 
 | Problem | Status |
 |---------|--------|
-| Problem 1 — MLP | ⬜ Not started |
-| Problem 2 — CNN | ⬜ Not started |
+| Problem 1 — MLP | ⬜ inprogress |
+| Problem 2 — CNN | ⬜ inprogress |
 | Problem 3 — Speech Recognition | ⬜ Not started |
 | Problem 4 — Autoencoder Speech | ⬜ Not started |
 | Problem 5 — Data Augmentation | ⬜ Not started |

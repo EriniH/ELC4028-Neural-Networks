@@ -1,0 +1,24 @@
+\subsection{Problem 5: Data Augmentation on ReducedMNIST}
+
+In this problem, we systematically study the effect of artificially expanding the dataset size over an underlying algorithm using augmentation parameters natively applied (Delta shifts, rotations, noise).
+
+\subsubsection{Test Mix Analysis}
+% Show the LeNET-5 implementation tests on 350, 750, 1000 original + augmented sizes.
+
+\begin{table}[h]
+    \centering
+    \caption{Data Augmentation performance across various data size regimes}
+    \label{tab:augmentation_prob5}
+    \begin{tabular}{|l|c|c|c|}
+        \hline
+        \textbf{Augmented (\# per digit)} & \textbf{350 Real} & \textbf{750 Real} & \textbf{1,000 Real} \\
+        \hline
+        1,000 Generated                   & -                 & -                 & -                   \\
+        1,500 Generated                   & -                 & -                 & -                   \\
+        2,000 Generated                   & -                 & -                 & -                   \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\paragraph{Discussion}
+% Detailed comments comparing the different mixes...
