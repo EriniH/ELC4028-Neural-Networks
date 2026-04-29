@@ -1,0 +1,40 @@
+# ==========================================
+# REQUIREMENTS FOR AUDIO AUTOENCODER PROJECT
+# ==========================================
+
+# 1. TensorFlow
+# Role in Project: This is the core Deep Learning framework. 
+# We use it to build the Autoencoder architecture using Keras (Functional API), 
+# compile the model with the Adam optimizer, and execute the training loop (Backpropagation).
+tensorflow
+
+# 2. Librosa
+# Role in Project: The primary audio processing library. 
+# We use it to read the .wav files (`librosa.load`) and convert the raw audio waveforms 
+# into Spectrograms using the Short-Time Fourier Transform (`librosa.stft`). 
+# It also handles amplitude to Decibel conversion.
+librosa
+
+# 3. NumPy
+# Role in Project: Essential for numerical operations and matrix manipulations. 
+# We use it to transpose the spectrograms, apply Zero Padding (`np.pad`), 
+# flatten the 2D arrays into 1D vectors for the Autoencoder, and normalize the data.
+numpy
+
+# 4. SciPy
+# Role in Project: This is a mathematical backend required by Librosa to perform 
+# complex signal processing (like the Fourier transforms). You don't call it directly, 
+# but Librosa will crash without it.
+scipy
+
+# 5. Matplotlib (Optional but Highly Recommended)
+# Role in Project: Useful for visualizing the Spectrograms before passing them to the model.
+# Even though it's not strictly in the training script, you will need it if you want 
+# to plot the audio features to understand what the Autoencoder is "seeing".
+matplotlib
+
+torch
+torchvision
+
+jupyter
+

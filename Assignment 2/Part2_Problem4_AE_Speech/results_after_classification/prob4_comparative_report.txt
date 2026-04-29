@@ -1,0 +1,34 @@
+====================================================
+    PROBLEM 4: AUDIO MLP COMPARATIVE REPORT         
+====================================================
+
+Configuration: Audio_Exp1_1_Layer
+- Hidden Layers: 1
+- Regularization: Yes
+- Learning Rate: 0.0005
+- Final Test Accuracy: 80.33%
+----------------------------------------------------
+Configuration: Audio_Exp2_3_Layers
+- Hidden Layers: 3
+- Regularization: Yes
+- Learning Rate: 0.0005
+- Final Test Accuracy: 82.00%
+----------------------------------------------------
+Configuration: Audio_Exp3_4_Layers
+- Hidden Layers: 4
+- Regularization: Yes
+- Learning Rate: 0.0005
+- Final Test Accuracy: 83.00%
+----------------------------------------------------
+Configuration: Audio_Exp4_No_Reg
+- Hidden Layers: 3
+- Regularization: No
+- Learning Rate: 0.0005
+- Final Test Accuracy: 81.67%
+----------------------------------------------------
+Configuration: Audio_Exp5_High_LR
+- Hidden Layers: 3
+- Regularization: Yes
+- Learning Rate: 0.01
+- Final Test Accuracy: 77.67%
+----------------------------------------------------

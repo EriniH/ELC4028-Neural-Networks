@@ -1,0 +1,38 @@
+====================================================
+    PROBLEM 1: MLP COMPARATIVE ANALYSIS REPORT      
+====================================================
+Configuration: Exp1_1_Hidden_Layer
+- Hidden Layers: 1
+- Regularization (Drop+BN): Yes
+- Learning Rate: 0.001
+- Final Test Accuracy: 96.75%
+- Final Test Loss: 0.1048
+----------------------------------------------------
+Configuration: Exp2_3_Hidden_Layers
+- Hidden Layers: 3
+- Regularization (Drop+BN): Yes
+- Learning Rate: 0.001
+- Final Test Accuracy: 97.20%
+- Final Test Loss: 0.0977
+----------------------------------------------------
+Configuration: Exp3_4_Hidden_Layers
+- Hidden Layers: 4
+- Regularization (Drop+BN): Yes
+- Learning Rate: 0.001
+- Final Test Accuracy: 97.20%
+- Final Test Loss: 0.0916
+----------------------------------------------------
+Configuration: Exp4_No_Regularization
+- Hidden Layers: 3
+- Regularization (Drop+BN): No
+- Learning Rate: 0.001
+- Final Test Accuracy: 96.95%
+- Final Test Loss: 0.1249
+----------------------------------------------------
+Configuration: Exp5_High_Learning_Rate
+- Hidden Layers: 3
+- Regularization (Drop+BN): Yes
+- Learning Rate: 0.01
+- Final Test Accuracy: 97.40%
+- Final Test Loss: 0.1042
+----------------------------------------------------
