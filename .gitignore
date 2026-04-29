@@ -32,6 +32,9 @@
 *.thm
 *.dvi
 
+# hugefiles
+*.npy
+
 # Auto-generated logs
 missfont.log
 

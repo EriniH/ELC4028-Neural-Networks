@@ -19,19 +19,47 @@ Table \ref{tab:prob2_results} illustrates the accuracy and computing times for t
 
 \begin{table}[h]
     \centering
-    \caption{CNN Variation Results for Problem 2}
+    \caption{Performance Comparison across Classical ML and ANNs}
     \label{tab:prob2_results}
-    \begin{tabular}{|l|p{6cm}|r|r|r|}
+    \resizebox{\linewidth}{!}{
+    \begin{tabular}{|l|c|c|c|c|c|c|}
         \hline
-        \textbf{Variation} & \textbf{Description} & \textbf{Acc. (\%)} & \textbf{Train (ms)} & \textbf{Test (ms)} \\
+        \multirow{3}{*}{\textbf{Classifier / Variations}} & \multicolumn{6}{c|}{\textbf{Features}} \\
+        \cline{2-7}
+        & \multicolumn{2}{c|}{\textbf{DCT}} & \multicolumn{2}{c|}{\textbf{PCA}} & \multicolumn{2}{c|}{\textbf{AutoEncoder}} \\
+        \cline{2-7}
+        & \textbf{Accuracy*} & \textbf{Time**} & \textbf{Accuracy} & \textbf{Time} & \textbf{Accuracy} & \textbf{Time} \\
         \hline
-        BaseCNN & Baseline LeNet-style CNN with ReLU & 95.0 & 74032.0 & 11554.2 \\
-        Variation 1 & Increased filters and FC widths & 97.3 & 18493.0 & 521.1 \\
-        Variation 2 & ReLU replaced by LeakyReLU & 96.2 & 16089.9 & 490.3 \\
-        Variation 3 & Added dropout before FC2/FC3 & 96.7 & 16424.0 & 453.8 \\
+        \multicolumn{7}{|l|}{\textbf{DCT and PCA features from Assignment 1}} \\
+        \hline
+        \textbf{K-means Clustering} & & & & & & \\
+        $K=1$               & 78.1\% & 4800.0  & 85.2\% & 2464.6  & & \\
+        $K=4$               & 84.4\% & 5077.3  & 82.6\% & 3608.5  & & \\
+        $K=16$              & 88.7\% & 12072.5 & 85.7\% & 5800.8  & & \\
+        $K=32$              & 89.6\% & 38344.4 & 85.6\% & 8701.1  & & \\
+        \hline
+        \textbf{SVM} & & & & & & \\
+        Linear              & 90.2\% & 11487.5 & 90.6\% & 10626.8 & & \\
+        Nonlinear (RBF)     & 95.5\% & 20560.2 & 95.1\% & 21054.4 & & \\
+        \hline
+        \multicolumn{7}{|l|}{\textbf{Multi-layer Perceptron (MLP) - Assignment 2}} \\
+        \hline
+        1-Hidden            & & & & & & \\
+        3-Hidden            & & & & & & \\
+        4-Hidden            & & & & & & \\
+        \hline
+        \multicolumn{7}{|c|}{\textbf{In the CNN Model no Features are needed}} \\
+        \hline
+        \textbf{CNN} & \textbf{Accuracy} & \multicolumn{2}{c|}{\textbf{Training time}} & \multicolumn{3}{c|}{\textbf{Testing time}} \\
+        \hline
+        Variation 1: Baseline LeNet w/ ReLU  & 95.0\% & \multicolumn{2}{c|}{74032.0} & \multicolumn{3}{c|}{11554.2} \\
+        Variation 2: Wider Network           & 97.3\% & \multicolumn{2}{c|}{18493.0} & \multicolumn{3}{c|}{521.1} \\
+        Variation 3: LeakyReLU               & 96.2\% & \multicolumn{2}{c|}{16089.9} & \multicolumn{3}{c|}{490.3} \\
+        Variation 4: Dropout                 & 96.7\% & \multicolumn{2}{c|}{16424.0} & \multicolumn{3}{c|}{453.8} \\
         \hline
     \end{tabular}
+    }
 \end{table}
 
 \paragraph{Discussion}
-% Detailed comments comparing the results internally and against Classical ML in Part 1.
+Compared to the baseline CNN, the wider network achieved the highest accuracy ($97.3\%$) by granting the network more capacity to extract robust patterns. While the classical nonlinear SVM required 20.5 seconds for total processing on DCT, the CNN runs feature extraction and classification natively from the raw image without separate dimension reduction steps like PCA or DCT. The Assignment 2 Problem 1 (MLP) results, along with AutoEncoder features, will be appended to this comparison in future revisions.
