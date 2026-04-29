@@ -1,65 +1,59 @@
 \subsection{Problem 2: Convolutional Neural Network (CNN) on ReducedMNIST}
 
-In this problem, we switch to working with the raw $28\times 28$ image pixels to train a Convolutional Neural Network. We adapted a LeNet-5 style architecture with ReLU activations to suit the ReducedMNIST dataset characteristics without explicit manual feature extraction.
+This problem trains CNN classifiers directly from the raw $28 \times 28$ ReducedMNIST images, without a separate feature extraction stage. The starting model is a LeNet-style network adjusted for $28 \times 28$ grayscale inputs and uses ReLU activations, as required by the assignment.
 
-\subsubsection{Baseline Architecture}
-The baseline CNN directly takes image pixels through two convolutional layers (with $5\times 5$ kernels) followed by Maximum Pooling, and then propagates features through three fully connected layers to output class predictions.
-
-\subsubsection{Hyperparameter Variations}
-To explore model performance dynamically, we made the following major variations to the baseline model:
+\subsubsection{CNN Architecture and Variations}
+The baseline model contains two $5 \times 5$ convolutional layers, max-pooling after each convolution, and three fully connected layers for classification. Four CNN entries are reported in the assignment table:
 \begin{itemize}
-    \item \textbf{Variation 1 (Wider):} Increased the number of convolutional filters and the width of the fully connected nodes to provide excessive capacity.
-    \item \textbf{Variation 2 (LeakyReLU):} Swapped the ReLU activation functions out for LeakyReLU models to check the impact of non-zero gradient limits on inactive regions.
-    \item \textbf{Variation 3 (Dropout):} Added Dropout probabilities to fully connected layers to test its regularization effect. 
+    \item \textbf{Variation 1: Baseline LeNet with ReLU} using 6 and 16 convolutional filters.
+    \item \textbf{Variation 2: Wider network} with 12 and 32 convolutional filters and wider fully connected layers.
+    \item \textbf{Variation 3: LeakyReLU network} replacing ReLU by LeakyReLU.
+    \item \textbf{Variation 4: Dropout network} adding dropout regularization before the later fully connected layers.
 \end{itemize}
 
-\subsubsection{Results and Comparison}
+\subsubsection{Comparison with Assignment 1 and Problem 1}
+Table~\ref{tab:prob2_results} follows the assignment comparison format. Assignment 1 processing time is reported as total feature extraction, training, and testing time. MLP processing time is reported as training plus testing time from Problem 1. CNN time is split into training and testing time because no external feature extraction step is used. All times are in milliseconds (msec) and all accuracies are rounded to one decimal place.
 
-Table \ref{tab:prob2_results} illustrates the accuracy and computing times for the tested configurations.
-
-\begin{table}[h]
+\begin{table}[H]
     \centering
-    \caption{Performance Comparison across Classical ML and ANNs}
+    \caption{Performance comparison across Assignment 1 classical methods, Problem 1 MLP, and Problem 2 CNN}
     \label{tab:prob2_results}
     \resizebox{\linewidth}{!}{
     \begin{tabular}{|l|c|c|c|c|c|c|}
         \hline
-        \multirow{3}{*}{\textbf{Classifier / Variations}} & \multicolumn{6}{c|}{\textbf{Features}} \\
+        \multirow{3}{*}{\textbf{Classifier / Variation}} & \multicolumn{6}{c|}{\textbf{Feature Representation}} \\
         \cline{2-7}
         & \multicolumn{2}{c|}{\textbf{DCT}} & \multicolumn{2}{c|}{\textbf{PCA}} & \multicolumn{2}{c|}{\textbf{AutoEncoder}} \\
         \cline{2-7}
-        & \textbf{Accuracy*} & \textbf{Time**} & \textbf{Accuracy} & \textbf{Time} & \textbf{Accuracy} & \textbf{Time} \\
+        & \textbf{Accuracy} & \textbf{Processing Time (msec)} & \textbf{Accuracy} & \textbf{Processing Time (msec)} & \textbf{Accuracy} & \textbf{Processing Time (msec)} \\
         \hline
-        \multicolumn{7}{|l|}{\textbf{DCT and PCA features from Assignment 1}} \\
+        \multicolumn{7}{|l|}{\textbf{Assignment 1: DCT/PCA feature classifiers}} \\
         \hline
-        \textbf{K-means Clustering} & & & & & & \\
-        $K=1$               & 78.1\% & 4800.0  & 85.2\% & 2464.6  & & \\
-        $K=4$               & 84.4\% & 5077.3  & 82.6\% & 3608.5  & & \\
-        $K=16$              & 88.7\% & 12072.5 & 85.7\% & 5800.8  & & \\
-        $K=32$              & 89.6\% & 38344.4 & 85.6\% & 8701.1  & & \\
+        K-means, $K=1$  & 78.1\% & 4800.0 & 85.2\% & 2464.6 & -- & -- \\
+        K-means, $K=4$  & 84.4\% & 5077.3 & 82.6\% & 3608.5 & -- & -- \\
+        K-means, $K=16$ & 88.8\% & 12072.5 & 85.7\% & 5800.8 & -- & -- \\
+        K-means, $K=32$ & 89.7\% & 38344.4 & 85.6\% & 8701.1 & -- & -- \\
+        SVM, linear & 90.3\% & 11487.5 & 90.7\% & 10626.8 & -- & -- \\
+        SVM, nonlinear RBF, $\gamma=\mathrm{scale}$ & 95.6\% & 20560.2 & 95.2\% & 21054.4 & -- & -- \\
         \hline
-        \textbf{SVM} & & & & & & \\
-        Linear              & 90.2\% & 11487.5 & 90.6\% & 10626.8 & & \\
-        Nonlinear (RBF)     & 95.5\% & 20560.2 & 95.1\% & 21054.4 & & \\
+        \multicolumn{7}{|l|}{\textbf{Assignment 2 Problem 1: MLP with DCT features}} \\
         \hline
-        \multicolumn{7}{|l|}{\textbf{Multi-layer Perceptron (MLP) - Assignment 2}} \\
+        MLP, 1-hidden layer & 97.3\% & 7225.5 & -- & -- & -- & -- \\
+        MLP, 3-hidden layers & 97.3\% & 10114.9 & -- & -- & -- & -- \\
+        MLP, 4-hidden layers & 97.3\% & 11957.3 & -- & -- & -- & -- \\
         \hline
-        1-Hidden            & & & & & & \\
-        3-Hidden            & & & & & & \\
-        4-Hidden            & & & & & & \\
+        \multicolumn{7}{|c|}{\textbf{Assignment 2 Problem 2: CNN directly from images, no feature extraction}} \\
         \hline
-        \multicolumn{7}{|c|}{\textbf{In the CNN Model no Features are needed}} \\
+        \textbf{CNN variation} & \textbf{Accuracy} & \multicolumn{2}{c|}{\textbf{Training Time (msec)}} & \multicolumn{3}{c|}{\textbf{Testing Time (msec)}} \\
         \hline
-        \textbf{CNN} & \textbf{Accuracy} & \multicolumn{2}{c|}{\textbf{Training time}} & \multicolumn{3}{c|}{\textbf{Testing time}} \\
-        \hline
-        Variation 1: Baseline LeNet w/ ReLU  & 95.0\% & \multicolumn{2}{c|}{74032.0} & \multicolumn{3}{c|}{11554.2} \\
-        Variation 2: Wider Network           & 97.3\% & \multicolumn{2}{c|}{18493.0} & \multicolumn{3}{c|}{521.1} \\
-        Variation 3: LeakyReLU               & 96.2\% & \multicolumn{2}{c|}{16089.9} & \multicolumn{3}{c|}{490.3} \\
-        Variation 4: Dropout                 & 96.7\% & \multicolumn{2}{c|}{16424.0} & \multicolumn{3}{c|}{453.8} \\
+        Variation 1: Baseline LeNet with ReLU & 94.9\% & \multicolumn{2}{c|}{90467.0} & \multicolumn{3}{c|}{14418.7} \\
+        Variation 2: Wider filters/FC layers & 97.0\% & \multicolumn{2}{c|}{19062.4} & \multicolumn{3}{c|}{503.3} \\
+        Variation 3: LeakyReLU activation & 96.3\% & \multicolumn{2}{c|}{15780.3} & \multicolumn{3}{c|}{433.4} \\
+        Variation 4: Dropout regularization & 97.0\% & \multicolumn{2}{c|}{16025.5} & \multicolumn{3}{c|}{426.3} \\
         \hline
     \end{tabular}
     }
 \end{table}
 
-\paragraph{Discussion}
-Compared to the baseline CNN, the wider network achieved the highest accuracy ($97.3\%$) by granting the network more capacity to extract robust patterns. While the classical nonlinear SVM required 20.5 seconds for total processing on DCT, the CNN runs feature extraction and classification natively from the raw image without separate dimension reduction steps like PCA or DCT. The Assignment 2 Problem 1 (MLP) results, along with AutoEncoder features, will be appended to this comparison in future revisions.
+\subsubsection{Discussion}
+The wider CNN and dropout CNN reached the strongest CNN accuracy at $97.0\%$, close to the DCT-based MLP result of $97.3\%$. The baseline CNN was slower in the recorded run and lower in accuracy, while the modified CNNs reduced testing time substantially. Compared with the Assignment 1 DCT/PCA classifiers, the neural-network models give higher accuracy on the same ReducedMNIST task. The AutoEncoder feature columns are marked ``--'' because the available Assignment 1 and Problems 1--2 result files do not contain MNIST AutoEncoder-feature experiments; the AutoEncoder implemented in Problem 4 is for speech utterance representation, not ReducedMNIST image features.

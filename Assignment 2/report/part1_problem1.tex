@@ -1,9 +1,37 @@
 \subsection{Problem 1: Multi-layer Perceptron (MLP) on ReducedMNIST}
 
-In this problem, we designed an MLP model using the ReducedMNIST dataset (1000 examples per digit for training, 200 per digit for testing). We trained variations of the MLP including models with 1, 3, and 4 hidden layers, using the DCT features calculated in Assignment 1.
+The objective of this problem is to classify the ReducedMNIST digits using MLP classifiers with 1, 3, and 4 hidden layers. The dataset follows the assignment split of 1000 training images per digit and 200 testing images per digit. Each image was represented using the DCT feature vector used in Assignment 1, then passed to fully connected neural networks.
 
 \subsubsection{Methodology}
-% Discuss your methodology here...
+The three required depths were trained under the same feature extraction and evaluation protocol. The hidden layers used ReLU activations, and the main configurations used Batch Normalization and Dropout for regularization. The Adam optimizer minimized categorical cross-entropy with an initial learning rate of $0.001$. Two extra diagnostic runs were also executed: one without regularization and one with a higher learning rate, to show the effect of these hyperparameters.
+
+\begin{table}[H]
+    \centering
+    \caption{Problem 1 MLP results using DCT features}
+    \label{tab:prob1_mlp_results}
+    \resizebox{\linewidth}{!}{
+    \begin{tabular}{|l|c|c|c|c|c|}
+        \hline
+        \textbf{Configuration} & \textbf{Hidden Layers} & \textbf{Regularization} & \textbf{Accuracy} & \textbf{Training Time} & \textbf{Testing Time} \\
+        \hline
+        Exp1: 1-hidden layer & 1 & Yes & 97.3\% & 7111.6 msec & 113.9 msec \\
+        Exp2: 3-hidden layers & 3 & Yes & 97.3\% & 9993.0 msec & 121.9 msec \\
+        Exp3: 4-hidden layers & 4 & Yes & 97.3\% & 11824.0 msec & 133.3 msec \\
+        Exp4: 3-hidden, no regularization & 3 & No & 96.7\% & 5333.0 msec & 119.5 msec \\
+        Exp5: 3-hidden, high learning rate & 3 & Yes & 96.6\% & 8338.0 msec & 124.3 msec \\
+        \hline
+    \end{tabular}
+    }
+\end{table}
 
 \subsubsection{Results and Observations}
-% Write up your observations...
+All three required MLP depths achieved very similar performance. The 1-hidden-layer model reached the highest measured accuracy at $97.3\%$, while the 3-hidden and 4-hidden models rounded to the same reported accuracy but required more training time. This indicates that the DCT representation is already discriminative for ReducedMNIST, so extra depth mainly increases computation rather than improving accuracy.
+
+The two diagnostic experiments confirm that regularization and learning rate selection matter. Removing Batch Normalization and Dropout reduced the 3-hidden-layer result to $96.7\%$, and increasing the learning rate to $0.01$ reduced it to $96.6\%$. Therefore, the reported MLP setup satisfies the required 1-, 3-, and 4-hidden-layer experiments, with timing reported in milliseconds and accuracy rounded to one decimal place.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{../Part1_Problem1_MLP/results/Exp1_1_Hidden_Layer_Curves.png}
+    \caption{Training and validation curves for the 1-hidden-layer MLP.}
+    \label{fig:prob1_mlp_curve}
+\end{figure}

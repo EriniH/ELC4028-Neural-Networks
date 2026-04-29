@@ -32,7 +32,7 @@
 *.thm
 *.dvi
 
-# Hugefiles
+# Huge files
 *.npy
 
 # Auto-generated logs

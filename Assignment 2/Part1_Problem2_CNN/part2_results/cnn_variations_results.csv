@@ -1,5 +1,5 @@
 Variation,Description,Accuracy (%),Training Time (ms),Testing Time (ms)
-BaseCNN,Baseline LeNet-style CNN with ReLU,95.0,74032.0,11554.2
-Variation1_Wider,Increased filters and FC widths,97.3,18493.0,521.1
-Variation2_LeakyReLU,ReLU replaced by LeakyReLU,96.2,16089.9,490.3
-Variation3_Dropout,Added dropout regularization before FC2/FC3,96.7,16424.0,453.8
+BaseCNN,Baseline LeNet-style CNN with ReLU,94.9,90467.0,14418.7
+Variation1_Wider,Increased filters and FC widths,97.0,19062.4,503.3
+Variation2_LeakyReLU,ReLU replaced by LeakyReLU,96.3,15780.3,433.4
+Variation3_Dropout,Added dropout regularization before FC2/FC3,97.0,16025.5,426.3

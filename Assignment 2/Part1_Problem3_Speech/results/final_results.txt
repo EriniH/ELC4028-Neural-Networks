@@ -1,0 +1,5 @@
+================== FINAL SUMMARY ==================
+A) Baseline Acc: 94.0% | Train Time: 28.01s | Test Time: 0.40s
+B) Audio Aug Acc: 90.0% | Train Time: 38.61s | Test Time: 0.35s
+C) Image Aug Acc: 93.0% | Train Time: 37.49s | Test Time: 0.42s
+D) Combined Acc : 89.7% | Train Time: 47.68s | Test Time: 0.41s
