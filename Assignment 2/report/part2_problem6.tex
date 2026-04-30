@@ -1,12 +1,92 @@
 \subsection{Problem 6: Generative Adversarial Networks (GAN)}
 
-This section expands upon our dataset generation from the augmentation strategy to true generation techniques. A GAN was used to model the ReducedMNIST dataset using 350 training examples correctly.
+\subsubsection*{Part 1 — Overview}
+We trained a conditional GAN on a reduced MNIST-style dataset (350 training examples, stratified to 35 examples per class) and used the trained generator to produce three samples per digit. Below we describe the network architecture and hyperparameters, report the generated samples, comment on timing and compute, and discuss training dynamics and limitations.
 
-\subsubsection{Visual Analysis of Generated Digits}
-% Include 3 distinct GAN comparisons against real data
+\subsubsection*{Architecture and design choices}
+\paragraph{Generator}
+The generator is a conditional model that receives a noise vector $z\in\mathbb{R}^{100}$ concatenated with a learned label embedding (embedding dimension 50) and produces a single-channel $28\times28$ image using a small DCGAN-style decoder. Key layers and roles:
+\begin{itemize}
+	\item \textbf{Embedding:} maps discrete label IDs to a continuous vector so the generator can condition image synthesis on class.
+	\item \textbf{Linear projection + Unflatten:} projects the combined latent+label vector into a 3D feature map (512×4×4) that is amenable to transposed convolution upsampling.
+	\item \textbf{ConvTranspose2d blocks:} successive transposed convolutions (512→256→128→64) with BatchNorm and ReLU upscale spatial resolution while stabilizing training and enabling richer representations.
+	\item \textbf{Final Conv2d + Tanh:} crops/resamples to the target $28\times28$ size and outputs pixel values in $[-1,1]$ for compatibility with the tanh output scaling.
+\end{itemize}
 
-\subsubsection{Testing Pipeline on Synthesized Data}
-% Complete and repeat table tests with GAN generation vs basic rotation models
+\paragraph{Discriminator}
+The discriminator is a conditional CNN receiving two channels: the image and a label ``map'' created by projecting the label embedding to a $1\times28\times28$ plane and concatenating it with the image. Notable design points:
+\begin{itemize}
+	\item \textbf{Label projection:} lets the discriminator evaluate image+class consistency by providing class information spatially aligned with the input image.
+	\item \textbf{Spectral normalization:} applied to convolution and linear layers to stabilise the critic and keep the Lipschitz constant bounded, which helps training stability when using high-capacity networks on small datasets.
+	\item \textbf{LeakyReLU + BatchNorm:} standard DCGAN-style blocks to increase representational power while maintaining gradient flow.
+\end{itemize}
 
-\subsubsection{Comparing Results}
-% Comment on the validity of GAN scaling compared to standard Data Augmentation...
+\paragraph{Why these choices?}
+The conditional setup (embedding + label map) improves per-class control over synthesis, which is essential when training from only 350 images. The generator architecture mirrors DCGAN upsampling best practices and keeps computation small. Spectral normalization in the discriminator reduces mode collapse and stabilizes adversarial training on a small dataset.
+
+\subsubsection*{Hyperparameters}
+Following values were used (see the code for exact settings):
+\begin{itemize}
+	\item Latent dimension: 100
+	\item Label embedding: 50
+	\item Epochs: 200
+	\item Batch size: 32
+	\item Optimizer: Adam, $\mathrm{LR}=2\times10^{-4}$, $\beta=(0.5,0.999)$
+	\item Loss: binary cross-entropy on logits (BCEWithLogitsLoss)
+	\item Initialization: DCGAN-style normal init
+	\item Regularization: spectral normalization on D
+\end{itemize}
+
+\subsubsection*{Training dynamics and observations}
+\begin{itemize}
+	\item \textbf{Discriminator vs Generator balance:} the discriminator is trained one step per generator step. Early in training the discriminator loss drops quickly while the generator loss rises; as training proceeds losses oscillate but the visual quality improves when the generator learns class-conditional features (strokes, thickness, rough digit shapes).
+	\item \textbf{Mode collapse and diversity:} with only 35 examples per class, the model is vulnerable to limited diversity — spectral norm helps, but some digits still show lower diversity and tend to reproduce a few common prototypes.
+	\item \textbf{Overfitting risk:} small dataset and high-capacity networks can make the discriminator memorize real examples; monitoring visual samples and simple pixel statistics can help detect this.
+	\item \textbf{Practical checks:} we saved per-digit pixel mean/std (reported by the generation script) and visually inspected a 10×3 grid (10 digits × 3 samples) as the primary qualitative check.
+\end{itemize}
+
+\subsubsection*{Generated samples}
+Figure~\ref{fig:gan_samples} shows the generator output (3 samples per digit) obtained after training on the 350-example reduced dataset. The image was produced by the notebook and saved as \verb|gan_generated_samples.png|.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.16\textwidth]{gan_generated_samples.png}
+	\caption{Generated samples from the conditional GAN: 10 rows (digits 0--9) $\times$ 3 columns (independent samples).}
+	\label{fig:gan_samples}
+\end{figure}
+
+\paragraph{Visual assessment}
+Most digits capture the coarse stroke patterns and relative topology of the target class (loops for 8, open curves for 2, vertical strokes for 1). However, finer details (consistent stroke width, crisp corners) are sometimes blurred and a few digits show mode-reduced variants (similar shapes repeated). This is expected given the limited real-data pool.
+
+\subsubsection*{Timing and compute environment}
+The notebook records timestamps for major stages (dataset load, training, and generation) using a lightweight \texttt{Timer} context manager. Measured durations from the notebook run were:
+\begin{itemize}
+	\item \textbf{Loading dataset:} 32.2 s
+	\item \textbf{Training (200 epochs):} 48.2 s (about 0.80 min)
+	\item \textbf{Generation (30 images + grid save):} 0.1 s
+\end{itemize}
+
+\paragraph{Computer setup}
+The notebook output for \verb|print_system_info()| was:
+\begin{itemize}
+\item OS: Linux 6.6.113+
+\item Python: 3.12.12
+\item PyTorch: 2.10.0+cu128
+\item CPU: Intel(R) Xeon(R) CPU @ 2.00GHz
+\item RAM: 31Gi total, 1.2Gi used
+\item GPU 0: Tesla T4, 14.6 GB VRAM
+\item GPU 1: Tesla T4, 14.6 GB VRAM
+\item CUDA: 12.8
+\end{itemize}
+
+The setup used for this run was a CUDA-enabled environment with two Tesla T4 GPUs on a Linux host, which explains the short training time despite using a relatively large generator.
+
+\subsubsection*{Evaluation and limitations}
+Quantitative evaluation on such small datasets is challenging. Suggested additions for a more complete study:
+\begin{itemize}
+	\item Compute FID/Inception-style metrics adapted for grayscale digits (requires a small reference set or pretrained feature extractor).
+	\item Use a held-out classifier accuracy test: augment training with generated images and measure downstream classifier performance.
+	\item Track diversity metrics (e.g., per-class nearest-neighbour distances in latent/image space).
+	\item Save model checkpoints and generator seeds to reproduce and compare samples deterministically.
+\end{itemize}
+
