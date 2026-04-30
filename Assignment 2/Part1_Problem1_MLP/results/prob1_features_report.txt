@@ -1,0 +1,31 @@
+=== PROB 1 FINAL RESULTS FOR REPORT ===
+
+Student Name: بيريهان سلطان
+
+--- 1. MLP Classifier Results (Varying Hidden Layers) ---
+
+--- MLP with 1 Hidden Layers ---
+PCA         -> Accuracy: 92.8%, Time: 4752.4 msec
+DCT         -> Accuracy: 94.8%, Time: 4673.8 msec
+AutoEncoder -> Accuracy: 93.0%, Time: 4667.3 msec
+----------------------------------------
+
+--- MLP with 3 Hidden Layers ---
+PCA         -> Accuracy: 93.3%, Time: 5603.6 msec
+DCT         -> Accuracy: 95.8%, Time: 5966.8 msec
+AutoEncoder -> Accuracy: 92.4%, Time: 5847.6 msec
+----------------------------------------
+
+--- MLP with 4 Hidden Layers ---
+PCA         -> Accuracy: 92.2%, Time: 6022.6 msec
+DCT         -> Accuracy: 94.2%, Time: 6020.2 msec
+AutoEncoder -> Accuracy: 92.5%, Time: 6049.8 msec
+----------------------------------------
+
+--- 2. Classical ML on AutoEncoder Features ---
+K-Means (K=1) -> Accuracy: 67.2%, Time: 45.1 msec
+K-Means (K=4) -> Accuracy: 79.8%, Time: 75.6 msec
+K-Means (K=16) -> Accuracy: 86.2%, Time: 181.2 msec
+K-Means (K=32) -> Accuracy: 88.1%, Time: 250.1 msec
+SVM (Linear) -> Accuracy: 89.1%, Time: 1731.1 msec
+SVM (RBF) -> Accuracy: 93.8%, Time: 1424.6 msec
