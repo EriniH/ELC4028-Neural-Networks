@@ -39,7 +39,6 @@ def run_prob1_experiments():
         report.write("====================================================\n")
         report.write("    PROBLEM 1: MLP COMPARATIVE ANALYSIS REPORT      \n")
         report.write("====================================================\n")
-        report.write(f"Student Name: بيريهان سلطان\n\n")
 
         # Iterate through each experimental setup
         for config in experiments:
