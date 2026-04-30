@@ -1,7 +1,5 @@
 === PROB 1 FINAL RESULTS FOR REPORT ===
 
-Student Name: بيريهان سلطان
-
 --- 1. MLP Classifier Results (Varying Hidden Layers) ---
 
 --- MLP with 1 Hidden Layers ---
