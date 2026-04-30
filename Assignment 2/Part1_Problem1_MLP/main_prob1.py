@@ -6,8 +6,8 @@ from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 from data_loader import load_mnist_data
 from models import build_mlp_model
 
-MNIST_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Reduced MNIST Data")
-RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
+MNIST_DATA_DIR = "/home/mohamedkhalid/Desktop/Neural Assignment2/Prob1/Reduced MNIST Data"
+RESULTS_DIR = "/home/mohamedkhalid/Desktop/Neural Assignment2/Prob1/results"
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
 def run_prob1_experiments():
@@ -39,7 +39,6 @@ def run_prob1_experiments():
         report.write("====================================================\n")
         report.write("    PROBLEM 1: MLP COMPARATIVE ANALYSIS REPORT      \n")
         report.write("====================================================\n")
-        report.write(f"Student Name: بيريهان سلطان\n\n")
 
         # Iterate through each experimental setup
         for config in experiments:
@@ -57,8 +56,6 @@ def run_prob1_experiments():
             early_stop = EarlyStopping(monitor='val_loss', patience=7, restore_best_weights=True, verbose=0)
             lr_scheduler = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=0)
 
-            import time
-            start_train = time.time()
             history = model.fit(
                 x_train_flat, y_train,
                 epochs=30, batch_size=128,
@@ -66,13 +63,8 @@ def run_prob1_experiments():
                 callbacks=[early_stop, lr_scheduler],
                 verbose=0 # Set to 0 to keep the terminal clean during multiple runs
             )
-            val_train_time = (time.time() - start_train) * 1000
 
-            start_test = time.time()
             test_loss, test_acc = model.evaluate(x_test_flat, y_test, verbose=0)
-            val_test_time = (time.time() - start_test) * 1000
-            
-            print(f"Finished {exp_name} -> Acc: {test_acc*100:.2f}% | Train Time: {val_train_time:.1f}ms | Test Time: {val_test_time:.1f}ms")
             
             # --- Save Individual Plots ---
             plt.figure(figsize=(12, 4))
@@ -97,8 +89,6 @@ def run_prob1_experiments():
             report.write(f"- Regularization (Drop+BN): {'Yes' if config['reg'] else 'No'}\n")
             report.write(f"- Learning Rate: {config['lr']}\n")
             report.write(f"- Final Test Accuracy: {test_acc * 100:.2f}%\n")
-            report.write(f"- Training Time (ms): {val_train_time:.1f}\n")
-            report.write(f"- Testing Time (ms): {val_test_time:.1f}\n")
             report.write(f"- Final Test Loss: {test_loss:.4f}\n")
             report.write("-" * 52 + "\n")
             

@@ -7,44 +7,34 @@ Configuration: Exp1_1_Hidden_Layer
 - Hidden Layers: 1
 - Regularization (Drop+BN): Yes
 - Learning Rate: 0.001
-- Final Test Accuracy: 97.30%
-- Training Time (ms): 7111.6
-- Testing Time (ms): 113.9
-- Final Test Loss: 0.1006
+- Final Test Accuracy: 96.80%
+- Final Test Loss: 0.1015
 ----------------------------------------------------
 Configuration: Exp2_3_Hidden_Layers
 - Hidden Layers: 3
 - Regularization (Drop+BN): Yes
 - Learning Rate: 0.001
-- Final Test Accuracy: 97.25%
-- Training Time (ms): 9993.0
-- Testing Time (ms): 121.9
-- Final Test Loss: 0.0946
+- Final Test Accuracy: 97.35%
+- Final Test Loss: 0.0919
 ----------------------------------------------------
 Configuration: Exp3_4_Hidden_Layers
 - Hidden Layers: 4
 - Regularization (Drop+BN): Yes
 - Learning Rate: 0.001
-- Final Test Accuracy: 97.25%
-- Training Time (ms): 11824.0
-- Testing Time (ms): 133.3
-- Final Test Loss: 0.1006
+- Final Test Accuracy: 97.70%
+- Final Test Loss: 0.0889
 ----------------------------------------------------
 Configuration: Exp4_No_Regularization
 - Hidden Layers: 3
 - Regularization (Drop+BN): No
 - Learning Rate: 0.001
-- Final Test Accuracy: 96.70%
-- Training Time (ms): 5333.0
-- Testing Time (ms): 119.5
-- Final Test Loss: 0.1067
+- Final Test Accuracy: 96.80%
+- Final Test Loss: 0.1171
 ----------------------------------------------------
 Configuration: Exp5_High_Learning_Rate
 - Hidden Layers: 3
 - Regularization (Drop+BN): Yes
 - Learning Rate: 0.01
-- Final Test Accuracy: 96.60%
-- Training Time (ms): 8338.0
-- Testing Time (ms): 124.3
-- Final Test Loss: 0.1157
+- Final Test Accuracy: 97.25%
+- Final Test Loss: 0.1130
 ----------------------------------------------------

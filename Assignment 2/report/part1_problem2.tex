@@ -21,27 +21,6 @@ Table~\ref{tab:prob2_results} follows the assignment comparison format. Assignme
     \resizebox{\linewidth}{!}{
     \begin{tabular}{|l|c|c|c|c|c|c|}
         \hline
-        \multirow{3}{*}{\textbf{Classifier / Variation}} & \multicolumn{6}{c|}{\textbf{Feature Representation}} \\
-        \cline{2-7}
-        & \multicolumn{2}{c|}{\textbf{DCT}} & \multicolumn{2}{c|}{\textbf{PCA}} & \multicolumn{2}{c|}{\textbf{AutoEncoder}} \\
-        \cline{2-7}
-        & \textbf{Accuracy} & \textbf{Processing Time (msec)} & \textbf{Accuracy} & \textbf{Processing Time (msec)} & \textbf{Accuracy} & \textbf{Processing Time (msec)} \\
-        \hline
-        \multicolumn{7}{|l|}{\textbf{Assignment 1: DCT/PCA feature classifiers}} \\
-        \hline
-        K-means, $K=1$  & 78.1\% & 4800.0 & 85.2\% & 2464.6 & 22.3\% & 1721.5 \\
-        K-means, $K=4$  & 84.4\% & 5077.3 & 82.6\% & 3608.5 & 24.0\% & 627.7 \\
-        K-means, $K=16$ & 88.8\% & 12072.5 & 85.7\% & 5800.8 & 41.1\% & 827.8 \\
-        K-means, $K=32$ & 89.7\% & 38344.4 & 85.6\% & 8701.1 & 43.8\% & 1029.3 \\
-        SVM, linear & 90.3\% & 11487.5 & 90.7\% & 10626.8 & 27.9\% & 2195.7 \\
-        SVM, nonlinear RBF, $\gamma=\mathrm{scale}$ & 95.6\% & 20560.2 & 95.2\% & 21054.4 & 23.2\% & 3651.0 \\
-        \hline
-        \multicolumn{7}{|l|}{\textbf{Assignment 2 Problem 1: MLP with DCT features}} \\
-        \hline
-        MLP, 1-hidden layer & 97.3\% & 7225.5 & -- & -- & 10.0\% & 6131.1 \\
-        MLP, 3-hidden layers & 97.3\% & 10114.9 & -- & -- & 28.0\% & 11635.5 \\
-        MLP, 4-hidden layers & 97.3\% & 11957.3 & -- & -- & 10.0\% & 12462.8 \\
-        \hline
         \multicolumn{7}{|c|}{\textbf{Assignment 2 Problem 2: CNN directly from images, no feature extraction}} \\
         \hline
         \textbf{CNN variation} & \textbf{Accuracy} & \multicolumn{2}{c|}{\textbf{Training Time (msec)}} & \multicolumn{3}{c|}{\textbf{Testing Time (msec)}} \\
