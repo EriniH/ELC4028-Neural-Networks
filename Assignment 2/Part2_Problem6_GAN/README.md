@@ -6,5 +6,5 @@ Use a **Generative Adversarial Network (GAN)** to generate synthetic handwritten
 
 ## Experiment
 - Problem 6 Part 1: [Notebook](https://www.kaggle.com/code/erinihosny/problem-6-1-final)
-- Problem 6 Part 2:
-- Problem 6 Part 3: 
+- Problem 6 Part 2: [Notebook](https://www.kaggle.com/code/erinihosny/problem-6-2-final)
+- Problem 6 Part 3: [Notebook](https://www.kaggle.com/code/erinihosny/problem-6-3)

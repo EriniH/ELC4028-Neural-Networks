@@ -72,5 +72,5 @@ Navigate to each problem's folder and follow the instructions in its `README.md`
 | Problem 2 — CNN | ✅ Completed |
 | Problem 3 — Speech Recognition | ✅ Completed |
 | Problem 4 — Autoencoder Speech | ✅ Completed |
-| Problem 5 — Data Augmentation | ⬜ Not started |
-| Problem 6 — GAN | ⬜ Not started |
+| Problem 5 — Data Augmentation | ✅ Completed |
+| Problem 6 — GAN | ✅ Completed |
