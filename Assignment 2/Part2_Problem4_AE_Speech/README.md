@@ -1,99 +1,126 @@
-# Problem 4 — Autoencoder for Speech Utterance Representation
+# Problem 4 - AutoEncoder Representation for Speech Utterances
 
-## 🎯 Objective
+This folder contains the Assignment 2, Problem 4 implementation for representing each spoken-digit utterance as a single fixed-length vector, then classifying the utterance from that representation.
 
-Develop an **Autoencoder (AE)** to compress each speech utterance into a **single fixed-length vector** representation, then use that representation to classify the spoken digit. This problem explores how autoencoders can be used for **dimensionality reduction** of variable-length sequential data.
+## Objective
 
-## 📋 Requirements
+Evaluate two single-vector representations for the speech utterances from Problem 3:
 
-### Step 1 — Baseline: Average Frame
+- Baseline average-frame vector
+- AutoEncoder bottleneck vector from concatenated spectrogram frames
 
-- Divide each utterance into frames (~15 ms each)
-- Calculate the **average frame** across all frames to get a single fixed-length vector per utterance
-- Use this vector as input to a classifier
-- This serves as the **baseline** for comparison
+The final classifier predicts the spoken digit `0` through `9`.
 
-### Step 2 — Autoencoder Approach
+## Dataset
 
-Use an autoencoder to generate a single vector per utterance:
+This folder includes a local copy of the audio dataset:
 
-#### Method: Concatenate All Frames
-
-1. Divide each utterance into frames (~15 ms)
-2. **Concatenate all frames** into one long vector
-3. Since utterances have different lengths, **pad shorter utterances with zero frames** to match the maximum length
-4. Feed the concatenated vector into an autoencoder
-5. The **bottleneck layer** output becomes the fixed-length representation
-
-**Conceptual diagram:**
-```
-Frame1 | Frame2 | Frame3 | ... | FrameN | ZeroPad | ZeroPad
-                          ↓
-                    Autoencoder
-                          ↓
-              Single Fixed-Length Vector
-                          ↓
-                      Classifier
+```text
+audio-dataset/
+├── Train/
+└── Test/
 ```
 
-The AE progressively reduces dimensionality:
+| Split | Files |
+|---|---:|
+| Train | 1,200 |
+| Test | 300 |
+
+## Implementation
+
+| File | Purpose |
+|---|---|
+| [`baseline.py`](baseline.py) | Extracts the baseline average-frame features and saves `.npy` arrays. |
+| [`baseline_classifier_run.py`](baseline_classifier_run.py) | Trains a dense classifier on the baseline features. |
+| [`input_preparation.py`](input_preparation.py) | Frames each utterance, pads/truncates to a fixed length, and prepares AutoEncoder inputs. |
+| [`auto_encoder.py`](auto_encoder.py) | Trains the AutoEncoder and saves bottleneck features. |
+| [`classifier_main.py`](classifier_main.py) | Trains MLP classifiers on the AutoEncoder bottleneck features. |
+| [`requirements.txt`](requirements.txt) | Python package requirements. |
+
+## Feature Representations
+
+### Baseline Average Frame
+
+Each utterance is split into 15 ms spectrogram frames. The 257 frequency bins are averaged across time, producing one `257`-dimensional vector per utterance.
+
+### AutoEncoder Bottleneck
+
+Each utterance is converted into 100 spectrogram frames with 257 bins per frame:
+
+```text
+100 frames x 257 bins = 25,700 input features
 ```
-All Frames Concatenated → AE Layer 1 → ... → Bottleneck (single vector) → ... → Reconstruction
+
+Shorter utterances are padded with zeros and longer utterances are truncated. The AutoEncoder compresses the flattened vector into a `256`-dimensional bottleneck representation:
+
+```text
+25700 -> 1024 -> 256 -> 1024 -> 25700
 ```
 
-## 📦 Dataset
+The bottleneck vector is then used as input to the final digit classifier.
 
-Same audio dataset as Problem 3, located in `../meterials/audio-dataset/`
+## Results
 
-## 📊 Results to Collect
+AutoEncoder classifier results are saved in [`results_after_classification/prob4_comparative_report.txt`](results_after_classification/prob4_comparative_report.txt). The baseline result is documented in the Assignment 2 report.
 
-| Method | Vector Length | Accuracy (%) | Comments |
-|--------|-------------|-------------|----------|
-| Baseline (average frame) | | | |
-| AE (concatenated frames) | | | |
+| Representation / classifier | Vector length | Accuracy |
+|---|---:|---:|
+| Baseline average frame + dense classifier | 257 | 28.3% |
+| AE bottleneck + 1-hidden-layer MLP | 256 | 78.0% |
+| AE bottleneck + 3-hidden-layer MLP | 256 | 82.0% |
+| AE bottleneck + 4-hidden-layer MLP | 256 | 82.0% |
+| AE bottleneck + 3-hidden-layer MLP, no regularization | 256 | 79.3% |
+| AE bottleneck + 3-hidden-layer MLP, high learning rate | 256 | 79.3% |
 
-## 🔧 Steps to Complete
+The AutoEncoder bottleneck representation significantly outperformed the simple average-frame baseline.
 
-1. [ ] Load the audio dataset
-2. [ ] Frame each utterance into ~15 ms frames
-3. [ ] Implement the baseline: compute average frame per utterance, classify
-4. [ ] Determine the maximum utterance length (number of frames)
-5. [ ] Concatenate all frames per utterance, zero-pad to max length
-6. [ ] Build and train an autoencoder on the concatenated frame vectors
-7. [ ] Extract bottleneck representations for all utterances
-8. [ ] Train a classifier on the bottleneck features
-9. [ ] Compare with baseline results
+## How to Run
 
-## 📝 Notes
+Install dependencies:
 
-- The bottleneck vector length is **your choice** — experiment with different sizes
-- Consider using a symmetric autoencoder architecture
-- The classifier on top can be any standard classifier (MLP, SVM, etc.)
-- Compare how the AE representation performs vs. the simple average frame baseline
-- This problem demonstrates how AEs can handle variable-length inputs via padding + compression
+```bash
+pip install -r requirements.txt
+```
 
-## ✅ Status
+Generate baseline average-frame features:
 
-- ✅ Completed
+```bash
+python baseline.py
+```
 
-## 🚀 How to Run
+Train the baseline classifier:
 
-1. **Install Dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+python baseline_classifier_run.py
+```
 
-2. **Run the Baseline**:
-   ```bash
-   python baseline_classifier_run.py
-   ```
-   
-3. **Train the Autoencoder & Extract Features**:
-   ```bash
-   python auto_encoder.py
-   ```
-   
-4. **Train and Evaluate Classifier on AE Features**:
-   ```bash
-   python classifier_main.py
-   ```
+Train the AutoEncoder and export bottleneck features:
+
+```bash
+python auto_encoder.py
+```
+
+Train and evaluate classifiers on the AutoEncoder features:
+
+```bash
+python classifier_main.py
+```
+
+Generated artifacts are written to:
+
+- [`results/`](results/) for AutoEncoder plots and feature arrays
+- [`results_after_classification/`](results_after_classification/) for classifier curves and reports
+
+## Completeness Check
+
+Implemented:
+
+- Average-frame baseline feature extraction is implemented.
+- Concatenated-frame AutoEncoder representation is implemented with padding/truncation.
+- Bottleneck features are classified using multiple MLP configurations.
+- AutoEncoder curves, classifier curves, and classifier report files are present.
+
+Needs attention for clean GitHub reproducibility:
+
+- The generated `.npy` feature arrays are not present in the current checkout. Run `baseline.py` and `auto_encoder.py` before running the classifier scripts.
+- `baseline_classifier_run.py` prints the baseline accuracy to the terminal but does not save a baseline result text file. The baseline accuracy is currently preserved in the Assignment 2 report.
