@@ -74,4 +74,26 @@ Same audio dataset as Problem 3, located in `../meterials/audio-dataset/`
 
 ## ✅ Status
 
-- ⬜ Not started
+- ✅ Completed
+
+## 🚀 How to Run
+
+1. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Run the Baseline**:
+   ```bash
+   python baseline_classifier_run.py
+   ```
+   
+3. **Train the Autoencoder & Extract Features**:
+   ```bash
+   python auto_encoder.py
+   ```
+   
+4. **Train and Evaluate Classifier on AE Features**:
+   ```bash
+   python classifier_main.py
+   ```

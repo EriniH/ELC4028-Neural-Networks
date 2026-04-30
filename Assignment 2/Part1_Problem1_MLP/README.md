@@ -49,6 +49,19 @@ For each MLP variation (1, 3, 4 hidden layers), record:
 - This problem connects directly to Assignment 1 results. The comparison table in Problem 2 will include both Assignment 1 classifiers (K-means, SVM) and the MLP results from this problem.
 - Consider trying different numbers of neurons per layer and different activation functions.
 
+## 🚀 How to Run
+
+1. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Run the Experiment Pipeline**:
+   ```bash
+   python main_prob1.py
+   ```
+   This script loads the dataset, builds and trains multi-layer perceptron models, evaluates them, and saves the results directly to the `results/` folder.
+
 ## ✅ Status
 
 - ⬜ Not started

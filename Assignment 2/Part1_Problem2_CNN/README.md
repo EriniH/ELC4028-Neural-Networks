@@ -33,7 +33,7 @@ The directory must contain:
 - `train/0..9`
 - `test/0..9`
 
-## Quick start
+## 🚀 How to Run
 
 Install dependencies:
 

@@ -73,4 +73,17 @@ Located in `../meterials/audio-dataset/`:
 
 ## ✅ Status
 
-- ⬜ Not started
+- ✅ Completed
+
+## 🚀 How to Run
+
+1. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Run the Experiment**:
+   ```bash
+   python main.py
+   ```
+   This script handles loading the speech data, extracting and augmenting spectrograms, training the models, and evaluating the final output.

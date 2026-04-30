@@ -1,5 +1,7 @@
 # Assignment 2 — Artificial Neural Networks (ANN)
 
+**Status: Completed**
+
 This repository contains the solutions for **Assignment 2** of the Neural Networks course (EECE4).
 
 ## 📂 Repository Structure
@@ -66,9 +68,9 @@ Navigate to each problem's folder and follow the instructions in its `README.md`
 
 | Problem | Status |
 |---------|--------|
-| Problem 1 — MLP | ⬜ inprogress |
-| Problem 2 — CNN | ⬜ inprogress |
-| Problem 3 — Speech Recognition | ⬜ Not started |
-| Problem 4 — Autoencoder Speech | ⬜ Not started |
+| Problem 1 — MLP | ✅ Completed |
+| Problem 2 — CNN | ✅ Completed |
+| Problem 3 — Speech Recognition | ✅ Completed |
+| Problem 4 — Autoencoder Speech | ✅ Completed |
 | Problem 5 — Data Augmentation | ⬜ Not started |
 | Problem 6 — GAN | ⬜ Not started |
