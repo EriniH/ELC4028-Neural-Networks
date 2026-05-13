@@ -256,26 +256,31 @@ After manual review, accepted predictions were reclassified as correct. Table~\r
     \noindent\faExclamationCircle\ \textbf{Key Takeaway:} Many apparent ``errors'' by LLMs in Arabic NLP are actually \textbf{acceptable alternative formulations}, not true failures.
 \end{reportblock}
 
-\subsection{Conclusion}
+\subsection{Limitations}
 
-This benchmark evaluates five LLMs on Arabic emotion detection, a task that challenges models with linguistic diversity (MSA, Classical, Dialects) and nuanced emotion boundaries. Key findings:
+While this benchmark provides valuable insights, several limitations must be acknowledged:
+\begin{itemize}
+    \item \textbf{Dataset Size:} The evaluation was conducted on a relatively small, curated dataset of 100 sentences. While carefully balanced across dialects, a larger dataset would yield more statistically robust findings.
+    \item \textbf{Subjectivity in Emotion:} Emotion detection is inherently subjective. Despite manual adjudication, some golden labels might be debated among different human annotators. Future iterations should involve multiple human annotators and calculate inter-annotator agreement (e.g., Cohen's Kappa).
+    \item \textbf{Prompt Sensitivity:} LLMs are highly sensitive to prompt phrasing. The simple, standard prompts used (Zero-Shot and 3-Shot) might not elicit the maximum capability of every model, particularly for instruction-tuned models like Fanar that might require specific system prompt formats.
+\end{itemize}
 
+\subsection{Final Conclusions and Recommendations}
+
+This benchmark evaluated five LLMs on Arabic emotion detection, a task that challenges models with linguistic diversity (MSA, Classical, Dialects) and nuanced emotion boundaries. 
+
+\textbf{Final Conclusions:}
 \begin{enumerate}
-    \item \textbf{Gemini 2.5 Flash} provides the best overall balance of accuracy (73.0\%) and macro F1 (58.6\%), with consistent performance across both prompting strategies.
-
-    \item \textbf{GPT-4o-mini} leads in raw zero-shot accuracy (74.0\%) but shows a notable drop in few-shot mode ($-5.0\%$).
-
-    \item \textbf{Jais-2-8B-Chat} is the strongest open-weights model, achieving 66.0\% accuracy with only 8B parameters.
-
-    \item \textbf{ALLaM-7B} benefits the most from few-shot prompting (+7.0\% accuracy), suggesting that smaller Arabic LLMs can leverage in-context learning effectively.
-
-    \item \textbf{Fanar-C-2-27B} underperforms relative to its 27B parameter count, partly due to its aggressive content safety filter.
-
-    \item Few-shot prompting does not universally improve performance; its benefit is model-dependent. Only ALLaM showed a substantial improvement.
-
-    \item The ``Surprise'' emotion class (\textarabic{اندهاش}) is consistently the hardest to classify across all models, partly due to label ambiguity with \textarabic{مفاجأة}.
-
-    \item Manual adjudication reveals that a portion of apparent misclassifications are actually acceptable predictions due to Arabic label synonymy, highlighting the importance of human review in Arabic NLP evaluation.
+    \item \textbf{Proprietary vs. Open-Weights:} Proprietary models (\textbf{GPT-4o-mini} and \textbf{Gemini 2.5 Flash}) maintain a noticeable edge in zero-shot accuracy, particularly in handling dialectal nuances and adhering strictly to output formats. However, open-weights models like \textbf{ALLaM-7B} and \textbf{Jais-2-8B-Chat} demonstrate significant promise and competitive capability, especially when guided by few-shot examples.
+    \item \textbf{Impact of Few-Shot Prompting:} Interestingly, few-shot prompting did not universally improve performance across all models. While it significantly boosted ALLaM-7B (+7.0\% raw accuracy), it actually caused a slight regression in GPT-4o-mini. This suggests that highly capable models might overfit to the specific few-shot examples, whereas smaller models use them to understand the task schema.
+    \item \textbf{The Necessity of Adjudication:} The manual adjudication process revealed that a large portion of apparent ``misclassifications'' by LLMs in Arabic are actually valid synonymous predictions (e.g., \textarabic{مفاجأة} vs. \textarabic{اندهاش}). Exact-match evaluation severely penalizes models for linguistic richness.
 \end{enumerate}
+
+\textbf{Recommendations:}
+\begin{itemize}
+    \item \textbf{Model Selection:} For zero-shot applications requiring high accuracy and out-of-the-box dialectal understanding, \textbf{GPT-4o-mini} (91.0\% adjusted accuracy) is highly recommended. For environments where data privacy is paramount requiring an open-weights model, \textbf{ALLaM-7B} deployed with few-shot prompting is the most robust choice.
+    \item \textbf{Evaluation Methodology:} Standard exact-match evaluation is fundamentally inadequate for generative LLMs. Future Arabic NLP benchmarks \textbf{must} incorporate semantic similarity metrics (using embeddings) or an ``LLM-as-a-Judge'' framework to automate the adjudication process fairly and account for synonymy.
+    \item \textbf{Prompt Engineering for Constrained Outputs:} To mitigate the verbosity of open-weights models (which frequently output full sentences instead of the requested single-word label), future workflows should employ strict structural enforcement, such as JSON-schema generation constraints, to ensure parsing reliability.
+\end{itemize}
 
 % End of Problem 5
