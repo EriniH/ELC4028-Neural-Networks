@@ -23,6 +23,33 @@
 \usepackage[a4paper, margin=2cm]{geometry}
 \usepackage{longtable}
 
+
+% ================= Custom blocks (Simplified B&W) =================
+\usepackage{fontawesome5} 
+
+\newtcolorbox{reportblock}[1]{
+  enhanced,
+  colback=white,                % Clean white background
+  colframe=black,               % Black border to match text
+  arc=3pt,                      % Subtle rounding
+  boxrule=0.6pt,                % Thin, elegant line
+  fonttitle=\bfseries\sffamily,
+  coltitle=white,               % White text for the dark label
+  title={\faSearch\hspace{0.5em}#1},
+  attach boxed title to top left={yshift=-2mm, xshift=3mm},
+  boxed title style={
+    colback=black,              % Black header box
+    sharp corners,
+    rounded corners=northwest,
+    arc=2pt,
+    boxrule=0.5pt
+  },
+  left=10pt, right=10pt,        % Balanced padding
+  top=10pt, bottom=8pt,
+  before skip=1.5em,
+  after skip=1.5em
+}
+
 % ================= Fonts =================
 \setmainfont{Times New Roman}
 \IfFontExistsTF{Amiri}{
@@ -43,21 +70,6 @@
 \definecolor{mainblue}{RGB}{0,60,120}
 \definecolor{lightgray}{RGB}{245,245,245}
 \definecolor{softgray}{RGB}{240,240,240}
-
-% ================= Custom blocks =================
-\newtcolorbox{reportblock}[1]{
-  colback=lightgray,
-  colframe=mainblue,
-  boxrule=0pt,
-  leftrule=4pt,
-  sharp corners,
-  enhanced,
-  title=\textbf{#1},
-  fonttitle=\bfseries,
-  coltitle=black,
-  before skip=1.2em,
-  after skip=1.2em
-}
 
 % ================= Lists =================
 \setlist[itemize]{
