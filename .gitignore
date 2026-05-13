@@ -89,3 +89,10 @@ Assignment\ 1/Problem\ 2/*.pickle
 # Keep results in Problem 2
 !Assignment\ 1/Problem\ 2/part2_results/
 
+# Ignore Heavy Arrays
+**/*_Data_Arrays/
+**/*_data_arrays/
+**/*.npy
+
+# Ignore Heavy Saved Models
+**/*.keras

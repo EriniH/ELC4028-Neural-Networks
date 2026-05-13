@@ -1,0 +1,35 @@
+
+=========================================================================
+              PROBLEM 3 (PART A) - MNIST ATTENTION EXPERIMENT            
+=========================================================================
+
+>>> Commencing Training for: Standard_CNN ...
+    -> Training Time: 62.45 seconds
+    -> Test Accuracy: 98.60%
+
+>>> Commencing Training for: Attention_CNN ...
+    -> Training Time: 76.60 seconds
+    -> Test Accuracy: 98.75%
+
+=========================================================================
+             FINAL COMPARISON TABLE (MNIST - PART A)                     
+=========================================================================
+
+A clear and detailed report describing (Answers on a Table):
+
+| Metric | Standard CNN | Attention CNN |
+| :--- | :--- | :--- |
+| **The network architectures you used** | 2x Conv2D (32, 64) -> MaxPool -> Dense(128) -> Dense(10). Stabilized with BatchNorm & Dropout. | Same base architecture + SpatialAttention(7x7) injected after the 2nd Conv2D layer. |
+| **Your training process and chosen hyperparameters** | Adam Optimizer, 15 Epochs, Batch Size=64. Learning Rate reduction on plateau. Input size: 28x28x1 | Same as Standard CNN. |
+| **A comparison of performance** | Test Accuracy: **98.60%**<br>Training Time: **62.45s** | Test Accuracy: **98.75%**<br>Training Time: **76.60s** |
+| **Your analysis of how the attention mechanism affected the results** | Baseline performance. | The Attention model performs similarly or slightly worse than the Standard CNN on MNIST. Since MNIST digits are already centered and simple with no cluttered background, standard CNNs capture them perfectly without needing to selectively ignore regions. The Attention mechanism simply adds a computational overhead (longer training time) without providing an accuracy boost for this specific, simple dataset. |
+
+Insights and observations you gained from your experiments:
+- Adding Batch Normalization and Dropout was extremely necessary to stabilize the training curve. Without them, the models suffered from severe zigzagging and erratic learning due to overfitting.
+- The computational cost is evident; the Attention mechanism consistently requires more training time due to the extra Conv2D and Pooling operations required to calculate the Spatial Mask.
+
+Suggestions for future improvements, such as trying different types of attention or tuning the model further:
+- For datasets like MNIST, hard Attention mechanisms (cropping the image based on bounding boxes) might be more effective than soft, continuous spatial masks.
+- Experimenting with Channel Attention (e.g., SENet) instead of Spatial Attention might yield different results, focusing on 'what' convolutional filters are most important rather than 'where' the pixels are.
+
+>>> Part A Experiment Complete! Check the '/home/mohamedkhalid/Desktop/Neural Assignments/Neural Assignment3/Prob3_Attention/Outputs/A_MNIST_Results' folder for plots and this report.
