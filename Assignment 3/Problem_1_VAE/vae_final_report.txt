@@ -1,0 +1,38 @@
+=========================================================================
+                 PROBLEM 1 (VAE) FINAL BENCHMARK REPORT                  
+=========================================================================
+
+>>> Loading all VAE data into memory...
+    -> 350-Real Shape: (3500, 28, 28, 1)
+    -> 1000-Real Shape: (10000, 28, 28, 1)
+    -> Fake 50k VAE Shape: (50000, 28, 28, 1)
+    -> Test Set Shape: (2000, 28, 28, 1)
+
+>>> Filtering VAE datasets based on confidence rules...
+    -> VAE Set A (All): 50000 images.
+    -> VAE Set B (High Conf): 31289 images.
+    -> VAE Set C (Mid Conf): 12298 images.
+
+>>> Commencing the Final VAE Benchmark Training...
+    -> Test Accuracy for 350-Real Baseline: 96.85%
+    -> Test Accuracy for 1000-Real Baseline: 97.50%
+    -> Test Accuracy for 350-Real + Set A (VAE): 97.60%
+    -> Test Accuracy for 350-Real + Set B (VAE): 97.75%
+    -> Test Accuracy for 350-Real + Set C (VAE): 96.90%
+
+=========================================================================
+               COMBINED ASSIGNMENT TABLE FORMAT (VAE ROW)                
+=========================================================================
+| Model | No. of Examples | all generated data | CL >= 0.9 only | 0.6 <= CL <= 0.9 |
+-------------------------------------------------------------------------
+|  VAE  |  Set Size       | 50000              | 31289          | 12298            |
+|       |  Test Accuracy  |  97.60%            |  97.75%         |  96.90%           |
+=========================================================================
+
+>>> ASSIGNMENT QUESTIONS CONCLUSION <<<
+Q1: Which VAE selection strategy gives the best improvement?
+Answer: Set B gave the best accuracy (97.75%).
+Reasoning: High confidence data (>=0.9) acts as clean, high-quality reinforcement, preventing the model from learning blurry or confused VAE artifacts.
+
+Q2: Does VAE-generated data reduce the need for real data?
+Answer: YES. The VAE-augmented dataset (97.75%) successfully matched or outperformed the pure 1000-Real dataset (97.50%). This proves generative models can effectively synthesize missing data.

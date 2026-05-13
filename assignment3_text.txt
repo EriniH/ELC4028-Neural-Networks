@@ -1,0 +1,732 @@
+Assignment 3 
+Problem 1- VAE Synthetic Data with Low-Data Stabilization 
+Using only 350 real examples per digit, train a conditional VAE. 
+Before training the VAE: 
+1. Augment the 350 real examples per digit by 10–20 times using rotations, shifts, small scaling, and light 
+noise. 
+2. Train the conditional VAE using the real + augmented data. 
+3. For each digit, sample latent vectors: z∼N(0,I) 
+4. Generate 5× (1000 examples in each run) of synthetic samples per digit. Each run should start with 
+different random values of the weights, that should give better variants of generated samples. 
+5. Pass generated samples through the LeNet-5 (trained on only the same allowed 350 examples) classifier 
+and calculate: 
+ confidence=max (softmax output of the trained LeNet above) 
+6. Create three synthetic datasets: 
+o 
+Set A: all generated samples 
+o 
+Set B: high-confidence samples: confidence ≥ 0.9 
+o 
+Set C: mid-confidence samples: 0.6 ≤ confidence ≤ 0.9 
+7. Train LeNet-5 using: 
+o 
+350 real examples per digit 
+o 
+plus, the selected VAE-generated samples 
+8. Compare Set A, Set B, and Set C with: 
+o 
+the 350-real baseline 
+o 
+the 1000-real baseline 
+o 
+the GAN-based results 
+Question: 
+Does VAE-generated data benefit more from high-confidence selection or mid-confidence/diverse latent samples, 
+and how does it compare with GAN-generated data and simple augmentation? 
+ 
+ 
+Problem 2 - GAN Synthetic Data with Low-Data Stabilization 
+Using only 350 real examples per digit, train a conditional GAN / cDCGAN. 
+Before training the GAN: 
+1. Augment the 350 real examples per digit by 10–20 times using rotations, shifts, small scaling, and light 
+noise. 
+2. Train the cDCGAN using the real + augmented data. 
+3. For each digit, generate 5× (each 1000 examples) of synthetic samples. 
+4. Pass generated samples through the LeNet-5 classifier and calculate: 
+confidence=max (softmax output) 
+5. Create three synthetic datasets: 
+o 
+Set A: all generated samples 
+o 
+Set B: high-confidence samples: confidence ≥ 0.9 
+o 
+Set C: mid-confidence samples: 0.6 ≤ confidence ≤ 0.9 
+6. Train LeNet-5 using: 
+o 
+350 real examples per digit 
+o 
+plus the selected GAN-generated samples 
+7. Compare Set A, Set B, and Set C with: 
+o 
+the 350-real baseline 
+o 
+the 1000-real baseline 
+Question: 
+Which GAN selection strategy gives the best improvement, and does GAN-generated data reduce the need for real 
+data? Compare with adding augmented data as in Assignment 2. 
+Summarize all the results of problem 1 and problem 2 in this table. 
+ 
+ 
+ 
+ 
+Confidence Level (CL) 
+ 
+ 
+all generated 
+data 
+CL >0.9 
+only 
+0.6 < 
+CL >0.9 
+No. of 
+examples 
+  
+  
+  
+Model 
+used 
+VAE 
+  
+  
+  
+GAN 
+  
+  
+  
+ 
+ 
+Problem 3: Understanding the Impact of Attention Mechanisms 
+a. Build a convolutional neural network (CNN) to classify images from the ReducedMNIST dataset (ex.: LeNet-5). 
+Then, build a second version of the CNN that includes a spatial attention mechanism. Compare the two models 
+in terms of accuracy and training time. What difference does the attention mechanism make? 
+b. Revisit the spoken digits task from Assignment 2, where you used spectrogram images to recognize 10 spoken 
+digits. Build two CNN models for this task: one with an attention mechanism and one without (which you 
+implemented in ass-2). Compare their performance and explain how attention affects the accuracy and training 
+time in this case. 
+For both parts (a and b), your submission should include: 
+• 
+A clear and detailed report describing (put your answers on a table): 
+o 
+The network architectures you used 
+o 
+Your training process and chosen hyperparameters 
+o 
+A comparison of performance between models with and without attention 
+o 
+Your analysis of how the attention mechanism affected the results 
+• 
+Insights and observations you gained from your experiments. 
+• 
+Suggestions for future improvements, such as trying different types of attention or tuning the 
+model further.  
+ 
+ 
+Problem 4: General Information Retrieval (including Q/A) 
+Information Retrieval and Question Answering using Arabic language. This problem introduces classical 
+keyword-based retrieval, semantic search using embeddings, and Retrieval-Augmented Generation 
+(RAG). You will apply these techniques using a single Arabic book (in plain text format) as the reference 
+source. 
+Tasks 
+(You must use a single open-source small LLM from HuggingFace — e.g., a model in the range of 1B–
+3B parameters — throughout all tasks.) 
+1. Book Preparation for Search 
+• 
+Select a public domain or permitted Arabic book in plain text format.  
+• 
+Be sure that the selected book was not used last year. 
+• 
+Split the text into short paragraphs (2–4 sentences).  
+• 
+Generate embeddings using a multilingual or Arabic sentence embedding model.  
+• 
+Index the vectors using a tool such as FAISS.  
+2. Retrieval System 
+• 
+Build an interface that accepts Arabic queries.  
+• 
+Implement:  
+o (a) Classical search (TF-IDF or BM25)  
+o (b) Semantic search (embedding-based)  
+• 
+Display the top 5 results from both methods side by side for each query.  
+3. RAG System 
+• 
+Extend the interface to answer Arabic questions using the same selected small LLM.  
+• 
+For each query:  
+o 
+(a) Retrieve relevant text using semantic search  
+o 
+(b) Generate an answer using RAG (LLM + retrieved content)  
+o 
+(c) Generate an answer using the LLM only (without retrieval)  
+• 
+Display both answers for comparison.  
+Deliverables 
+1. Description of the selected book:  
+o Title and source  
+o Text preprocessing and chunking method  
+o Embedding and indexing process  
+2. Results from at least 10 Arabic queries using:  
+o Classical search  
+o Semantic search  
+3. Answers for 10 queries using:  
+o RAG  
+o LLM-only  
+4. Comparison and reflection:  
+o Which retrieval method produced more relevant results  
+o Whether retrieval improved LLM-generated answers  
+o Conclusions on the value of semantic retrieval and RAG for Arabic text  
+ 
+Important Note 
+• 
+The model should be downloadable from HuggingFace and runnable locally (CPU or limited 
+resources).  
+• 
+Choosing a less common book topic is encouraged, as it better highlights the benefit of retrieval.  
+• 
+Create different kind of questions including direct and indirect, easy and hard ones to get good 
+insights. 
+ 
+Problem 5: Benchmarking Arabic NLP Tasks Across LLMs 
+Learning Objective 
+The goal of this assignment is to evaluate how different Large Language Models (LLMs) perform on Arabic NLP 
+tasks, to identify their strengths and weaknesses, and to understand the specific challenges of processing Arabic, 
+including dialect variation, morphology, and ambiguity. 
+Models to be Evaluated: ChatGPT, Gemini, ALLaM, Jais, Fanar 
+Task Assignment: Each group is assigned one unique task from the list of 27 Arabic NLP tasks.  
+1. Scope Definition: Each group must clearly define the task objective (such as accuracy, robustness, or 
+hallucination), specify the application domain, and describe the data sources used. 
+The dataset must include a balanced mix of Arabic varieties: 
+• 
+approximately one third of Modern Standard Arabic 
+• 
+one third Classical Arabic 
+• 
+one third Arabic dialects 
+2. Dataset Creation: Each group must construct a dataset according to the predefined number of cases for the 
+assigned task. 
+Data requirements: 
+• 
+Real data should form the majority of the dataset 
+Each sample must include a correct reference (gold) output. 
+Annotation: 
+• 
+At least two annotators per sample 
+• 
+Disagreements resolved by majority voting (a 3rd annotator when needed) 
+• 
+Report on a simple inter-annotator agreement (IAA) measure 
+The dataset must be clean, balanced, and well documented. 
+3. Evaluation Protocol: All five models must be evaluated using the same inputs and the same prompt format. 
+Model settings should be kept as consistent as possible. 
+Each group must record and submit inputs, prompts, outputs 
+4. Evaluation Metrics: Each group must use the predefined metric for its task and report both quantitative results 
+and brief qualitative observations. 
+5. Error Analysis: Each group must analyze model failures by including: 
+• 
+at least three incorrect or weak outputs 
+• 
+at least three Arabic-specific challenges (e.g., dialect confusion, morphology, ambiguity) 
+• 
+at least two difficult or borderline cases 
+Each case must be explained clearly. 
+6. Results Presentation 
+Each group must present: 
+• 
+a comparison table across the five models 
+• 
+at least one visualization (such as a bar chart) 
+• 
+Selected output examples 
+7. Report Requirements 
+Each group must submit a report of no less than eight pages including: 
+• 
+task definition 
+• 
+dataset creation 
+• 
+annotation process 
+• 
+evaluation setup 
+• 
+results 
+• 
+error analysis 
+• 
+limitations 
+• 
+final conclusions, comments and recommendations. 
+Important Rules 
+• 
+Each group must work on a different task and must evaluate all five models. All datasets must be 
+original, and full logs must be submitted. 
+• 
+Below is a guideline checklist to be sure that the Benchmarking process is reasonably done. Each 
+team should include in the report what they could apply of this checklist. 
+ 
+# 
+ اسم المهمة
+بالعربية 
+Task in 
+English 
+ الوصف بالعربية عدد حاالت االختبار 
+  الرابط+ المقياس 
+ ( مرجعWikipedia
+ )
+ 
+1 
+ سؤال وجواب 
+Question 
+Answering 
+ اإلجابة عن أسئلة
+ اعتمادًا على نص أو
+ معرفة عامة والمطلوب
+ التأكد من دقة اإلجابة 
+100
+ 
+  إجابة+ سؤال
+ مرجعية 
+F1 / Exact 
+Match 
+https://en.wikipedia.org/wiki/Question_answering  
+2 
+ التلخيص 
+Summarization 
+ تلخيص نص عربي مع
+ الحفاظ على المعنى 
+30
+ 
+ فقرة ال تقل الواحد
+ عن50
+ 
+ كلمة، لكل فقرة
+ ملخص مرجعي 
+ROUGE 
+https://en.wikipedia.org/wiki/Automatic_summarization 
+3 ترجمة إنجليزي -
+عربي 
+English-to-
+Arabic 
+Translation 
+ ترجمة جمل إنجليزية
+ إلى العربية 
+50
+ 
+  ترجمة+ جملة
+مرجعية 
+BLEU 
+https://en.wikipedia.org/wiki/Machine_translation  
+4 
+ التشكيل 
+Diacritization 
+ إضافة الحركات 
+50
+ 
+ جملة من10
+ –
+20
+ 
+كلمة 
+CER / 
+Accuracy 
+https://en.wikipedia.org/wiki/Arabic_diacritics 
+5 
+ تحليل المشاعر 
+Sentiment 
+Analysis 
+ تصنيف النص إلى
+ إيجابي/سلبي/محايد 
+100
+ 
+ جملة قصيرة 
+Accuracy / F1 
+https://en.wikipedia.org/wiki/Sentiment_analysis 
+6 
+ كشف العواطف 
+Emotion 
+Detection 
+ ،تحديد العاطفة: فرح
+ ...غضب، حزن، خوف 
+100
+ 
+ جملة 
+F1 
+https://en.wikipedia.org/wiki/Emotion_classification 
+7 
+ تصنيف الموضوع 
+Topic 
+Classification 
+ تصنيف النص حسب
+ المجال 
+80
+ 
+ نصًا قصيرًا 
+Accuracy 
+https://en.wikipedia.org/wiki/Text_classification 
+8 
+ اإلعراب 
+parsing 
+ اإلعراب لكلمات النص 
+50
+ 
+ جملة من5
+-
+15
+ 
+ كلمة
+ في كل جملة 
+word 
+accuracy, 
+human 
+evaluation 
+check internet 
+9 
+ التعرف على
+ الكيانات 
+Named Entity 
+Recognition 
+ استخراج األشخاص
+ واألماكن والمؤسسات 
+80
+ 
+ فقرة 
+F1 
+https://en.wikipedia.org/wiki/Named-entity_recognition  
+10 
+ استخراج الكلمات
+ المفتاحية 
+Keyphrase 
+Extraction 
+ استخراج أهم الكلمات أو
+ العبارات 
+80
+ 
+ فقرة 
+Precision@k 
+https://en.wikipedia.org/wiki/Keyword_extraction 
+11 
+ التشابه النصي 
+Text Similarity 
+ تقدير التشابه بين نصين 
+80
+ 
+ زوج جمل 
+Pearson 
+https://en.wikipedia.org/wiki/Semantic_similarity 
+12 
+ كشف إعادة
+ الصياغة 
+Paraphrase 
+Detection 
+ هل الجملتان تحمالن
+ نفس المعنى؟ 
+80
+ 
+ زوج جمل 
+Accuracy / F1 
+https://en.wikipedia.org/wiki/Paraphrase 
+13 
+ توليد نص عربي 
+Arabic Text 
+Generation 
+ إنتاج نص عربي حول
+ موضوع محدد 
+30
+ 
+prompt
+ 
+ (فقرات
+ تعليمية لتوضيح مبدأ
+)محدد 
+Human 
+Evaluation 
+https://en.wikipedia.org/wiki/Natural-
+language_generation  
+14 
+ إعادة الصياغة 
+Paraphrasing 
+ إعادة كتابة الجملة بنفس
+ المعنى 
+100
+ 
+ جملة 
+BLEU +  تقييم
+ بشري 
+https://en.wikipedia.org/wiki/Paraphrase 
+15 
+ تبسيط النص 
+Text 
+Simplification 
+ تبسيط النص مع حفظ
+ المعنى 
+40
+ 
+ فقرة 
+SARI 
+https://en.wikipedia.org/wiki/Text_simplification 
+16 
+ توليد أسئلة 
+Question 
+Generation 
+ توليد أسئلة من فقرة
+ معطاة 
+40
+ 
+ ،فقرة3
+ 
+ أسئلة لكل
+فقرة 
+ROUGE 
+https://en.wikipedia.org/wiki/Question_generation  
+17 توليد حوار 
+Dialogue 
+Generation 
+ إنتاج حوار مناسب
+لسياق معين 
+20
+ 
+ سيناريو (كل حوار
+ من3
+-
+5
+ 
+ دورات سؤال
+ وجواب في نفس
+ )الموضوع 
+Human 
+Evaluation 
+https://en.wikipedia.org/wiki/Dialogue_system 
+18 
+ الوسوم النحوية 
+POS Tagging 
+ تحديد نوع كل كلمة 
+100
+ 
+ جملة 
+Accuracy 
+https://en.wikipedia.org/wiki/Part-of-speech_tagging 
+19 
+ التحليل الصرفي 
+Morphological 
+Analysis 
+ تحليل بنية الكلمة العربية 
+100
+ 
+ كلمة 
+Accuracy 
+https://en.wikipedia.org/wiki/Morphological_analysis  
+20 
+ اإلرجاع لألصل 
+Lemmatization 
+ إرجاع الكلمة إلى
+ صيغتها األساسية 
+100
+ 
+ كلمة 
+Accuracy 
+https://en.wikipedia.org/wiki/Lemmatisation 
+21 
+ استخراج الجذر 
+Root 
+Extraction 
+ استخراج الجذر العربي
+ للكلمة 
+100
+ 
+ كلمة 
+Accuracy 
+https://en.wikipedia.org/wiki/Arabic_morphology  
+22 
+ تمييز اللهجات 
+Dialect 
+Identification 
+ تحديد اللهجة العربية 
+200
+ 
+ جملة من5
+ 
+ لهجات
+ عربية على األقل 
+Accuracy 
+https://en.wikipedia.org/wiki/Arabic_dialects 
+23 
+ اضافة عالمات
+ الترقيم 
+Adding 
+Punctuation 
+marks 
+ اضافتها لنص خام ليس
+ به عالمات ترقيم 
+60
+ 
+ فقرة قصيرة 
+F1 
+https://en.wikipedia.org/wiki/Punctuation 
+24 
+ استخراج
+ المعلومات 
+Information 
+Extraction 
+ تحويل النص إلى حقول
+ منظمة 
+60
+ 
+ فقرة قصيرة 
+F1 
+https://en.wikipedia.org/wiki/Information_extraction 
+25 
+ تصنيف الوثائق 
+Document 
+Classification 
+ تصنيف نص طويل إلى
+ فئة 
+50
+ 
+ مقاالً (حدد8
+ 
+ مجاالت
+ مختلفة: سياسة- 
+ ..اقتصاد 
+Accuracy 
+https://en.wikipedia.org/wiki/Document_classification 
+26 
+ التصحيح اللغوي 
+Grammar & 
+Spelling 
+Correction 
+ تصحيح األخطاء
+ اإلمالئية والنحوية 
+100
+ 
+ جملة بها أخطاء 
+GLEU 
+https://en.wikipedia.org/wiki/Grammar_checker 
+27 
+ كشف اإلساءة 
+Toxicity 
+Detection 
+ كشف النصوص المسيئة
+ أو العدائية 
+100
+ 
+ جملة أو تعليق 
+F1 
+https://en.wikipedia.org/wiki/Toxicity_(behavior) 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+A Checklist Table 
+ (recommended to be used in your answer) 
+# 
+Category 
+Checklist Item 
+Status 
+(Yes/No) 
+Notes 
+ 
+1 
+Scope Definition 
+Have you clearly defined the NLT task(s) to be evaluated? 
+  
+  
+2 
+Scope Definition 
+Have you specified the evaluation goals (accuracy, robustness, etc.)? 
+  
+  
+3 
+Language and Domain 
+Selection 
+Have you selected relevant languages and dialects? 
+  
+  
+4 
+Language and Domain 
+Selection 
+Have you included multiple genres and domains? 
+  
+  
+5 
+Data Collection 
+Is the data licensed for research/benchmark use? 
+  
+  
+6 
+Data Collection 
+Have you included real-world or synthetic data? 
+  
+  
+7 
+Annotation 
+Is there a clear annotation schema for the task? 
+  
+  
+8 
+Annotation Quality 
+Is inter-annotator agreement calculated and acceptable? 
+  
+  
+9 
+Data Balance 
+Does the dataset reflect demographic and topical 
+diversity? 
+  
+  
+10 
+Preprocessing 
+Is the data cleaned and normalized consistently? 
+  
+  
+11 
+Preprocessing 
+Is the preprocessing procedure documented? 
+  
+  
+12 
+Evaluation Metrics 
+Are appropriate metrics defined for each NLT task? 
+  
+  
+13 
+Evaluation Metrics 
+Do you include baseline results or evaluation 
+scripts? 
+  
+  
+14 
+Documentation 
+Is the data creation process fully documented? 
+  
+  
+15 
+Documentation 
+Are known limitations or biases discussed? 
+  
+  
+16 
+Fairness 
+Does the dataset include diverse and fair 
+representation? 
+  
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
