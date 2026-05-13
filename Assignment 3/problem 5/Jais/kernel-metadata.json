@@ -1,0 +1,13 @@
+{
+  "id": "mohebmheshmat/jais-emotion-detection",
+  "title": "Jais Emotion Detection",
+  "code_file": "Jais-2-8B-Chat.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "true",
+  "enable_gpu": "true",
+  "enable_internet": "true",
+  "dataset_sources": ["mohebmheshmat/emotion-dataset"],
+  "competition_sources": [],
+  "kernel_sources": []
+}

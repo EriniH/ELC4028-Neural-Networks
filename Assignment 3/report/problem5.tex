@@ -1,0 +1,274 @@
+\section{Problem 5: Benchmarking Arabic NLP Tasks Across LLMs}
+
+This experiment benchmarks the performance of five Large Language Models (LLMs) on the task of \textbf{Arabic Emotion Detection}. Each model classifies Arabic text into one of six emotions using both Zero-Shot and Few-Shot prompting strategies. The goal is to compare API-based commercial models against open-weights Arabic-focused models on a linguistically diverse Arabic dataset.
+
+\subsection{Dataset}
+
+We use a custom dataset (\texttt{emotion\_dataset\_v2.jsonl}) containing 100 Arabic sentences distributed approximately equally across three linguistic registers:
+
+\begin{itemize}
+    \item \textbf{Modern Standard Arabic (MSA):} Formal Arabic used in news and literature.
+    \item \textbf{Classical Arabic:} Poetry and historical prose.
+    \item \textbf{Dialectal Arabic:} Egyptian, Gulf, Levantine, and Maghrebi dialects.
+\end{itemize}
+
+Each sentence is annotated with one of six emotions:
+
+\begin{table}[H]
+    \centering
+    \caption{Emotion classes in the evaluation dataset}
+    \label{tab:emotions}
+    \begin{tabular}{|l|l|}
+        \hline
+        \textbf{Arabic Label} & \textbf{English Label} \\
+        \hline
+        \textarabic{فرح} & Joy \\
+        \textarabic{غضب} & Anger \\
+        \textarabic{حزن} & Sadness \\
+        \textarabic{خوف} & Fear \\
+        \textarabic{اندهاش} / \textarabic{مفاجأة} & Surprise \\
+        \textarabic{اشمئزاز} & Disgust \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection{Models Evaluated}
+
+We evaluate five models spanning three categories: commercial API-based models, a regional API-based model, and open-weights models deployed on cloud GPU infrastructure.
+
+\begin{table}[H]
+    \centering
+    \caption{Models evaluated in Problem 5}
+    \label{tab:models}
+    \begin{tabular}{|l|l|l|l|l|}
+        \hline
+        \textbf{Model} & \textbf{Origin} & \textbf{Parameters} & \textbf{Access} & \textbf{Execution} \\
+        \hline
+        Gemini 2.5 Flash & Google & N/A (cloud) & API & Local \\
+        GPT-4o-mini & OpenAI & N/A (cloud) & API & Local \\
+        Fanar-C-2-27B & Qatar & 27B & API & Local \\
+        ALLaM-7B & Saudi Arabia & 7B & Open-weights & Kaggle (T4 GPU) \\
+        Jais-2-8B-Chat & UAE & 8B & Open-weights & Kaggle (T4 GPU) \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsubsection{Model Descriptions}
+
+\begin{itemize}
+    \item \textbf{Gemini 2.5 Flash} is Google's latest multimodal LLM, accessed via the \texttt{google-genai} SDK. Safety filters were set to \texttt{BLOCK\_NONE} to prevent false content blocks during evaluation.
+
+    \item \textbf{GPT-4o-mini} is OpenAI's cost-efficient model optimized for fast inference. Accessed via the standard \texttt{openai} SDK.
+
+    \item \textbf{Fanar-C-2-27B} is Qatar's large Arabic-focused LLM with 27 billion parameters. It uses an OpenAI-compatible API endpoint at \texttt{api.fanar.qa}. Notably, it has an aggressive content safety filter that permanently blocks certain Arabic texts.
+
+    \item \textbf{ALLaM-7B-Instruct-preview} is Saudi Arabia's Arabic LLM developed by SDAIA. Loaded in FP16 on Kaggle's T4 GPU via the \texttt{transformers} library.
+
+    \item \textbf{Jais-2-8B-Chat} is the UAE's bilingual Arabic-English LLM by Core42/Inception. Requires \texttt{trust\_remote\_code=True} due to its custom architecture.
+\end{itemize}
+
+\subsection{Prompting Strategy}
+
+All five models receive \textbf{identical prompts} written entirely in Arabic. Two strategies are evaluated:
+
+\subsubsection{Zero-Shot Prompt}
+The model receives a task description and is asked to classify the emotion in one word from the predefined set. No examples are provided.
+
+\begin{reportblock}{Zero-Shot Prompt Template}
+\begin{flushleft}
+\small
+\textarabic{أنت خبير في معالجة اللغات الطبيعية للغة العربية.}\\[2pt]
+\textarabic{المهمة: تصنيف العاطفة في النص التالي إلى واحدة فقط من العواطف الستة التالية:}\\[2pt]
+\textarabic{(فرح، غضب، حزن، خوف، مفاجأة، اشمئزاز)}\\[6pt]
+\textarabic{النص: "[النص المدخل]"}\\[6pt]
+\textarabic{أجب بالكلمة المعبرة عن العاطفة فقط (كلمة واحدة) بدون أي شرح إضافي.}\\[2pt]
+\textarabic{الإجابة:}
+\end{flushleft}
+\end{reportblock}
+
+\subsubsection{Few-Shot Prompt}
+The model receives four labeled examples (Joy, Sadness, Anger, Fear) before being asked to classify the target text. This tests whether in-context examples improve classification accuracy.
+
+\begin{reportblock}{Few-Shot Examples (appended before the input text)}
+\begin{flushleft}
+\small
+\textarabic{النص: "تخرجت اليوم بتفوق وحصلت على الوظيفة التي أحلم بها!"}\\
+\textarabic{الإجابة: فرح}\\[4pt]
+\textarabic{النص: "لا أصدق حجم الدمار الذي خلفه الإعصار، فقدنا كل شيء."}\\
+\textarabic{الإجابة: حزن}\\[4pt]
+\textarabic{النص: "كيف تجرؤ على أخذ أغراضي دون إذن مني؟"}\\
+\textarabic{الإجابة: غضب}\\[4pt]
+\textarabic{النص: "سمعت صوتاً غريباً في منتصف الليل والبيت مظلم تماماً."}\\
+\textarabic{الإجابة: خوف}
+\end{flushleft}
+\end{reportblock}
+
+\subsection{Evaluation Methodology}
+
+\begin{itemize}
+    \item \textbf{Test set:} 100 sentences evaluated per model per strategy (200 total inferences per model).
+    \item \textbf{Temperature:} Set to 0 for all models (deterministic output).
+    \item \textbf{Max tokens:} 10 (the model should respond with a single word).
+    \item \textbf{Matching:} Model output is compared against both the Arabic and English gold labels after lowercasing and stripping whitespace.
+    \item \textbf{Error handling:} API models use exponential backoff for rate limits. Fanar's content filter blocks are detected and marked as ``FILTERED'' without retrying.
+\end{itemize}
+
+\subsubsection{Metrics}
+We report two standard metrics:
+\begin{itemize}
+    \item \textbf{Accuracy:} Fraction of correctly classified sentences:
+    $$\mathrm{Accuracy} = \frac{1}{N}\sum_{i=1}^N \mathbf{1}\!\left\{\hat{y}_i = y_i\right\}$$
+    \item \textbf{Macro F1-Score:} Per-class F1 averaged across all 6 emotion classes:
+    $$F1_{\text{macro}} = \frac{1}{C} \sum_{c=1}^C \frac{2P_c R_c}{P_c + R_c}$$
+    where $P_c$ and $R_c$ are precision and recall for class $c$, and $C=6$.
+\end{itemize}
+
+\subsection{Results}
+
+\subsubsection{Overall Performance}
+
+Table~\ref{tab:results_summary} presents the overall accuracy and macro F1-Score for all five models under both prompting strategies.
+
+\begin{table}[H]
+    \centering
+    \caption{Overall accuracy and macro F1-Score across all models}
+    \label{tab:results_summary}
+    \begin{tabular}{|l|c|c|c|c|}
+        \hline
+        \textbf{Model} & \textbf{ZS Accuracy} & \textbf{FS Accuracy} & \textbf{ZS Macro F1} & \textbf{FS Macro F1} \\
+        \hline
+        Gemini 2.5 Flash & 73.0\% & 73.0\% & 58.3\% & 58.6\% \\
+        GPT-4o-mini & 74.0\% & 69.0\% & 46.8\% & 48.5\% \\
+        Fanar-C-2-27B & 69.0\% & 62.0\% & 39.4\% & 37.8\% \\
+        Jais-2-8B-Chat & 66.0\% & 66.0\% & 42.0\% & 37.9\% \\
+        ALLaM-7B & 61.0\% & 64.0\% & 28.3\% & 30.5\% \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsubsection{Comparative Analysis}
+
+\begin{itemize}
+    \item \textbf{GPT-4o-mini} achieves the highest zero-shot accuracy (74.0\%) but its few-shot performance drops to 69.0\%, suggesting that in-context examples may introduce a slight bias for this model.
+
+    \item \textbf{Gemini 2.5 Flash} shows the most consistent performance between zero-shot and few-shot (73.0\% for both), and achieves the highest macro F1 scores (58.3\%/58.6\%). This indicates the best balance across all emotion classes.
+
+    \item \textbf{Fanar-C-2-27B} scores lower partly due to its content safety filter, which permanently blocks certain Arabic texts (especially those about violence or strong negative emotions). These blocked responses are marked as ``FILTERED'' and count as misclassifications.
+
+    \item \textbf{Jais-2-8B-Chat} achieves 66.0\% accuracy in both modes, placing it between the API models and ALLaM. Despite having only 8B parameters, it outperforms the 27B Fanar in F1 for zero-shot (42.0\% vs 39.4\%).
+
+    \item \textbf{ALLaM-7B} has the lowest overall scores (ZS: 61.0\%, FS: 64.0\%). However, it is the only model that shows a notable \textit{improvement} from zero-shot to few-shot (+3.0\% accuracy), suggesting it benefits from in-context examples.
+\end{itemize}
+
+\subsubsection{API vs. Open-Weights Models}
+
+A clear performance gap exists between API-based models and open-weights models:
+
+\begin{itemize}
+    \item API models (Gemini, GPT, Fanar) average 70.0\% zero-shot accuracy.
+    \item Open-weights models (ALLaM, Jais) average 61.5\% zero-shot accuracy.
+\end{itemize}
+
+This gap is expected given the significantly larger scale and extensive training of commercial API models. However, the open-weights models offer deployment advantages: full data privacy, no API costs, and the ability to fine-tune for specific Arabic NLP tasks.
+
+\subsection{Error Analysis}
+
+Common error patterns observed across all five models:
+
+\begin{table}[H]
+    \centering
+    \caption{Common misclassification patterns}
+    \label{tab:error_patterns}
+    \begin{tabular}{|l|l|p{7cm}|}
+        \hline
+        \textbf{True Label} & \textbf{Predicted} & \textbf{Observation} \\
+        \hline
+        Surprise (\textarabic{اندهاش}) & Fear / Joy & Surprise is the hardest class; models confuse it with fear (negative surprise) or joy (positive surprise) \\
+        \hline
+        Anger (\textarabic{غضب}) & Sadness / Disgust & Negative emotions are often conflated, especially in dialectal Arabic \\
+        \hline
+        Disgust (\textarabic{اشمئزاز}) & Anger & Disgust and anger share overlapping sentiment in Arabic expressions \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsubsection{Arabic-Specific Challenges}
+
+\begin{itemize}
+    \item \textbf{Label mismatch:} The dataset uses \textarabic{اندهاش} (astonishment) for Surprise, but models often output \textarabic{مفاجأة} (surprise). Both are valid Arabic translations, but only exact matches count as correct.
+
+    \item \textbf{Dialect confusion:} Dialectal Arabic (e.g., Egyptian \textarabic{مش مصدق}) is consistently harder for all models compared to MSA or Classical Arabic.
+
+    \item \textbf{Content filtering:} Fanar's safety filter blocks some emotionally charged Arabic texts (particularly those involving violence, fear, or anger), resulting in ``FILTERED'' outputs that reduce its effective accuracy.
+
+    \item \textbf{Verbose outputs:} Open-weights models (ALLaM, Jais) sometimes generate multi-word answers instead of the requested single-word emotion label, causing match failures despite identifying the correct emotion within the output.
+\end{itemize}
+
+\subsection{Manual Adjudication of Predictions}
+
+An automated exact-match evaluation can sometimes be overly strict. To ensure evaluation fairness and accuracy, we introduced a manual adjudication step to review the mismatched predictions. This additional review was necessary for three primary reasons:
+
+\begin{enumerate}
+    \item \textbf{Label Synonymy:} Models often predict semantically equivalent classifications that differ only in vocabulary. For example, predicting \textarabic{مفاجأة} (surprise) instead of the golden label \textarabic{اندهاش} (astonishment).
+    \item \textbf{Emotion Overlap:} Many sentences can be validly classified with multiple emotions depending on the interpretation. For instance, sadness and anger may be very similar in certain situations, making the model's alternative prediction perfectly acceptable.
+    \item \textbf{Golden Label Inaccuracies:} Some human errors or subjectivity can occur when originally annotating and collecting the golden labels for the dataset.
+\end{enumerate}
+
+To account for these factors, all mismatched predictions across all five models were individually reviewed by a human annotator.
+
+\subsubsection{Adjudication Protocol}
+
+For each mismatched prediction, the reviewer examined the original Arabic text, the golden label, and the model's output, then classified the mismatch as either:
+\begin{itemize}
+    \item \textbf{Accepted:} The model's prediction is a valid/acceptable answer based on the reasons outlined above.
+    \item \textbf{Rejected:} The model's prediction is genuinely incorrect.
+\end{itemize}
+
+\subsubsection{Adjusted Results}
+
+After manual review, accepted predictions were reclassified as correct. Table~\ref{tab:adjusted_results} shows the accuracy improvements across all models.
+
+\begin{table}[H]
+    \centering
+    \caption{Accuracy before and after manual adjudication}
+    \label{tab:adjusted_results}
+    \begin{tabular}{|l|c|c|c|c|c|c|}
+        \hline
+        \textbf{Model} & \textbf{ZS Original} & \textbf{ZS Adjusted} & \textbf{ZS $\Delta$} & \textbf{FS Original} & \textbf{FS Adjusted} & \textbf{FS $\Delta$} \\
+        \hline
+        Gemini 2.5 Flash & 73.0\% & 87.0\% & +14.0\% & 73.0\% & 86.0\% & +13.0\% \\
+        GPT-4o-mini & 74.0\% & 91.0\% & +17.0\% & 69.0\% & 84.0\% & +15.0\% \\
+        Fanar-C-2-27B & 69.0\% & 86.0\% & +17.0\% & 62.0\% & 75.0\% & +13.0\% \\
+        Jais-2-8B-Chat & 66.0\% & 72.0\% & +6.0\% & 66.0\% & 75.0\% & +9.0\% \\
+        ALLaM-7B & 61.0\% & 69.0\% & +8.0\% & 64.0\% & 78.0\% & +14.0\% \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\begin{reportblock}{Insight}
+Manual adjudication significantly improved the accuracy scores of all models. Notably, GPT-4o-mini achieved an outstanding 91.0\% adjusted accuracy in zero-shot mode. This highlights that many apparent ``errors'' by LLMs in Arabic NLP are actually acceptable alternative formulations rather than true failures.
+\end{reportblock}
+
+\subsection{Conclusion}
+
+This benchmark evaluates five LLMs on Arabic emotion detection, a task that challenges models with linguistic diversity (MSA, Classical, Dialects) and nuanced emotion boundaries. Key findings:
+
+\begin{enumerate}
+    \item \textbf{Gemini 2.5 Flash} provides the best overall balance of accuracy (73.0\%) and macro F1 (58.6\%), with consistent performance across both prompting strategies.
+
+    \item \textbf{GPT-4o-mini} leads in raw zero-shot accuracy (74.0\%) but shows a notable drop in few-shot mode ($-5.0\%$).
+
+    \item \textbf{Jais-2-8B-Chat} is the strongest open-weights model, achieving 66.0\% accuracy with only 8B parameters.
+
+    \item \textbf{ALLaM-7B} benefits the most from few-shot prompting (+7.0\% accuracy), suggesting that smaller Arabic LLMs can leverage in-context learning effectively.
+
+    \item \textbf{Fanar-C-2-27B} underperforms relative to its 27B parameter count, partly due to its aggressive content safety filter.
+
+    \item Few-shot prompting does not universally improve performance; its benefit is model-dependent. Only ALLaM showed a substantial improvement.
+
+    \item The ``Surprise'' emotion class (\textarabic{اندهاش}) is consistently the hardest to classify across all models, partly due to label ambiguity with \textarabic{مفاجأة}.
+
+    \item Manual adjudication reveals that a portion of apparent misclassifications are actually acceptable predictions due to Arabic label synonymy, highlighting the importance of human review in Arabic NLP evaluation.
+\end{enumerate}
+
+% End of Problem 5

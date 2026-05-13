@@ -1,0 +1,7 @@
+﻿Evaluation Metric,Value
+Model Evaluated,gemini-2.5-flash
+Total Sentences Tested,100
+Zero-Shot Overall Accuracy,73.0%
+Few-Shot Overall Accuracy,73.0%
+Zero-Shot Macro F1-Score,58.3%
+Few-Shot Macro F1-Score,58.6%

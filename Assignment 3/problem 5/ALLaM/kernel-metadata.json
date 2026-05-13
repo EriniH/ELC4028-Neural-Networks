@@ -1,0 +1,13 @@
+{
+  "id": "mohebmheshmat/allam-emotion-detection",
+  "title": "ALLaM Emotion Detection",
+  "code_file": "allam-7b-instruct-preview.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "true",
+  "enable_gpu": "true",
+  "enable_internet": "true",
+  "dataset_sources": ["mohebmheshmat/emotion-dataset"],
+  "competition_sources": [],
+  "kernel_sources": []
+}

@@ -1,0 +1,17 @@
+# Core Data Science & NLP
+pandas==2.2.2
+tqdm
+fsspec==2025.3.0
+python-dotenv
+scikit-learn
+
+# Local API Models (Gemini, GPT, Fanar)
+google-genai==1.58.0
+openai
+
+# Kaggle Models / Open Weights (ALLaM, Jais)
+transformers
+torch
+accelerate
+sentencepiece
+huggingface-hub

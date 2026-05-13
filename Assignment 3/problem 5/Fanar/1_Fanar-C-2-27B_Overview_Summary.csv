@@ -1,0 +1,7 @@
+﻿Evaluation Metric,Value
+Model Evaluated,Fanar-C-2-27B
+Total Sentences Tested,100
+Zero-Shot Overall Accuracy,69.0%
+Few-Shot Overall Accuracy,62.0%
+Zero-Shot Macro F1-Score,39.4%
+Few-Shot Macro F1-Score,37.8%

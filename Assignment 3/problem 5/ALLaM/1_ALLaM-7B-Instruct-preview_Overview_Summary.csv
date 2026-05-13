@@ -1,0 +1,7 @@
+﻿Evaluation Metric,Value
+Model Evaluated,ALLaM-AI/ALLaM-7B-Instruct-preview
+Total Sentences Tested,100
+Zero-Shot Overall Accuracy,57.0%
+Few-Shot Overall Accuracy,64.0%
+Zero-Shot Macro F1-Score,28.3%
+Few-Shot Macro F1-Score,30.5%

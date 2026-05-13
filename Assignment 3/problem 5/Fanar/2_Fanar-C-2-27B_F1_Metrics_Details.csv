@@ -1,0 +1,21 @@
+﻿Strategy,Emotion_Class,Total Tested,Precision (%),Recall/Accuracy (%),F1-Score (%)
+Zero-Shot,,0,0.0,0.0,0.0
+Zero-Shot,filtered,0,0.0,0.0,0.0
+Zero-Shot,اشمئزاز,12,78.6,91.7,84.6
+Zero-Shot,اندهاش,14,0.0,0.0,0.0
+Zero-Shot,حب,0,0.0,0.0,0.0
+Zero-Shot,حزن,17,66.7,82.4,73.7
+Zero-Shot,خوف,16,84.6,68.8,75.9
+Zero-Shot,غضب,17,68.8,64.7,66.7
+Zero-Shot,فرح,24,95.7,91.7,93.6
+Zero-Shot,مفاجأة,0,0.0,0.0,0.0
+Few-Shot,,0,0.0,0.0,0.0
+Few-Shot,filtered,0,0.0,0.0,0.0
+Few-Shot,اشمئزاز,12,90.0,75.0,81.8
+Few-Shot,اندهاش,14,0.0,0.0,0.0
+Few-Shot,حب,0,0.0,0.0,0.0
+Few-Shot,حزن,17,72.2,76.5,74.3
+Few-Shot,خوف,16,78.6,68.8,73.3
+Few-Shot,غضب,17,66.7,58.8,62.5
+Few-Shot,فرح,24,95.0,79.2,86.4
+Few-Shot,مفاجأة,0,0.0,0.0,0.0

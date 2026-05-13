@@ -1,0 +1,7 @@
+﻿Evaluation Metric,Value
+Model Evaluated,inceptionai/jais-2-8b-chat
+Total Sentences Tested,100
+Zero-Shot Overall Accuracy,66.0%
+Few-Shot Overall Accuracy,66.0%
+Zero-Shot Macro F1-Score,42.0%
+Few-Shot Macro F1-Score,37.9%

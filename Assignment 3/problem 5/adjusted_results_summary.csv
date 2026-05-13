@@ -1,0 +1,11 @@
+﻿Model,Strategy,Total,Original Correct,Accepted Mismatches,Adjusted Correct,Original Accuracy (%),Adjusted Accuracy (%),Improvement (%)
+Gemini 2.5 Flash,zero-shot,100,73,14,87,73.0,87.0,14.0
+Gemini 2.5 Flash,few-shot,100,73,13,86,73.0,86.0,13.0
+GPT-4o-mini,zero-shot,100,74,17,91,74.0,91.0,17.0
+GPT-4o-mini,few-shot,100,69,15,84,69.0,84.0,15.0
+Fanar-C-2-27B,zero-shot,100,69,17,86,69.0,86.0,17.0
+Fanar-C-2-27B,few-shot,100,62,13,75,62.0,75.0,13.0
+ALLaM-7B,zero-shot,100,61,8,69,61.0,69.0,8.0
+ALLaM-7B,few-shot,100,64,14,78,64.0,78.0,14.0
+Jais-2-8B-Chat,zero-shot,100,66,6,72,66.0,72.0,6.0
+Jais-2-8B-Chat,few-shot,100,66,9,75,66.0,75.0,9.0

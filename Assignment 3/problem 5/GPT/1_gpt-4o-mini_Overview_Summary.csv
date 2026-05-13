@@ -1,0 +1,8 @@
+﻿Evaluation Metric,Value
+Model Evaluated,gpt-4o-mini
+Total Sentences Tested,100
+Zero-Shot Overall Accuracy,74.0%
+Few-Shot Overall Accuracy,69.0%
+Zero-Shot Macro F1-Score,46.8%
+Few-Shot Macro F1-Score,48.5%
+API Error Count,0

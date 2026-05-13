@@ -1,0 +1,95 @@
+% =====================================================
+% style.tex  (Formatting & Style Only)
+% =====================================================
+
+% ================= Basic packages =================
+\usepackage{booktabs}
+\usepackage[colorlinks=true, urlcolor=blue,linkcolor=black]{hyperref}
+\usepackage{float}
+\usepackage{dashrule}
+\usepackage{tocloft}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{fontspec}
+\usepackage{bidi}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage[a4paper, margin=2cm]{geometry}
+\usepackage{longtable}
+
+% ================= Fonts =================
+\setmainfont{Times New Roman}
+\IfFontExistsTF{Amiri}{
+  \newfontfamily\arabicfont[Script=Arabic,Scale=0.8]{Amiri}
+}{
+  \IfFontExistsTF{Traditional Arabic}{
+    \newfontfamily\arabicfont[Script=Arabic,Scale=1.1]{Traditional Arabic}
+  }{
+    \newfontfamily\arabicfont[Script=Arabic,Scale=1.1]{Times New Roman}
+  }
+}
+\newcommand{\textarabic}[1]{{\arabicfont\RL{#1}}}
+
+% Improve global line breaking
+\setlength{\emergencystretch}{2em}
+
+% ================= Colors =================
+\definecolor{mainblue}{RGB}{0,60,120}
+\definecolor{lightgray}{RGB}{245,245,245}
+\definecolor{softgray}{RGB}{240,240,240}
+
+% ================= Custom blocks =================
+\newtcolorbox{reportblock}[1]{
+  colback=lightgray,
+  colframe=mainblue,
+  boxrule=0pt,
+  leftrule=4pt,
+  sharp corners,
+  enhanced,
+  title=\textbf{#1},
+  fonttitle=\bfseries,
+  coltitle=black,
+  before skip=1.2em,
+  after skip=1.2em
+}
+
+% ================= Lists =================
+\setlist[itemize]{
+  leftmargin=1.5em,
+  itemsep=0.4em,
+  topsep=0.4em
+}
+
+% ================= Python Listings =================
+\definecolor{pyblue}{rgb}{0.0,0.0,0.6}
+\definecolor{pygreen}{rgb}{0.0,0.5,0.0}
+\definecolor{pyred}{rgb}{0.6,0.0,0.0}
+\definecolor{pygray}{rgb}{0.95,0.95,0.95}
+
+\lstdefinelanguage{MyPython}{
+  language=Python,
+  morekeywords={self,True,False,None,as,with,yield,async,await,f},
+  keywordstyle=\color{pyblue},
+  commentstyle=\color{pygreen}\itshape,
+  stringstyle=\color{pyred},
+  sensitive=true
+}
+
+\lstset{
+  language=MyPython,
+  backgroundcolor=\color{pygray},
+  basicstyle=\ttfamily\footnotesize,
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  frame=single,
+  breaklines=true,
+  showstringspaces=false,
+  tabsize=4,
+  inputencoding=utf8
+}
