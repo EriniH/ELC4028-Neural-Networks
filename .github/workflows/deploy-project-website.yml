@@ -27,8 +27,9 @@ jobs:
       - name: Prepare Arabic demo artifact
         run: |
           mkdir -p Project/Website/dist
-          cp Project/Website/public/arabic-embeddings-demo.html Project/Website/dist/index.html
-          cp Project/Website/public/arabic-embeddings-demo.html Project/Website/dist/arabic-embeddings-demo.html
+          demo_source="Project/Website/public/arabic-embeddings-demo.html"
+          cp "$demo_source" Project/Website/dist/index.html
+          cp "$demo_source" Project/Website/dist/arabic-embeddings-demo.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
