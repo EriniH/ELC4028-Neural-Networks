@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { EmbeddingDemo } from "@/components/EmbeddingDemo";
 import { Quiz } from "@/components/Quiz";
+import { WordAnalogyExplorer } from "@/components/WordAnalogyExplorer";
+import { EmbeddingMethodsComparison } from "@/components/EmbeddingMethodsComparison";
+import { ConceptCards } from "@/components/ConceptCards";
+import { CommonQuestions } from "@/components/CommonQuestions";
 import { Sparkles, Brain, Target, BookOpen, Languages } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 
@@ -50,6 +54,9 @@ function Index() {
             <div className="hidden gap-6 text-muted-foreground sm:flex">
               <a href="#learn" className="hover:text-foreground">{t("nav.learn")}</a>
               <a href="#demo" className="hover:text-foreground">{t("nav.demo")}</a>
+              <a href="#analogies" className="hover:text-foreground">Analogies</a>
+              <a href="#methods" className="hover:text-foreground">Methods</a>
+              <a href="#faq" className="hover:text-foreground">FAQ</a>
               <a href="#arabic" className="hover:text-foreground">{t("nav.arabic")}</a>
               <a href="#quiz" className="hover:text-foreground">{t("nav.quiz")}</a>
             </div>
@@ -128,12 +135,32 @@ function Index() {
             {t("learn.example.note")}
           </p>
         </div>
+
+        <div className="mt-10">
+          <ConceptCards />
+        </div>
       </Section>
 
       {/* demo */}
       <Section id="demo" eyebrow={t("demo.eyebrow")} title={t("demo.title")}>
         <p className="mb-8 max-w-2xl text-muted-foreground">{t("demo.desc")}</p>
         <EmbeddingDemo />
+      </Section>
+
+      {/* analogy explorer */}
+      <Section id="analogies" eyebrow="Interactive" title="Word Arithmetic in Action">
+        <p className="mb-8 max-w-2xl text-muted-foreground">
+          Embeddings reveal hidden relationships through vector arithmetic. Select an analogy below to see how subtracting and adding vectors produces semantic insights.
+        </p>
+        <WordAnalogyExplorer />
+      </Section>
+
+      {/* methods comparison */}
+      <Section id="methods" eyebrow="Learning Evolution" title="From Word2Vec to Modern Methods">
+        <p className="mb-8 max-w-2xl text-muted-foreground">
+          Embedding techniques have evolved dramatically. Compare how different methods handle context, vocabulary growth, and speed. Click any method to explore its strengths and limitations.
+        </p>
+        <EmbeddingMethodsComparison />
       </Section>
 
       {/* arabic demo */}
@@ -157,6 +184,14 @@ function Index() {
             {t("arabic.open")} ↗
           </a>
         </div>
+      </Section>
+
+      {/* faq */}
+      <Section id="faq" eyebrow="Knowledge" title="Common Questions & Misconceptions">
+        <p className="mb-8 max-w-2xl text-muted-foreground">
+          Clear up common misconceptions about word embeddings. Filter by topic to focus on what interests you most.
+        </p>
+        <CommonQuestions />
       </Section>
 
       {/* quiz */}

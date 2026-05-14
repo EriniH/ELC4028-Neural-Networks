@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { WORDS, GROUP_COLORS, similarity, type WordVec } from "@/lib/embeddings";
 import { useLang } from "@/lib/i18n";
+import { HelpCircle } from "lucide-react";
 
 const W = 560;
 const H = 420;
@@ -16,6 +17,7 @@ function project(v: WordVec) {
 export function EmbeddingDemo() {
   const { t } = useLang();
   const [selected, setSelected] = useState<string>("king");
+  const [hoveredNeighbor, setHoveredNeighbor] = useState<string | null>(null);
 
   const sel = useMemo(() => WORDS.find((w) => w.word === selected)!, [selected]);
 
@@ -95,23 +97,45 @@ export function EmbeddingDemo() {
         <div className="mt-1 text-sm text-muted-foreground">
           vector ≈ ({sel.x.toFixed(2)}, {sel.y.toFixed(2)})
         </div>
-        <div className="mt-5 mb-2 text-xs uppercase tracking-wider text-muted-foreground">
+        <div className="mt-5 mb-2 flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground">
           {t("demo.neighbors")}
+          <div className="group relative inline-block cursor-help">
+            <HelpCircle className="h-3.5 w-3.5 text-muted-foreground/60" />
+            <div className="invisible absolute bottom-full right-0 mb-2 w-48 rounded-lg bg-background p-2 text-xs text-foreground shadow-lg group-hover:visible border border-border z-10">
+              Cosine similarity measures how aligned two word vectors are (closer to 1 = more similar).
+            </div>
+          </div>
         </div>
         <ul className="space-y-2">
-          {neighbors.map((n) => (
-            <li key={n.word} className="flex items-center gap-2">
+          {neighbors.map((n, idx) => (
+            <li
+              key={n.word}
+              className="flex items-center gap-3 rounded-lg px-2 py-1.5 transition hover:bg-secondary/50 cursor-pointer"
+              onMouseEnter={() => setHoveredNeighbor(n.word)}
+              onMouseLeave={() => setHoveredNeighbor(null)}
+            >
               <span
-                className="h-2.5 w-2.5 rounded-full"
+                className="h-2.5 w-2.5 rounded-full flex-shrink-0"
                 style={{ background: GROUP_COLORS[n.group] }}
               />
-              <span className="flex-1 text-sm">{n.word}</span>
-              <span className="font-mono text-xs text-muted-foreground">
-                {n.sim.toFixed(3)}
-              </span>
+              <span className="flex-1 text-sm font-medium">{n.word}</span>
+              <div className="flex items-center gap-2">
+                <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-primary transition-all duration-300"
+                    style={{ width: `${n.sim * 100}%` }}
+                  />
+                </div>
+                <span className="font-mono text-xs text-muted-foreground min-w-[2.5rem]">
+                  {(n.sim * 100).toFixed(0)}%
+                </span>
+              </div>
             </li>
           ))}
         </ul>
+        <p className="mt-4 text-xs text-muted-foreground border-t pt-3">
+          💡 <strong>Similarity patterns:</strong> The system grouped words by semantic meaning without explicit instruction — showing how embeddings capture deep semantic relationships.
+        </p>
       </div>
     </div>
   );
