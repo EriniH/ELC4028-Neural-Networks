@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { EmbeddingDemo } from "@/components/EmbeddingDemo";
 import { Quiz } from "@/components/Quiz";
 import { WordAnalogyExplorer } from "@/components/WordAnalogyExplorer";
@@ -60,6 +60,7 @@ function Index() {
               <a href="#faq" className="hover:text-foreground">{t("nav.faq")}</a>
               <a href="#arabic" className="hover:text-foreground">{t("nav.arabic")}</a>
               <a href="#quiz" className="hover:text-foreground">{t("nav.quiz")}</a>
+              <Link to="/presentation" className="hover:text-foreground text-primary font-medium">{t("nav.presentation")}</Link>
             </div>
             <button
               onClick={() => setLang(lang === "en" ? "ar" : "en")}
