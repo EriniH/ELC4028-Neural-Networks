@@ -56,6 +56,7 @@ function Index() {
               <a href="#demo" className="hover:text-foreground">{t("nav.demo")}</a>
               <a href="#analogies" className="hover:text-foreground">{t("nav.analogies")}</a>
               <a href="#methods" className="hover:text-foreground">{t("nav.methods")}</a>
+              <a href="#limitations" className="hover:text-foreground">{t("nav.limitations")}</a>
               <a href="#faq" className="hover:text-foreground">{t("nav.faq")}</a>
               <a href="#arabic" className="hover:text-foreground">{t("nav.arabic")}</a>
               <a href="#quiz" className="hover:text-foreground">{t("nav.quiz")}</a>
@@ -161,6 +162,34 @@ function Index() {
           {t("methods.desc")}
         </p>
         <EmbeddingMethodsComparison />
+      </Section>
+
+      {/* limitations */}
+      <Section id="limitations" eyebrow={t("limitations.eyebrow")} title={t("limitations.title")}>
+        <div className="prose-like space-y-5 text-[17px] leading-relaxed text-foreground/90">
+          <p>{t("limitations.p1")}</p>
+          <p>{t("limitations.p2")}</p>
+        </div>
+        <div className="mt-8 grid gap-5 md:grid-cols-2">
+          <div className="rounded-xl border bg-card p-5 shadow-[var(--shadow-soft)]">
+            <div className="font-display text-xl text-primary">{t("limitations.fasttext.title")}</div>
+            <p className="mt-2 text-sm text-muted-foreground">{t("limitations.fasttext.desc")}</p>
+          </div>
+          <div className="rounded-xl border bg-card p-5 shadow-[var(--shadow-soft)]">
+            <div className="font-display text-xl text-primary">{t("limitations.elmo.title")}</div>
+            <p className="mt-2 text-sm text-muted-foreground">{t("limitations.elmo.desc")}</p>
+          </div>
+        </div>
+        
+        <div className="mt-10 rounded-xl border bg-secondary/60 p-6">
+          <div className="mb-2 text-xs uppercase tracking-wider text-muted-foreground">{t("limitations.comparison.eyebrow")}</div>
+          <div className="font-display text-xl sm:text-2xl mb-3">
+            {t("limitations.comparison.title")}
+          </div>
+          <p className="text-sm sm:text-base text-foreground/90">
+            {t("limitations.comparison.desc")}
+          </p>
+        </div>
       </Section>
 
       {/* arabic demo */}
