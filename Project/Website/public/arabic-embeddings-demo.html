@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تضمين الكلمات العربية — Word2Vec Demo</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+:root {
+  --bg: #07070d;
+  --s1: #0e0e18;
+  --s2: #141420;
+  --s3: #1c1c2e;
+  --border: rgba(130,100,255,0.18);
+  --border2: rgba(130,100,255,0.35);
+  --accent: #7c5cfc;
+  --accent2: #c084fc;
+  --gold: #fbbf24;
+  --cyan: #22d3ee;
+  --green: #34d399;
+  --red: #f87171;
+  --orange: #fb923c;
+  --text: #e2e0f0;
+  --muted: #7070a0;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'Cairo', sans-serif;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);display:flex;flex-direction:column}
+
+/* ── TOP BAR ── */
+#topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.55rem 1.4rem;border-bottom:1px solid var(--border);
+  background:rgba(7,7,13,.95);z-index:100;flex-shrink:0;gap:1rem;
+}
+#topbar h1{font-size:1.1rem;font-weight:700;
+  background:linear-gradient(120deg,var(--accent),var(--accent2),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap;}
+#topbar p{font-size:.68rem;color:var(--muted);font-family:var(--mono);white-space:nowrap;}
+.tabs{display:flex;gap:.3rem;flex-shrink:0}
+.tab{padding:.35rem .85rem;border-radius:6px;font-size:.78rem;cursor:pointer;
+  border:1px solid transparent;color:var(--muted);transition:all .2s;font-family:var(--sans);background:none;}
+.tab:hover{color:var(--text);border-color:var(--border)}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.info-badge{font-family:var(--mono);font-size:.62rem;padding:.25rem .65rem;
+  border-radius:20px;border:1px solid var(--accent);color:var(--accent);white-space:nowrap}
+
+@media (max-width: 1200px){
+  #topbar{flex-wrap:wrap;align-items:flex-start;padding:.45rem .8rem;gap:.55rem}
+  #topbar > div:first-child{flex:1 1 100%;min-width:0}
+  #topbar h1{font-size:.98rem}
+  #topbar p{font-size:.6rem;white-space:normal;line-height:1.25}
+  .tabs{flex-wrap:wrap;gap:.25rem;max-width:100%}
+  .tab{padding:.28rem .55rem;font-size:.7rem}
+  .info-badge{font-size:.56rem;padding:.2rem .5rem}
+}
+
+/* ── MAIN GRID ── */
+#app{display:flex;flex:1;overflow:hidden}
+#left-panel{width:290px;flex-shrink:0;overflow-y:auto;border-right:1px solid var(--border);
+  background:var(--s1);display:flex;flex-direction:column;gap:0}
+#canvas-area{flex:1;position:relative;overflow:hidden}
+#right-panel{width:260px;flex-shrink:0;overflow-y:auto;border-left:1px solid var(--border);
+  background:var(--s1);display:flex;flex-direction:column}
+
+/* ── VIEWS ── */
+.view{display:none;width:100%;height:100%}
+.view.active{display:flex}
+
+/* Hide side panels when not in 3D view */
+body:not(.view-3d) #left-panel,
+body:not(.view-3d) #right-panel{display:none}
+
+/* ── PANELS ── */
+.pane{padding:1rem;border-bottom:1px solid var(--border)}
+.pane-title{font-size:.65rem;font-family:var(--mono);color:var(--muted);
+  text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;
+  display:flex;align-items:center;gap:.4rem}
+.pane-title::before{content:'';display:block;width:5px;height:5px;
+  border-radius:50%;background:var(--accent)}
+
+/* ── INPUTS ── */
+input[type=text]{width:100%;background:var(--bg);border:1px solid var(--border);
+  color:var(--text);border-radius:7px;padding:.5rem .75rem;
+  font-family:var(--sans);font-size:.9rem;outline:none;direction:rtl;
+  transition:border-color .2s}
+input[type=text]:focus{border-color:var(--accent)}
+
+button{background:var(--accent);border:none;color:#fff;border-radius:7px;
+  padding:.45rem .9rem;font-family:var(--sans);font-size:.82rem;font-weight:600;
+  cursor:pointer;transition:opacity .2s,transform .1s;white-space:nowrap}
+button:hover{opacity:.85}
+button:active{transform:scale(.97)}
+button.ghost{background:transparent;border:1px solid var(--accent);color:var(--accent)}
+button.sm{padding:.3rem .65rem;font-size:.75rem}
+button.danger{background:var(--red)}
+button.success{background:var(--green);color:var(--bg)}
+
+/* ── SEARCH ── */
+.row{display:flex;gap:.5rem;margin-top:.5rem}
+
+/* ── ANALOGY ── */
+.analogy-note{font-size:.72rem;color:var(--muted);font-family:var(--mono);line-height:1.5;margin:.15rem 0 .6rem}
+.analogy-formula{direction:ltr;text-align:center;font-family:var(--mono);font-size:.92rem;color:var(--text);background:rgba(0,0,0,.25);border:1px solid rgba(124,92,252,.18);border-radius:10px;padding:.55rem .7rem;margin-bottom:.75rem}
+.analogy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;align-items:start}
+.analogy-slot{display:flex;flex-direction:column;gap:.25rem}
+.analogy-label{font-size:.62rem;font-family:var(--mono);color:var(--muted);text-align:right}
+.op{font-family:var(--mono);font-size:1rem;font-weight:600;color:var(--gold);text-align:center}
+
+/* ── RESULT BOX ── */
+.result-box{display:none;margin-top:.75rem;padding:.75rem;background:var(--bg);
+  border-radius:8px;border:1px solid rgba(124,92,252,.15)}
+.result-box.show{display:block}
+.result-label{font-size:.62rem;font-family:var(--mono);color:var(--muted);margin-bottom:.4rem}
+.result-word{font-size:1.4rem;font-weight:700;color:var(--gold)}
+.result-sim{font-size:.72rem;font-family:var(--mono);color:var(--green);margin-top:.2rem}
+.eq-line{font-size:.72rem;font-family:var(--mono);color:var(--muted);
+  direction:ltr;text-align:left;margin-top:.4rem;
+  background:rgba(0,0,0,.3);padding:.3rem .5rem;border-radius:5px;display:none}
+.eq-line.show{display:block}
+
+/* ── SIMILAR LIST ── */
+.sim-row{display:flex;justify-content:space-between;padding:.28rem 0;
+  border-bottom:1px solid rgba(255,255,255,.04);font-size:.85rem;align-items:center;cursor:pointer}
+.sim-row:hover .sim-word{color:var(--accent2)}
+.sim-bar{height:3px;background:var(--accent);border-radius:2px;margin-top:2px;transition:width .4s}
+.sim-pct{font-family:var(--mono);font-size:.7rem;color:var(--green)}
+
+/* ── EXAMPLES ── */
+.ex-btn{display:block;width:100%;text-align:right;background:var(--bg);
+  border:1px solid var(--border);border-radius:7px;padding:.55rem .75rem;
+  color:var(--text);font-size:.83rem;cursor:pointer;margin-bottom:.4rem;
+  font-family:var(--sans);direction:rtl;transition:border-color .2s}
+.ex-btn:hover{border-color:var(--accent)}
+.ex-sub{font-size:.65rem;font-family:var(--mono);color:var(--muted);direction:ltr;text-align:left;margin-top:.2rem}
+
+/* ── CATEGORY PILLS ── */
+.cat-pills{display:flex;flex-wrap:wrap;gap:.35rem}
+.pill{font-size:.72rem;padding:.22rem .6rem;border-radius:20px;cursor:pointer;
+  font-family:var(--sans);transition:opacity .2s;border:1px solid transparent}
+.pill.off{opacity:.25}
+
+/* ── HEATMAP ── */
+#heatmap-canvas{display:block;width:100%;border-radius:8px}
+
+/* ── ARCHITECTURE PANEL ── */
+#arch-view{background:var(--bg);flex-direction:column;overflow-y:auto;padding:1.5rem}
+
+.nn-diagram{direction:ltr;display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:stretch;background:linear-gradient(180deg,rgba(14,14,24,.85),rgba(7,7,13,.95));border:1px solid var(--border);border-radius:16px;padding:1rem}
+.nn-models{display:grid;grid-template-columns:1fr 1fr;gap:1rem;grid-column:1 / -1}
+.nn-stage{display:flex;flex-direction:column;gap:.65rem;min-width:0}
+.nn-stage-label{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.nn-stage-body{display:flex;flex-direction:column;gap:.55rem;flex:1}
+.nn-token{border:1px solid var(--border);background:var(--s1);color:var(--text);border-radius:12px;padding:.75rem .9rem;font-size:.82rem;line-height:1.35;box-shadow:0 10px 24px rgba(0,0,0,.18)}
+.nn-token strong{color:var(--gold)}
+.nn-model-card{display:flex;flex-direction:column;gap:.85rem;border:1px solid var(--border);background:rgba(14,14,24,.78);border-radius:16px;padding:1rem;min-width:0}
+.nn-model-title{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent2)}
+.nn-flow{direction:ltr;display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.85rem 1rem;border-radius:12px;background:rgba(7,7,13,.8);border:1px solid rgba(124,92,252,.22);font-family:var(--mono);font-size:.8rem;color:var(--text)}
+.nn-flow span{white-space:nowrap}
+.nn-flow .nn-flow-arrow{color:var(--gold);font-size:1.3rem;line-height:1}
+.nn-model-note{font-size:.8rem;color:var(--muted);line-height:1.55}
+.nn-caption{grid-column:1 / -1;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding-top:.25rem;color:var(--muted);font-size:.78rem;line-height:1.5;border-top:1px solid rgba(255,255,255,.06)}
+.nn-caption strong{color:var(--gold)}
+
+@media (max-width: 900px){
+  .nn-diagram,.nn-models{grid-template-columns:1fr;gap:.75rem}
+  .nn-flow{justify-content:flex-start;flex-wrap:wrap}
+}
+
+/* ── PIPELINE VIEW ── */
+#pipeline-view{background:var(--bg);flex-direction:column;overflow-y:auto;padding:1.5rem}
+
+/* ── CANVAS TOOLTIP ── */
+#tip{position:absolute;pointer-events:none;display:none;z-index:50;
+  background:var(--s3);border:1px solid var(--accent);border-radius:9px;
+  padding:.6rem .85rem;min-width:140px;
+  box-shadow:0 0 24px rgba(124,92,252,.25)}
+
+/* ── CANVAS OVERLAY ── */
+#canvas-overlay{position:absolute;bottom:1rem;left:1rem;pointer-events:none;
+  font-family:var(--mono);font-size:.65rem;color:var(--muted);line-height:1.9}
+#canvas-overlay span{color:var(--cyan)}
+
+/* ── LEGEND ── */
+.leg-item{display:flex;align-items:center;gap:.55rem;font-size:.79rem;color:var(--muted);
+  margin-bottom:.35rem;cursor:pointer}
+.leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* ── VECTOR VIZ ── */
+#vec-display{margin-top:.6rem}
+.vec-bar-row{display:flex;align-items:center;gap:.4rem;margin-bottom:3px}
+.vec-dim-label{font-family:var(--mono);font-size:.6rem;color:var(--muted);width:28px;text-align:right;flex-shrink:0}
+.vec-bar-track{flex:1;height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.vec-bar-fill{height:100%;border-radius:3px;transition:width .5s}
+.vec-val{font-family:var(--mono);font-size:.6rem;color:var(--muted);width:35px;text-align:left;flex-shrink:0}
+
+/* ── LAYOUT ── */
+.canvas-info{position:absolute;top:.8rem;left:50%;transform:translateX(-50%);
+  font-family:var(--mono);font-size:.65rem;color:var(--muted);pointer-events:none;
+  background:rgba(7,7,13,.7);padding:.25rem .6rem;border-radius:20px;
+  border:1px solid var(--border)}
+#proj-mode{position:absolute;top:.8rem;right:1rem;display:flex;gap:.3rem}
+.proj-btn{font-size:.68rem;padding:.25rem .55rem;border-radius:5px;cursor:pointer;
+  border:1px solid var(--border);color:var(--muted);background:transparent;font-family:var(--mono)}
+.proj-btn.active{border-color:var(--accent);color:var(--accent)}
+
+/* Arch panels */
+.arch-section{margin-bottom:2rem}
+.arch-title{font-size:.85rem;font-weight:600;color:var(--accent2);margin-bottom:.75rem;
+  font-family:var(--mono)}
+.arch-diagram{display:flex;align-items:center;justify-content:center;gap:.5rem;
+  flex-wrap:wrap;margin-bottom:.75rem}
+.arch-node{padding:.45rem .8rem;border-radius:7px;font-size:.78rem;text-align:center;
+  border:1px solid var(--border);color:var(--text)}
+.arch-arrow{color:var(--muted);font-size:1.1rem}
+.arch-desc{font-size:.8rem;color:var(--muted);line-height:1.6;
+  border-left:2px solid var(--accent);padding-left:.75rem}
+
+/* pipeline steps */
+.pipe-step{display:flex;gap:.85rem;margin-bottom:1.2rem;align-items:flex-start}
+.pipe-num{width:26px;height:26px;border-radius:50%;background:var(--accent);
+  display:flex;align-items:center;justify-content:center;font-size:.75rem;
+  font-weight:700;flex-shrink:0;color:#fff}
+.pipe-content h4{font-size:.85rem;font-weight:600;margin-bottom:.25rem}
+.pipe-content p{font-size:.78rem;color:var(--muted);line-height:1.5}
+.code-block{font-family:var(--mono);font-size:.72rem;background:rgba(0,0,0,.4);
+  padding:.5rem .75rem;border-radius:6px;margin-top:.4rem;color:var(--cyan);
+  border:1px solid rgba(34,211,238,.15);direction:ltr;text-align:left;white-space:pre}
+
+/* heatmap view */
+#heatmap-view{flex-direction:column;padding:1.2rem;gap:1rem;overflow-y:auto;background:var(--bg)}
+#heatmap-view h3{font-size:.9rem;color:var(--accent2);font-family:var(--mono)}
+#heatmap-controls{display:flex;gap:.5rem;flex-wrap:wrap}
+
+/* vector arithmetic view */
+#arithmetic-view{flex-direction:column;padding:1.4rem;overflow-y:auto;background:var(--bg);gap:1rem}
+.arith-word-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:.9rem}
+.arith-word-card h4{font-size:.85rem;color:var(--gold);margin-bottom:.5rem}
+
+/* AraVec info */
+.aravec-badge{background:rgba(124,92,252,.12);border:1px solid rgba(124,92,252,.3);
+  border-radius:8px;padding:.6rem .85rem;margin-bottom:.6rem}
+.aravec-badge h4{font-size:.78rem;color:var(--accent2);margin-bottom:.25rem}
+.aravec-badge p{font-size:.72rem;color:var(--muted);line-height:1.5}
+
+/* top indicator */
+.tsne-label{position:absolute;top:.8rem;left:1rem;
+  font-family:var(--mono);font-size:.65rem;color:var(--muted);pointer-events:none;
+  background:rgba(7,7,13,.7);padding:.25rem .55rem;border-radius:20px;
+  border:1px solid var(--border)}
+</style>
+</head>
+<body class="view-3d">
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div>
+    <h1>فضاء تضمين الكلمات العربية</h1>
+    <p>Arabic Word2Vec · AraVec-style Embeddings · Interactive Lecture Demo</p>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('3d')">🌐 الفضاء ثلاثي الأبعاد</button>
+    <button class="tab" onclick="switchTab('heatmap')">🟥 خريطة التشابه</button>
+    <button class="tab" onclick="switchTab('arithmetic')">➕ حساب المتجهات</button>
+    <button class="tab" onclick="switchTab('arch')">🧠 المعمارية</button>
+    <button class="tab" onclick="switchTab('pipeline')">⚙️ خط المعالجة</button>
+  </div>
+  <div class="info-badge">AraVec 3.0 · 300-dim · Skip-gram</div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- ══ LEFT PANEL ══ -->
+  <div id="left-panel">
+
+    <div class="pane">
+      <div class="pane-title">بحث وتشابه</div>
+      <input type="text" id="search-input" placeholder="ابحث عن كلمة..." />
+      <div class="row">
+        <button onclick="doSearch()" style="flex:1">بحث</button>
+        <button class="ghost" onclick="clearHL()">مسح</button>
+      </div>
+      <div class="result-box" id="search-result">
+        <div class="result-label">أقرب الكلمات — cosine similarity</div>
+        <div id="search-result-content"></div>
+      </div>
+    </div>
+
+    <div class="pane">
+      <div class="pane-title">حساب التناظر</div>
+      <div class="analogy-note">اكتب الكلمات في الصيغة: كلمة أصلية − كلمة مرجعية + كلمة جديدة = ؟</div>
+      <div class="analogy-formula">[ الملك ] − [ الرجل ] + [ المرأة ] = [ <span id="analogy-inline" style="font-weight:700;color:var(--gold)">؟</span> ]</div>
+      <div class="analogy-grid">
+        <div class="analogy-slot">
+          <div class="analogy-label">A: الكلمة الأصلية</div>
+          <input type="text" id="aw1" value="ملك" placeholder="أ" />
+        </div>
+        <div class="analogy-slot">
+          <div class="analogy-label">B: ما نطرحه</div>
+          <input type="text" id="aw2" value="رجل" placeholder="ب" />
+        </div>
+        <div class="analogy-slot">
+          <div class="analogy-label">C: ما نضيفه</div>
+          <input type="text" id="aw3" value="امرأة" placeholder="ج" />
+        </div>
+      </div>
+      <button onclick="doAnalogy()" style="width:100%;margin-top:.6rem">احسب التناظر</button>
+      <div class="eq-line" id="eq-line"></div>
+      <div class="result-box" id="analogy-result">
+        <div class="result-label">الناتج</div>
+        <div class="result-word" id="analogy-word">—</div>
+        <div class="result-sim" id="analogy-sim"></div>
+      </div>
+    </div>
+
+    <div class="pane">
+      <div class="pane-title">أمثلة جاهزة</div>
+      <div onclick="loadEx('ملك','رجل','امرأة')" class="ex-btn">ملك − رجل + امرأة = ؟<div class="ex-sub">king - man + woman = queen</div></div>
+      <div onclick="loadEx('باريس','فرنسا','إيطاليا')" class="ex-btn">باريس − فرنسا + إيطاليا = ؟<div class="ex-sub">Paris - France + Italy = Rome</div></div>
+      <div onclick="loadEx('طبيب','رجل','امرأة')" class="ex-btn">طبيب − رجل + امرأة = ؟<div class="ex-sub">doctor (m) - man + woman = doctor (f)</div></div>
+      <div onclick="loadEx('مصر','القاهرة','الرياض')" class="ex-btn">مصر − القاهرة + الرياض = ؟<div class="ex-sub">Egypt - Cairo + Riyadh = Saudi Arabia</div></div>
+      <div onclick="loadEx('أمير','رجل','امرأة')" class="ex-btn">أمير − رجل + امرأة = ؟<div class="ex-sub">prince - man + woman = princess</div></div>
+      <div onclick="loadEx('كاتب','رجل','امرأة')" class="ex-btn">كاتب − رجل + امرأة = ؟<div class="ex-sub">writer (m) - man + woman = writer (f)</div></div>
+    </div>
+
+    <div class="pane" style="flex:1">
+      <div class="pane-title">المتجه المحدد</div>
+      <div id="selected-word-name" style="font-size:1rem;color:var(--gold);font-weight:700;min-height:1.4rem"></div>
+      <div id="vec-display"></div>
+    </div>
+  </div>
+
+  <!-- ══ CANVAS AREA ══ -->
+  <div id="canvas-area">
+
+    <!-- 3D VIEW -->
+    <div id="view-3d" class="view active" style="width:100%;height:100%">
+      <canvas id="c3d" style="display:block;width:100%;height:100%"></canvas>
+      <div class="tsne-label">t-SNE 3D projection · 300dim → 3dim</div>
+      <div id="proj-mode">
+        <button class="proj-btn active" onclick="setProj('tsne')" id="btn-tsne">t-SNE</button>
+        <button class="proj-btn" onclick="setProj('raw')" id="btn-raw">Raw PCA</button>
+      </div>
+      <div id="canvas-overlay">
+        <div>🖱️ اسحب: <span>تدوير</span></div>
+        <div>عجلة: <span>تكبير</span></div>
+        <div>انقر: <span>تحديد كلمة</span></div>
+      </div>
+      <div id="tip"></div>
+    </div>
+
+    <!-- HEATMAP VIEW -->
+    <div id="view-heatmap" class="view" style="flex-direction:column;overflow-y:auto;padding:1.5rem;background:var(--bg)">
+      <h3 style="font-family:var(--mono);font-size:.9rem;color:var(--accent2);margin-bottom:1rem">
+        خريطة التشابه الكوسيني — Cosine Similarity Heatmap
+      </h3>
+      <div id="heatmap-controls" style="margin-bottom:1rem;display:flex;gap:.4rem;flex-wrap:wrap"></div>
+      <canvas id="hm-canvas" style="max-width:700px;border-radius:8px;display:block"></canvas>
+    </div>
+
+
+    <!-- VECTOR ARITHMETIC VIEW -->
+    <div id="view-arithmetic" class="view" style="flex-direction:column;overflow-y:auto;padding:1.5rem;background:var(--bg);gap:1.2rem">
+      <h3 style="font-family:var(--mono);font-size:.9rem;color:var(--accent2)">حساب المتجهات — Vector Arithmetic</h3>
+      <p style="font-size:.82rem;color:var(--muted)">اختر ثلاث كلمات وشاهد كيف يُنتج حساب المتجهات المعنى الرابع</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1rem" id="arith-cards"></div>
+      <canvas id="arith-canvas" style="max-width:100%;border-radius:8px;display:block;margin-top:1rem"></canvas>
+    </div>
+
+    <!-- ARCH VIEW -->
+    <div id="view-arch" class="view" style="flex-direction:column;overflow-y:auto;padding:1.5rem;background:var(--bg);gap:1.5rem">
+      <div class="aravec-badge">
+        <h4>AraVec 3.0 — أكبر نموذج تضمين عربي مفتوح المصدر</h4>
+        <p>مدرب على أكثر من <strong style="color:var(--gold)">1,169,075,128</strong> رمز (token) من تغريدات تويتر ومقالات ويكيبيديا العربية. يوفر 16 نموذجاً مختلفاً بأبعاد 100 و300.</p>
+      </div>
+
+      <div class="arch-section">
+        <div class="arch-title">1. CBOW — Continuous Bag of Words</div>
+        <div class="arch-diagram" id="cbow-diag"></div>
+        <p class="arch-desc">يتنبأ CBOW بالكلمة المستهدفة بناءً على السياق المحيط بها. يأخذ نافذة من الكلمات المجاورة ويتعلم تمثيل الكلمة المركزية. أسرع في التدريب وأفضل للكلمات الشائعة.</p>
+      </div>
+
+      <div class="arch-section">
+        <div class="arch-title">2. Skip-gram</div>
+        <div class="arch-diagram" id="sg-diag"></div>
+        <p class="arch-desc">يتنبأ Skip-gram بالكلمات السياقية بناءً على الكلمة المركزية. يعمل بشكل أفضل مع الكلمات النادرة وعينات التدريب الصغيرة — النموذج المفضل في AraVec 3.0 لدقته العالية في التشابه الدلالي.</p>
+      </div>
+
+      <div class="arch-section">
+        <div class="arch-title">3. بنية الشبكة العصبية</div>
+        <div id="nn-diagram" class="nn-diagram" aria-label="مخطط بنية الشبكة العصبية"></div>
+      </div>
+
+      <div class="arch-section">
+        <div class="arch-title">4. مقاييس المسافة</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div style="background:var(--s1);border:1px solid var(--border);border-radius:8px;padding:.85rem">
+            <h5 style="font-size:.78rem;color:var(--cyan);margin-bottom:.35rem">تشابه جيب التمام</h5>
+            <div class="code-block">sim(A,B) = A·B / (|A|·|B|)</div>
+            <p style="font-size:.72rem;color:var(--muted);margin-top:.4rem">المستخدم في AraVec للتشابه الدلالي. القيمة بين -1 و+1.</p>
+          </div>
+          <div style="background:var(--s1);border:1px solid var(--border);border-radius:8px;padding:.85rem">
+            <h5 style="font-size:.78rem;color:var(--orange);margin-bottom:.35rem">مسافة إقليدس</h5>
+            <div class="code-block">d(A,B) = √Σ(aᵢ-bᵢ)²</div>
+            <p style="font-size:.72rem;color:var(--muted);margin-top:.4rem">تقيس المسافة الهندسية المباشرة في الفضاء ثلاثمئة الأبعاد.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PIPELINE VIEW -->
+    <div id="view-pipeline" class="view" style="flex-direction:column;overflow-y:auto;padding:1.5rem;background:var(--bg);gap:0">
+      <h3 style="font-family:var(--mono);font-size:.9rem;color:var(--accent2);margin-bottom:1.2rem">خط معالجة النصوص العربية — Arabic NLP Pipeline</h3>
+      <div class="pipe-step">
+        <div class="pipe-num">1</div>
+        <div class="pipe-content">
+          <h4>جمع البيانات الخام</h4>
+          <p>تغريدات تويتر العربية + مقالات ويكيبيديا العربية → أكثر من مليار رمز.</p>
+          <div class="code-block">corpus = twitter_ar + wikipedia_ar
+tokens_total ≈ 1,169,075,128</div>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">2</div>
+        <div class="pipe-content">
+          <h4>التطبيع — Text Normalization</h4>
+          <p>إزالة التشكيل، توحيد أشكال الألف، إزالة الرموز والأرقام الأجنبية.</p>
+          <div class="code-block">إزالة التشكيل:   كَتَبَ  →  كتب
+توحيد الألف:    أإآ   →   ا
+إزالة اللاتيني: hello123  →  [محذوف]</div>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">3</div>
+        <div class="pipe-content">
+          <h4>الترميز — Tokenization</h4>
+          <p>تقطيع الجمل إلى كلمات مع دعم الـ n-grams (أحادية ومتعددة) في AraVec 3.0.</p>
+          <div class="code-block">"صباح الخير يا مصر"
+→ ["صباح", "الخير", "يا", "مصر"]
+→ unigrams + bigrams: "صباح_الخير"</div>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">4</div>
+        <div class="pipe-content">
+          <h4>تدريب Word2Vec باستخدام Gensim</h4>
+          <p>نافذة سياقية = 5، أبعاد = 300، الحد الأدنى للتكرار = 5.</p>
+          <div class="code-block">from gensim.models import Word2Vec
+model = Word2Vec(
+  sentences=corpus,
+  vector_size=300,
+  window=5,
+  min_count=5,
+  sg=1,          # Skip-gram
+  workers=8
+)</div>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">5</div>
+        <div class="pipe-content">
+          <h4>تخفيض الأبعاد للتصور — t-SNE</h4>
+          <p>تحويل المتجهات ذات الـ 300 بُعد إلى 3 أبعاد قابلة للتصور مع الحفاظ على البنية المحلية.</p>
+          <div class="code-block">from sklearn.manifold import TSNE
+xyz = TSNE(
+  n_components=3,
+  perplexity=30,
+  n_iter=1000
+).fit_transform(vectors_300d)</div>
+        </div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">6</div>
+        <div class="pipe-content">
+          <h4>تحميل النموذج واستخدامه</h4>
+          <p>تحميل نموذج AraVec المُدرب مسبقاً وإجراء استعلامات التشابه.</p>
+          <div class="code-block">from gensim.models import KeyedVectors
+model = KeyedVectors.load('aravec_sg_300.mdl')
+# أقرب الكلمات
+model.most_similar('ملك', topn=5)
+# حساب التناظر
+model.most_similar(
+  positive=['ملك', 'امرأة'],
+  negative=['رجل']
+)</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ RIGHT PANEL ══ -->
+  <div id="right-panel">
+    <div class="pane">
+      <div class="pane-title">تصفية الفئات</div>
+      <div class="cat-pills" id="cat-pills"></div>
+    </div>
+    <div class="pane">
+      <div class="pane-title">المفتاح</div>
+      <div id="legend"></div>
+    </div>
+    <div class="pane" style="flex:1">
+      <div class="pane-title">إحصائيات النموذج</div>
+      <div style="font-size:.75rem;color:var(--muted);line-height:2;font-family:var(--mono)">
+        <div>الأبعاد: <span style="color:var(--cyan)">300</span></div>
+        <div>حجم المفردات: <span style="color:var(--cyan)">1,476,715</span></div>
+        <div>الرموز الكلية: <span style="color:var(--cyan)">1.17 مليار</span></div>
+        <div>المصادر: <span style="color:var(--cyan)">تويتر + ويكيبيديا</span></div>
+        <div>الخوارزمية: <span style="color:var(--gold)">Skip-gram</span></div>
+        <div>النافذة: <span style="color:var(--cyan)">5</span></div>
+        <div>الحد الأدنى: <span style="color:var(--cyan)">5 تكرارات</span></div>
+        <div>الإصدار: <span style="color:var(--accent2)">AraVec 3.0</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// WORD DATABASE — AraVec-inspired categories
+// Vectors are 300-dim reduced to 3D via t-SNE simulation
+// ══════════════════════════════════════════
+const WORDS = [
+  // ROYALTY — cluster around top-right
+  {w:"ملك",      cat:"royalty",   v:[2.1, 3.8, 1.2],   v300:[.81,.61,.72,.55,.4,.3,.65,.72,.5,.35]},
+  {w:"ملكة",     cat:"royalty",   v:[-1.8,3.8, 1.3],   v300:[.21,.61,.72,.55,.4,.3,.65,.72,.5,.35]},
+  {w:"أمير",     cat:"royalty",   v:[2.0, 3.5, 0.8],   v300:[.78,.58,.65,.5,.38,.28,.6,.7,.48,.33]},
+  {w:"أميرة",    cat:"royalty",   v:[-1.7,3.5, 0.9],   v300:[.22,.58,.65,.5,.38,.28,.6,.7,.48,.33]},
+  {w:"سلطان",    cat:"royalty",   v:[2.3, 3.2, 1.0],   v300:[.84,.55,.62,.48,.37,.27,.58,.68,.46,.32]},
+  {w:"خليفة",    cat:"royalty",   v:[2.0, 3.0, 1.1],   v300:[.80,.52,.60,.46,.35,.25,.56,.66,.44,.30]},
+  {w:"إمبراطور", cat:"royalty",   v:[2.4, 3.7, 1.4],   v300:[.85,.62,.70,.53,.42,.32,.64,.70,.52,.36]},
+
+  // GENDER
+  {w:"رجل",      cat:"gender",    v:[2.8, 0.5, 0.2],   v300:[.76,.41,.31,.70,.2,.6,.3,.4,.5,.2]},
+  {w:"امرأة",    cat:"gender",    v:[-2.7,0.5, 0.3],   v300:[.26,.41,.31,.70,.2,.6,.3,.4,.5,.2]},
+  {w:"ولد",      cat:"gender",    v:[2.6, 0.2, 0.1],   v300:[.73,.26,.29,.67,.18,.58,.28,.38,.48,.18]},
+  {w:"بنت",      cat:"gender",    v:[-2.5,0.2, 0.2],   v300:[.29,.26,.29,.67,.18,.58,.28,.38,.48,.18]},
+  {w:"أب",       cat:"gender",    v:[2.9, 0.8, 0.3],   v300:[.79,.43,.33,.72,.22,.62,.32,.42,.52,.22]},
+  {w:"أم",       cat:"gender",    v:[-2.8,0.8, 0.4],   v300:[.23,.43,.33,.72,.22,.62,.32,.42,.52,.22]},
+  {w:"أخ",       cat:"gender",    v:[2.7, 0.6, 0.1],   v300:[.77,.39,.29,.69,.19,.59,.29,.39,.49,.19]},
+  {w:"أخت",      cat:"gender",    v:[-2.6,0.6, 0.2],   v300:[.25,.39,.29,.69,.19,.59,.29,.39,.49,.19]},
+
+  // COUNTRIES — cluster far left
+  {w:"فرنسا",    cat:"country",   v:[-3.5,1.8,-1.5],   v300:[.31,.81,.21,.45,.7,.55,.42,.35,.6,.48]},
+  {w:"إيطاليا",  cat:"country",   v:[-3.3,1.9,-1.3],   v300:[.36,.83,.19,.43,.68,.53,.40,.33,.58,.46]},
+  {w:"مصر",      cat:"country",   v:[-3.0,1.7,-1.6],   v300:[.41,.79,.23,.47,.72,.57,.44,.37,.62,.50]},
+  {w:"السعودية", cat:"country",   v:[-2.8,1.6,-1.7],   v300:[.43,.77,.25,.49,.74,.59,.46,.39,.64,.52]},
+  {w:"المغرب",   cat:"country",   v:[-3.1,1.5,-1.8],   v300:[.39,.75,.27,.51,.76,.61,.48,.41,.66,.54]},
+  {w:"ألمانيا",  cat:"country",   v:[-3.6,1.9,-1.4],   v300:[.29,.85,.17,.41,.66,.51,.38,.31,.56,.44]},
+  {w:"اليابان",  cat:"country",   v:[-3.2,1.8,-1.5],   v300:[.33,.80,.22,.44,.71,.56,.43,.36,.61,.49]},
+  {w:"الصين",    cat:"country",   v:[-3.4,1.7,-1.6],   v300:[.30,.78,.24,.46,.73,.58,.45,.38,.63,.51]},
+
+  // CAPITALS — same cluster but slightly closer
+  {w:"باريس",    cat:"capital",   v:[-3.5,1.0,-2.0],   v300:[.31,.66,.21,.45,.7,.55,.42,.35,.6,.48]},
+  {w:"روما",     cat:"capital",   v:[-3.3,1.1,-1.8],   v300:[.36,.68,.19,.43,.68,.53,.40,.33,.58,.46]},
+  {w:"القاهرة",  cat:"capital",   v:[-3.0,0.9,-2.1],   v300:[.41,.64,.23,.47,.72,.57,.44,.37,.62,.50]},
+  {w:"الرياض",   cat:"capital",   v:[-2.8,0.8,-2.2],   v300:[.43,.62,.25,.49,.74,.59,.46,.39,.64,.52]},
+  {w:"الرباط",   cat:"capital",   v:[-3.1,0.7,-2.3],   v300:[.39,.60,.27,.51,.76,.61,.48,.41,.66,.54]},
+  {w:"برلين",    cat:"capital",   v:[-3.6,1.1,-1.9],   v300:[.29,.70,.17,.41,.66,.51,.38,.31,.56,.44]},
+  {w:"طوكيو",    cat:"capital",   v:[-3.2,1.0,-2.0],   v300:[.33,.65,.22,.44,.71,.56,.43,.36,.61,.49]},
+
+  // PROFESSIONS
+  {w:"طبيب",     cat:"profession",v:[1.5, 2.0, 3.2],   v300:[.73,.53,.81,.4,.3,.6,.7,.5,.45,.35]},
+  {w:"طبيبة",    cat:"profession",v:[-1.4,2.0, 3.3],   v300:[.29,.53,.81,.4,.3,.6,.7,.5,.45,.35]},
+  {w:"مهندس",    cat:"profession",v:[1.4, 1.8, 3.0],   v300:[.71,.51,.79,.38,.28,.58,.68,.48,.43,.33]},
+  {w:"مهندسة",   cat:"profession",v:[-1.3,1.8, 3.1],   v300:[.31,.51,.79,.38,.28,.58,.68,.48,.43,.33]},
+  {w:"معلم",     cat:"profession",v:[1.3, 1.6, 2.8],   v300:[.69,.49,.77,.36,.26,.56,.66,.46,.41,.31]},
+  {w:"معلمة",    cat:"profession",v:[-1.2,1.6, 2.9],   v300:[.33,.49,.77,.36,.26,.56,.66,.46,.41,.31]},
+  {w:"كاتب",     cat:"profession",v:[1.6, 2.2, 3.0],   v300:[.74,.54,.78,.39,.29,.59,.69,.49,.44,.34]},
+  {w:"كاتبة",    cat:"profession",v:[-1.5,2.2, 3.1],   v300:[.28,.54,.78,.39,.29,.59,.69,.49,.44,.34]},
+  {w:"محامي",    cat:"profession",v:[1.7, 1.9, 3.3],   v300:[.75,.52,.82,.41,.31,.61,.71,.51,.46,.36]},
+
+  // EMOTIONS
+  {w:"سعيد",     cat:"emotion",   v:[0.5, 3.5, -2.0],  v300:[.51,.86,.66,.35,.25,.45,.55,.65,.35,.25]},
+  {w:"حزين",     cat:"emotion",   v:[0.4,-2.5,-2.1],   v300:[.51,.21,.36,.35,.25,.45,.55,.65,.35,.25]},
+  {w:"غاضب",     cat:"emotion",   v:[0.6,-2.2,-2.0],   v300:[.56,.23,.39,.37,.27,.47,.57,.67,.37,.27]},
+  {w:"هادئ",     cat:"emotion",   v:[0.3, 2.2,-1.8],   v300:[.51,.61,.56,.35,.25,.45,.55,.65,.35,.25]},
+  {w:"خائف",     cat:"emotion",   v:[0.4,-2.0,-2.2],   v300:[.49,.26,.41,.34,.24,.44,.54,.64,.34,.24]},
+  {w:"مسرور",    cat:"emotion",   v:[0.6, 3.2,-1.9],   v300:[.53,.83,.63,.37,.27,.47,.57,.67,.37,.27]},
+  {w:"متفائل",   cat:"emotion",   v:[0.5, 3.0,-1.7],   v300:[.52,.80,.60,.36,.26,.46,.56,.66,.36,.26]},
+  {w:"يائس",     cat:"emotion",   v:[0.3,-2.8,-2.3],   v300:[.50,.19,.34,.34,.24,.44,.54,.64,.34,.24]},
+
+  // SIZE / SCALE
+  {w:"كبير",     cat:"size",      v:[1.8,-0.5, 2.5],   v300:[.61,.56,.86,.4,.3,.5,.6,.7,.4,.3]},
+  {w:"صغير",     cat:"size",      v:[-1.7,-0.5,-1.5],  v300:[.41,.46,.27,.4,.3,.5,.6,.7,.4,.3]},
+  {w:"طويل",     cat:"size",      v:[2.0,-0.3, 2.6],   v300:[.63,.58,.84,.42,.32,.52,.62,.72,.42,.32]},
+  {w:"قصير",     cat:"size",      v:[-1.9,-0.3,-1.4],  v300:[.39,.44,.28,.42,.32,.52,.62,.72,.42,.32]},
+  {w:"عملاق",    cat:"size",      v:[2.2,-0.6, 2.8],   v300:[.65,.58,.88,.44,.34,.54,.64,.74,.44,.34]},
+  {w:"ضئيل",     cat:"size",      v:[-2.1,-0.6,-1.6],  v300:[.37,.44,.25,.40,.30,.50,.60,.70,.40,.30]},
+
+  // RELIGION — Arabic-specific domain from AraVec
+  {w:"الله",     cat:"religion",  v:[0.0, 4.5, 0.0],   v300:[.50,.95,.50,.50,.90,.50,.50,.50,.90,.50]},
+  {w:"رسول",     cat:"religion",  v:[0.1, 4.2, 0.1],   v300:[.51,.92,.51,.51,.87,.51,.51,.51,.87,.51]},
+  {w:"صلاة",     cat:"religion",  v:[0.2, 3.9,-0.1],   v300:[.52,.89,.49,.52,.84,.52,.52,.52,.84,.52]},
+  {w:"قرآن",     cat:"religion",  v:[-0.1,4.0, 0.2],   v300:[.49,.90,.52,.49,.85,.49,.49,.49,.85,.49]},
+  {w:"مسجد",     cat:"religion",  v:[0.3, 3.7,-0.2],   v300:[.53,.87,.48,.53,.82,.53,.53,.53,.82,.53]},
+
+  // FOOD
+  {w:"خبز",      cat:"food",      v:[-0.5,-3.5, 1.5],  v300:[.50,.25,.45,.60,.80,.40,.30,.55,.70,.45]},
+  {w:"ماء",      cat:"food",      v:[-0.3,-3.8, 1.3],  v300:[.50,.22,.43,.58,.78,.38,.28,.53,.68,.43]},
+  {w:"تمر",      cat:"food",      v:[-0.6,-3.3, 1.7],  v300:[.51,.27,.47,.62,.82,.42,.32,.57,.72,.47]},
+  {w:"شاي",      cat:"food",      v:[-0.4,-3.1, 1.8],  v300:[.52,.29,.49,.64,.84,.44,.34,.59,.74,.49]},
+  {w:"قهوة",     cat:"food",      v:[-0.2,-3.6, 1.6],  v300:[.51,.24,.46,.61,.81,.41,.31,.56,.71,.46]},
+];
+
+const CAT_META = {
+  royalty:    {label:"ملوك وأمراء",   color:"#fbbf24", sz:7},
+  gender:     {label:"جنس ونوع",      color:"#f472b6", sz:6},
+  country:    {label:"دول",           color:"#60a5fa", sz:6},
+  capital:    {label:"عواصم",         color:"#22d3ee", sz:6},
+  profession: {label:"مهن",           color:"#34d399", sz:6},
+  emotion:    {label:"مشاعر",         color:"#c084fc", sz:6},
+  size:       {label:"أحجام",         color:"#fb923c", sz:6},
+  religion:   {label:"دين",           color:"#fde68a", sz:7},
+  food:       {label:"طعام وشراب",    color:"#86efac", sz:5},
+};
+
+let activeCategories = new Set(Object.keys(CAT_META));
+let highlightedWord = null;
+let projMode = 'tsne';
+
+// ── COSINE SIM ──
+function cos(a,b){
+  let d=0,ma=0,mb=0;
+  for(let i=0;i<a.length;i++){d+=a[i]*b[i];ma+=a[i]**2;mb+=b[i]**2;}
+  return d/(Math.sqrt(ma)*Math.sqrt(mb));
+}
+function findW(name){return WORDS.find(w=>w.w===name.trim())}
+function nearest(vec,exclude=[]){
+  let best=null,bs=-Infinity;
+  WORDS.forEach(w=>{if(exclude.includes(w.w))return;const s=cos(vec,w.v);if(s>bs){bs=s;best=w;}});
+  return {word:best,sim:bs};
+}
+function topN(target,n=8,excl=[]){
+  return WORDS.filter(w=>w.w!==target&&!excl.includes(w.w))
+    .map(w=>({w:w.w,s:cos(findW(target).v,w.v),cat:w.cat}))
+    .sort((a,b)=>b.s-a.s).slice(0,n);
+}
+
+function doSearch(){
+  const q=document.getElementById('search-input').value.trim();
+  const found=findW(q);
+  const rb=document.getElementById('search-result');
+  const rc=document.getElementById('search-result-content');
+  rb.classList.add('show');
+  if(!found){rc.innerHTML=`<span style="color:var(--red)">الكلمة غير موجودة في المجموعة</span>`;return;}
+  const sims=topN(q);
+  rc.innerHTML=sims.map(s=>{
+    const pct=(s.s*100).toFixed(1);
+    return `<div class="sim-row" onclick="selectWord('${s.w}')">
+      <span class="sim-word">${s.w}</span>
+      <span class="sim-pct">${pct}%</span>
+    </div>
+    <div class="sim-bar" style="width:${pct*0.9}%"></div>`;
+  }).join('');
+  selectWord(q);
+}
+
+function doAnalogy(){
+  const w1=document.getElementById('aw1').value.trim();
+  const w2=document.getElementById('aw2').value.trim();
+  const w3=document.getElementById('aw3').value.trim();
+  const a=findW(w1),b=findW(w2),c=findW(w3);
+  const rb=document.getElementById('analogy-result');
+  const rw=document.getElementById('analogy-word');
+  const rs=document.getElementById('analogy-sim');
+  const ri=document.getElementById('analogy-inline');
+  const eq=document.getElementById('eq-line');
+  rb.classList.add('show');
+  if(!a||!b||!c){rw.textContent='كلمة غير موجودة';rs.textContent='';ri.textContent='?';return;}
+  const vec=a.v.map((v,i)=>v-b.v[i]+c.v[i]);
+  const {word,sim}=nearest(vec,[w1,w2,w3]);
+  rw.textContent=word.w;
+  rs.textContent=`تشابه كوساين: ${(sim*100).toFixed(1)}%`;
+  ri.textContent=word.w;
+  eq.classList.add('show');
+  eq.textContent=`vec(${w1}) − vec(${w2}) + vec(${w3}) ≈ vec(${word.w})`;
+  selectWord(word.w);
+  // Update arithmetic view
+  updateArithView(w1,w2,w3,word.w);
+}
+
+function loadEx(a,b,c){
+  document.getElementById('aw1').value=a;
+  document.getElementById('aw2').value=b;
+  document.getElementById('aw3').value=c;
+  doAnalogy();
+}
+
+function clearHL(){highlightedWord=null;renderScene();}
+
+function selectWord(name){
+  highlightedWord=name;
+  const w=findW(name);
+  document.getElementById('selected-word-name').textContent=name;
+  if(w) renderVec(w.v300||w.v);
+  renderScene();
+}
+
+function renderVec(v){
+  const el=document.getElementById('vec-display');
+  const dims=Math.min(v.length,20);
+  el.innerHTML=Array.from({length:dims},(_,i)=>{
+    const val=v[i];
+    const pct=Math.abs(val)*100;
+    const col=val>=0?'var(--accent)':'var(--red)';
+    return `<div class="vec-bar-row">
+      <span class="vec-dim-label">${i}</span>
+      <div class="vec-bar-track"><div class="vec-bar-fill" style="width:${pct.toFixed(0)}%;background:${col}"></div></div>
+      <span class="vec-val">${val.toFixed(2)}</span>
+    </div>`;
+  }).join('')+'<div style="font-size:.6rem;color:var(--muted);margin-top:.4rem;font-family:var(--mono)">أول 20 بُعد من 300...</div>';
+}
+
+// ── PILLS & LEGEND ──
+function buildUI(){
+  const pills=document.getElementById('cat-pills');
+  const leg=document.getElementById('legend');
+  Object.entries(CAT_META).forEach(([k,m])=>{
+    // pill
+    const p=document.createElement('div');
+    p.className='pill';p.textContent=m.label;
+    p.style.background=m.color+'22';p.style.borderColor=m.color+'66';p.style.color=m.color;
+    p.onclick=()=>{
+      if(activeCategories.has(k)){activeCategories.delete(k);p.classList.add('off');}
+      else{activeCategories.add(k);p.classList.remove('off');}
+      renderScene();if(currentView==='heatmap')drawHeatmap();
+    };
+    pills.appendChild(p);
+    // legend
+    const l=document.createElement('div');
+    l.className='leg-item';
+    l.innerHTML=`<div class="leg-dot" style="background:${m.color}"></div>${m.label}`;
+    l.onclick=()=>{p.click();};
+    leg.appendChild(l);
+  });
+}
+
+// ── 3D CANVAS ──
+const c3d=document.getElementById('c3d');
+const ctx=c3d.getContext('2d');
+let W,H,rotX=.35,rotY=.55,zoom=.45;
+let isDrag=false,lmx,lmy;
+
+function resize(){
+  const ca=document.getElementById('canvas-area');
+  W=c3d.width=ca.clientWidth*devicePixelRatio;
+  H=c3d.height=ca.clientHeight*devicePixelRatio;
+  c3d.style.width=ca.clientWidth+'px';
+  c3d.style.height=ca.clientHeight+'px';
+  renderScene();
+}
+window.addEventListener('resize',resize);
+
+function project(x,y,z){
+  const cx=Math.cos(rotX),sx=Math.sin(rotX);
+  const cy=Math.cos(rotY),sy=Math.sin(rotY);
+  const ry=y*cx-z*sx,rz=y*sx+z*cx;
+  const rx2=x*cy+rz*sy,ry2=ry,rz2=-x*sy+rz*cy;
+  const fov=5*zoom,scale=fov/(fov+rz2+3);
+  const sc=Math.min(W,H)*0.24;
+  return{sx:W/2+rx2*scale*sc,sy:H/2-ry2*scale*sc,depth:rz2};
+}
+
+function renderScene(){
+  ctx.clearRect(0,0,W,H);
+  // axes
+  const axes=[
+    {f:[-5,0,0],t:[5,0,0],c:'rgba(255,100,100,.5)',lbl:'جنس'},
+    {f:[0,-5,0],t:[0,5,0],c:'rgba(100,255,150,.5)',lbl:'قيمة'},
+    {f:[0,0,-5],t:[0,0,5],c:'rgba(100,150,255,.5)',lbl:'مجال'},
+  ];
+  axes.forEach(ax=>{
+    const f=project(...ax.f),t=project(...ax.t);
+    ctx.beginPath();ctx.moveTo(f.sx,f.sy);ctx.lineTo(t.sx,t.sy);
+    ctx.strokeStyle=ax.c;ctx.lineWidth=1.2*devicePixelRatio;ctx.stroke();
+    ctx.fillStyle=ax.c;ctx.font=`${10*devicePixelRatio}px Cairo`;ctx.textAlign='center';
+    ctx.fillText(ax.lbl,t.sx,t.sy-8);
+  });
+
+  // words
+  const visible=WORDS.filter(w=>activeCategories.has(w.cat));
+  const pts=visible.map(w=>{
+    const v=projMode==='tsne'?w.v:[w.v300[0]*8-4,w.v300[1]*8-4,w.v300[2]*8-4];
+    const p=project(v[0],v[1],v[2]);
+    return{...w,...p,v3:v};
+  });
+  pts.sort((a,b)=>a.depth-b.depth);
+
+  // draw connections for highlighted
+  if(highlightedWord){
+    const hw=findW(highlightedWord);
+    if(hw){
+      const hv=projMode==='tsne'?hw.v:[hw.v300[0]*8-4,hw.v300[1]*8-4,hw.v300[2]*8-4];
+      const hp=project(hv[0],hv[1],hv[2]);
+      const near=topN(highlightedWord,4);
+      near.forEach(n=>{
+        const nw=findW(n.w);if(!nw)return;
+        const nv=projMode==='tsne'?nw.v:[nw.v300[0]*8-4,nw.v300[1]*8-4,nw.v300[2]*8-4];
+        const np=project(nv[0],nv[1],nv[2]);
+        ctx.beginPath();ctx.moveTo(hp.sx,hp.sy);ctx.lineTo(np.sx,np.sy);
+        ctx.strokeStyle=`rgba(251,191,36,${n.s*0.6})`;
+        ctx.lineWidth=1.5*devicePixelRatio;ctx.setLineDash([4,4]);ctx.stroke();
+        ctx.setLineDash([]);
+      });
+    }
+  }
+
+  pts.forEach(w=>{
+    const m=CAT_META[w.cat];
+    const r=m.sz*devicePixelRatio*(w.w===highlightedWord?2:1);
+    const isHL=w.w===highlightedWord;
+    ctx.beginPath();ctx.arc(w.sx,w.sy,r,0,Math.PI*2);
+    ctx.fillStyle=m.color+(isHL?'ff':'cc');
+    ctx.fill();
+    if(isHL){ctx.strokeStyle='#fbbf24';ctx.lineWidth=2.5*devicePixelRatio;ctx.stroke();}
+    const fs=(isHL?14:10)*devicePixelRatio;
+    ctx.font=`${isHL?'700 ':''}${fs}px Cairo`;
+    ctx.fillStyle=isHL?'#fbbf24':'rgba(225,224,240,.88)';
+    ctx.textAlign='center';
+    ctx.fillText(w.w,w.sx,w.sy-r-4*devicePixelRatio);
+  });
+}
+
+// mouse events
+c3d.addEventListener('mousedown',e=>{isDrag=true;lmx=e.clientX;lmy=e.clientY;});
+window.addEventListener('mouseup',()=>isDrag=false);
+window.addEventListener('mousemove',e=>{
+  if(!isDrag)return;
+  rotY+=(e.clientX-lmx)*.009;rotX+=(e.clientY-lmy)*.009;
+  lmx=e.clientX;lmy=e.clientY;renderScene();
+});
+c3d.addEventListener('wheel',e=>{
+  zoom*=e.deltaY>0?.92:1.09;zoom=Math.max(.3,Math.min(4,zoom));renderScene();e.preventDefault();
+},{passive:false});
+
+const tip=document.getElementById('tip');
+c3d.addEventListener('mousemove',e=>{
+  const r=c3d.getBoundingClientRect();
+  const mx=(e.clientX-r.left)*devicePixelRatio,my=(e.clientY-r.top)*devicePixelRatio;
+  let hit=null,minD=18*devicePixelRatio;
+  WORDS.filter(w=>activeCategories.has(w.cat)).forEach(w=>{
+    const v=projMode==='tsne'?w.v:[w.v300[0]*8-4,w.v300[1]*8-4,w.v300[2]*8-4];
+    const p=project(v[0],v[1],v[2]);
+    const d=Math.hypot(p.sx-mx,p.sy-my);
+    if(d<minD){minD=d;hit=w;}
+  });
+  if(hit){
+    tip.style.display='block';
+    tip.style.left=(e.clientX-r.left+14)+'px';
+    tip.style.top=(e.clientY-r.top-8)+'px';
+    const sims=topN(hit.w).slice(0,4);
+    tip.innerHTML=`<strong style="color:var(--gold);font-size:.95rem">${hit.w}</strong>
+      <div style="font-size:.65rem;color:var(--muted);margin:.2rem 0 .4rem;font-family:var(--mono)">${CAT_META[hit.cat].label}</div>
+      ${sims.map(s=>`<div style="font-size:.78rem;display:flex;justify-content:space-between;gap:.6rem">
+        <span>${s.w}</span><span style="color:var(--green);font-family:var(--mono)">${(s.s*100).toFixed(0)}%</span>
+      </div>`).join('')}`;
+  } else {tip.style.display='none';}
+});
+
+c3d.addEventListener('click',e=>{
+  const r=c3d.getBoundingClientRect();
+  const mx=(e.clientX-r.left)*devicePixelRatio,my=(e.clientY-r.top)*devicePixelRatio;
+  let hit=null,minD=20*devicePixelRatio;
+  WORDS.filter(w=>activeCategories.has(w.cat)).forEach(w=>{
+    const v=projMode==='tsne'?w.v:[w.v300[0]*8-4,w.v300[1]*8-4,w.v300[2]*8-4];
+    const p=project(v[0],v[1],v[2]);
+    const d=Math.hypot(p.sx-mx,p.sy-my);
+    if(d<minD){minD=d;hit=w;}
+  });
+  if(hit){document.getElementById('search-input').value=hit.w;selectWord(hit.w);
+    const rb=document.getElementById('search-result');
+    rb.classList.add('show');
+    document.getElementById('search-result-content').innerHTML=topN(hit.w).map(s=>{
+      const pct=(s.s*100).toFixed(1);
+      return `<div class="sim-row"><span class="sim-word">${s.w}</span><span class="sim-pct">${pct}%</span></div>
+        <div class="sim-bar" style="width:${pct*.9}%"></div>`;
+    }).join('');
+  }
+});
+
+function setProj(mode){
+  projMode=mode;
+  document.getElementById('btn-tsne').classList.toggle('active',mode==='tsne');
+  document.getElementById('btn-raw').classList.toggle('active',mode==='raw');
+  renderScene();
+}
+
+// auto rotate disabled — drag to rotate manually
+let autoRot=false;
+(function loop(){if(autoRot&&!isDrag){rotY+=.0025;renderScene();}requestAnimationFrame(loop);})();
+
+// ── HEATMAP ──
+function drawHeatmap(){
+  const cats=[...activeCategories];
+  const sample=WORDS.filter(w=>activeCategories.has(w.cat)).slice(0,24);
+  const n=sample.length;
+  const hmc=document.getElementById('hm-canvas');
+  const cellSize=Math.min(24,Math.floor(680/n));
+  const pad=80;
+  hmc.width=(n*cellSize+pad);hmc.height=(n*cellSize+pad);
+  hmc.style.maxWidth='100%';
+  const hmx=hmc.getContext('2d');
+  hmx.clearRect(0,0,hmc.width,hmc.height);
+  for(let i=0;i<n;i++){
+    for(let j=0;j<n;j++){
+      const s=cos(sample[i].v,sample[j].v);
+      const t=(s+1)/2;
+      const r=Math.round(t*50+(1-t)*100);
+      const g=Math.round(t*130+(1-t)*30);
+      const b=Math.round(t*252+(1-t)*100);
+      hmx.fillStyle=`rgb(${r},${g},${b})`;
+      hmx.fillRect(pad+j*cellSize,i*cellSize,cellSize-1,cellSize-1);
+    }
+  }
+  // labels
+  hmx.font=`${Math.max(8,cellSize-4)}px Cairo`;
+  hmx.fillStyle='rgba(220,220,240,.8)';
+  hmx.textAlign='right';
+  sample.forEach((w,i)=>{hmx.fillText(w.w,pad-4,i*cellSize+cellSize*.75);});
+  hmx.textAlign='center';
+  hmx.save();hmx.translate(pad,0);
+  sample.forEach((w,j)=>{
+    hmx.save();hmx.translate(j*cellSize+cellSize/2,n*cellSize+4);hmx.rotate(-Math.PI/4);
+    hmx.fillText(w.w,0,0);hmx.restore();
+  });
+  hmx.restore();
+}
+
+// ── VECTOR ARITHMETIC CANVAS ──
+function updateArithView(w1n,w2n,w3n,resn){
+  const w1=findW(w1n),w2=findW(w2n),w3=findW(w3n),res=findW(resn);
+  if(!w1||!w2||!w3)return;
+  const ac=document.getElementById('arith-canvas');
+  const words=[
+    {lbl:w1n,vec:w1.v300||w1.v,col:'var(--gold)',op:''},
+    {lbl:w2n,vec:w2.v300||w2.v,col:'var(--red)',op:'−'},
+    {lbl:w3n,vec:w3.v300||w3.v,col:'var(--cyan)',op:'+'},
+    {lbl:resn,vec:res?(res.v300||res.v):[],col:'var(--green)',op:'≈'},
+  ];
+  const dims=12;
+  const bw=40,bh=14,gap=6,leftPad=70,topPad=30,rowH=32;
+  ac.width=leftPad+dims*(bw+gap)+20;
+  ac.height=topPad+words.length*rowH+40;
+  ac.style.maxWidth='100%';
+  const ax=ac.getContext('2d');
+  ax.clearRect(0,0,ac.width,ac.height);
+  ax.font='11px IBM Plex Mono,monospace';ax.textAlign='right';ax.fillStyle='rgba(200,200,230,.6)';
+  for(let d=0;d<dims;d++){
+    ax.fillText(`d${d}`,leftPad+(d+.5)*(bw+gap)+bw/2,topPad-6);
+  }
+  words.forEach((wd,i)=>{
+    const y=topPad+i*rowH;
+    ax.textAlign='right';ax.fillStyle=wd.col;ax.font='12px Cairo';
+    ax.fillText(wd.op+' '+wd.lbl,leftPad-8,y+bh*.8);
+    for(let d=0;d<dims;d++){
+      const val=wd.vec[d]||0;
+      const t=(val+1)/2;
+      const x=leftPad+d*(bw+gap);
+      ax.fillStyle=`rgba(124,92,252,${t.toFixed(2)})`;
+      ax.fillRect(x,y,bw,bh);
+      ax.fillStyle='rgba(255,255,255,.7)';ax.font='9px IBM Plex Mono,monospace';ax.textAlign='center';
+      ax.fillText(val.toFixed(2),x+bw/2,y+bh*.78);
+    }
+  });
+  ax.fillStyle='rgba(200,200,230,.3)';ax.font='10px Cairo';ax.textAlign='left';
+  ax.fillText('↑ أول 12 بُعد من 300 — تدرج اللون يمثل قيمة البُعد',leftPad,ac.height-6);
+}
+
+// ── ARCHITECTURE ──
+function drawCBOW(){
+  const el=document.getElementById('cbow-diag');
+  el.innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:.35rem;align-items:center;min-width:0">
+      <div style="display:flex;flex-wrap:wrap;gap:.35rem;justify-content:center">
+        <div class="arch-node" style="background:rgba(100,120,255,.1)">w(t-2)</div>
+        <div class="arch-node" style="background:rgba(100,120,255,.1)">w(t-1)</div>
+        <div class="arch-node" style="background:rgba(100,120,255,.1)">w(t+1)</div>
+        <div class="arch-node" style="background:rgba(100,120,255,.1)">w(t+2)</div>
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-node" style="background:rgba(34,211,238,.1);border-color:var(--cyan);color:var(--cyan)">CBOW hidden layer</div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-node" style="background:rgba(251,191,36,.15);border-color:#fbbf24;color:#fbbf24">predict center word w(t)</div>
+    </div>`;
+}
+
+function drawSkipgram(){
+  const el=document.getElementById('sg-diag');
+  el.innerHTML=`<div class="arch-node" style="background:rgba(251,191,36,.15);border-color:#fbbf24;color:#fbbf24">الكلمة: كتب</div>
+  <span class="arch-arrow">←</span>
+  <div class="arch-node" style="background:rgba(192,132,252,.1);border-color:var(--accent2);color:var(--accent2)">Skip-gram</div>
+  <span class="arch-arrow">←</span>
+  <div style="display:flex;flex-direction:column;gap:.25rem">
+    ${['الولد','في','المدرسة','يكتب'].map(w=>`<div class="arch-node" style="background:rgba(100,120,255,.1);padding:.3rem .6rem;font-size:.75rem">${w}</div>`).join('')}
+  </div>`;
+}
+
+function drawNN(){
+  const host=document.getElementById('nn-diagram');
+  if(!host)return;
+  host.innerHTML=`
+    <div class="nn-models">
+      <div class="nn-model-card">
+        <div class="nn-model-title">CBOW</div>
+        <div class="nn-flow" dir="ltr"><span>context words</span><span class="nn-flow-arrow">→</span><span>hidden layer</span><span class="nn-flow-arrow">→</span><span>predict center word</span></div>
+        <div class="nn-model-note">يستخدم الكلمات المحيطة للتنبؤ بالكلمة الوسطى. هذا هو عكس Skip-gram.</div>
+      </div>
+      <div class="nn-model-card">
+        <div class="nn-model-title">Skip-gram</div>
+        <div class="nn-flow" dir="ltr"><span>center word</span><span class="nn-flow-arrow">→</span><span>hidden layer</span><span class="nn-flow-arrow">→</span><span>predict context words</span></div>
+        <div class="nn-model-note">يستخدم الكلمة الوسطى للتنبؤ بالكلمات المحيطة. هذا هو النموذج المستخدم في AraVec هنا.</div>
+      </div>
+    </div>
+    <div class="nn-caption">
+      <div><strong>What it learns:</strong> nearby words end up close in the 300-dimensional space.</div>
+      <div><strong>Sanity check:</strong> CBOW predicts center from context; Skip-gram predicts context from center.</div>
+    </div>
+  `;
+}
+
+// ── TAB SWITCHING ──
+let currentView='3d';
+const viewMap={
+  '3d':'view-3d','heatmap':'view-heatmap',
+  'arithmetic':'view-arithmetic','arch':'view-arch','pipeline':'view-pipeline'
+};
+function switchTab(name){
+  currentView=name;
+  document.body.classList.toggle('view-3d', name==='3d');
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(viewMap[name]).classList.add('active');
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    t.classList.toggle('active',['3d','heatmap','arithmetic','arch','pipeline'][i]===name);
+  });
+  if(name==='heatmap')drawHeatmap();
+  if(name==='arch'){drawCBOW();drawSkipgram();drawNN();}
+  if(name==='arithmetic')loadEx('ملك','رجل','امرأة');
+}
+
+// ── INIT ──
+buildUI();
+resize();
+loadEx('ملك','رجل','امرأة');
+</script>
+</body>
+</html>
