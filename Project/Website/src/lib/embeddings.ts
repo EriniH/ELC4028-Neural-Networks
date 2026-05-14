@@ -35,6 +35,6 @@ export const WORDS: WordVec[] = [
 export function similarity(a: WordVec, b: WordVec) {
   const dot = a.x * b.x + a.y * b.y;
   const mag = Math.hypot(a.x, a.y) * Math.hypot(b.x, b.y);
-  if (!mag) return 0;
+  if (mag === 0) return 0;
   return dot / mag;
 }

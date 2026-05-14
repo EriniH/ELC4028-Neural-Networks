@@ -59,7 +59,7 @@ const translations: Record<Lang, Record<string, string>> = {
     "quiz.try": "Try again",
     "quiz.results": "See results",
     "quiz.next": "Next question",
-    footer: "Built for ELC4028 Neural Networks.",
+    ["footer"]: "Built for ELC4028 Neural Networks.",
   },
   ar: {
     "nav.brand": "تضمين الكلمات",
@@ -108,7 +108,7 @@ const translations: Record<Lang, Record<string, string>> = {
     "quiz.try": "أعد المحاولة",
     "quiz.results": "عرض النتائج",
     "quiz.next": "السؤال التالي",
-    footer: "تم البناء لمقرر الشبكات العصبية ELC4028.",
+    ["footer"]: "تم البناء لمقرر الشبكات العصبية ELC4028.",
   },
 };
 
