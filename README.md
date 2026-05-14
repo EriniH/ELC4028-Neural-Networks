@@ -6,3 +6,6 @@ All datasets required for the assignments have been consolidated and moved to th
 `Materials/Datasets/`
 
 Please refer to this folder for any raw or processed data files used by the models in this repository.
+
+## Project Website
+https://erinih.github.io/ELC4028-Neural-Networks/
