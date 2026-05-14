@@ -96,3 +96,7 @@ Assignment\ 1/Problem\ 2/*.pickle
 
 # Ignore Heavy Saved Models
 **/*.keras
+
+# Allow website source libraries
+!Project/Website/src/lib/
+!Project/Website/src/lib/**
