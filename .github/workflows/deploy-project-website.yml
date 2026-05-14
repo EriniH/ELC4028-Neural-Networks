@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "Project/Website/public/**"
+      - "Project/Website/**"
       - ".github/workflows/deploy-project-website.yml"
   workflow_dispatch:
 
@@ -18,14 +18,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: Project/Website/package-lock.json
+
+      - name: Install dependencies
+        working-directory: Project/Website
+        run: npm ci
+
+      - name: Build
+        working-directory: Project/Website
+        run: npm run build
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -35,8 +47,15 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: Project/Website/public
+          path: Project/Website/dist
 
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
