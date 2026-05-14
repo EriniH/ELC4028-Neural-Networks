@@ -328,6 +328,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const saved = window.localStorage.getItem("lang");
     if (saved === "en" || saved === "ar") {
       setLangState(saved);
+      document.documentElement.lang = saved;
+      document.documentElement.dir = saved === "ar" ? "rtl" : "ltr";
     }
   }, []);
 
@@ -335,6 +337,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     setLangState(next);
     if (typeof window !== "undefined") {
       window.localStorage.setItem("lang", next);
+      document.documentElement.lang = next;
+      document.documentElement.dir = next === "ar" ? "rtl" : "ltr";
     }
   }, []);
 

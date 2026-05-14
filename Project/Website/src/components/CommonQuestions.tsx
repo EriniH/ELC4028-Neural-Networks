@@ -119,7 +119,7 @@ export function CommonQuestions() {
           { key: "representation", label: t("faq.tag.representation") },
           { key: "training", label: t("faq.tag.training") },
           { key: "interpretation", label: t("faq.tag.interpretation") },
-          { key: "transfer_learning", label: t("faq.tag.transferLearning") },
+          { key: "transferLearning", label: t("faq.tag.transferLearning") },
           { key: "methods", label: t("faq.tag.methods") },
           { key: "advanced", label: t("faq.tag.advanced") },
         ].map((tag) => (
@@ -150,7 +150,7 @@ export function CommonQuestions() {
                 <div className="text-xs text-primary/70 mt-1">{faq.tag}</div>
               </div>
               <ChevronDown
-                className={`h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5 transition-transform ${
+                className={`h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5 transition-transform rtl:-scale-x-100 ${
                   expanded === idx ? "rotate-180" : ""
                 }`}
               />

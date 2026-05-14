@@ -33,7 +33,7 @@ export function ConceptCards() {
               <p className="text-sm text-muted-foreground mt-0.5">{concept.shortDesc}</p>
             </div>
             <ChevronDown
-              className={`h-5 w-5 text-muted-foreground flex-shrink-0 transition-transform ${
+              className={`h-5 w-5 text-muted-foreground flex-shrink-0 transition-transform rtl:-scale-x-100 ${
                 expanded === idx ? "rotate-180" : ""
               }`}
             />
