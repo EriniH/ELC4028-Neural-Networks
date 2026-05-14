@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, HelpCircle } from "lucide-react";
+import { useLang } from "@/lib/i18n";
 
 const FAQS = [
   {
@@ -45,17 +46,60 @@ const FAQS = [
 ];
 
 export function CommonQuestions() {
+  const { t, lang } = useLang();
   const [expanded, setExpanded] = useState<number | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
-  const allTags = Array.from(new Set(FAQS.map((q) => q.tag)));
-  const filtered = selectedTag ? FAQS.filter((q) => q.tag === selectedTag) : FAQS;
+  const FAQS = [
+    {
+      q: t("faq.q1.q"),
+      a: t("faq.q1.a"),
+      tag: t("faq.tag.fundamentals"),
+    },
+    {
+      q: t("faq.q2.q"),
+      a: t("faq.q2.a"),
+      tag: t("faq.tag.representation"),
+    },
+    {
+      q: t("faq.q3.q"),
+      a: t("faq.q3.a"),
+      tag: t("faq.tag.training"),
+    },
+    {
+      q: t("faq.q4.q"),
+      a: t("faq.q4.a"),
+      tag: t("faq.tag.interpretation"),
+    },
+    {
+      q: t("faq.q5.q"),
+      a: t("faq.q5.a"),
+      tag: t("faq.tag.transferLearning"),
+    },
+    {
+      q: t("faq.q6.q"),
+      a: t("faq.q6.a"),
+      tag: t("faq.tag.methods"),
+    },
+    {
+      q: t("faq.q7.q"),
+      a: t("faq.q7.a"),
+      tag: t("faq.tag.advanced"),
+    },
+    {
+      q: t("faq.q8.q"),
+      a: t("faq.q8.a"),
+      tag: t("faq.tag.advanced"),
+    },
+  ];
+
+  const filtered = selectedTag ? FAQS.filter((q) => q.tag === t(`faq.tag.${selectedTag}`)) : FAQS;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2 mb-6">
         <HelpCircle className="h-5 w-5 text-primary" />
-        <h3 className="text-lg font-semibold">Common Questions & Misconceptions</h3>
+        <h3 className="text-lg font-semibold">{t("faq.title")}</h3>
       </div>
 
       {/* Tag Filter */}
@@ -68,19 +112,27 @@ export function CommonQuestions() {
               : "border border-border bg-background hover:bg-secondary"
           }`}
         >
-          All
+          {t("faq.all")}
         </button>
-        {allTags.map((tag) => (
+        {[
+          { key: "fundamentals", label: t("faq.tag.fundamentals") },
+          { key: "representation", label: t("faq.tag.representation") },
+          { key: "training", label: t("faq.tag.training") },
+          { key: "interpretation", label: t("faq.tag.interpretation") },
+          { key: "transfer_learning", label: t("faq.tag.transferLearning") },
+          { key: "methods", label: t("faq.tag.methods") },
+          { key: "advanced", label: t("faq.tag.advanced") },
+        ].map((tag) => (
           <button
-            key={tag}
-            onClick={() => setSelectedTag(tag)}
+            key={tag.key}
+            onClick={() => setSelectedTag(tag.key)}
             className={`rounded-full px-3 py-1 text-xs font-medium transition ${
-              selectedTag === tag
+              selectedTag === tag.key
                 ? "bg-primary text-primary-foreground"
                 : "border border-border bg-background hover:bg-secondary"
             }`}
           >
-            {tag}
+            {tag.label}
           </button>
         ))}
       </div>
@@ -91,7 +143,7 @@ export function CommonQuestions() {
           <div key={idx} className="rounded-lg border bg-card shadow-[var(--shadow-soft)] overflow-hidden">
             <button
               onClick={() => setExpanded(expanded === idx ? null : idx)}
-              className="w-full px-5 py-4 flex items-start justify-between gap-3 hover:bg-secondary/50 transition text-left"
+              className="w-full px-5 py-4 flex items-start justify-between gap-3 hover:bg-secondary/50 transition text-start"
             >
               <div className="flex-1 text-start">
                 <div className="font-semibold text-foreground">{faq.q}</div>

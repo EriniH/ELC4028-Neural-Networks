@@ -54,9 +54,9 @@ function Index() {
             <div className="hidden gap-6 text-muted-foreground sm:flex">
               <a href="#learn" className="hover:text-foreground">{t("nav.learn")}</a>
               <a href="#demo" className="hover:text-foreground">{t("nav.demo")}</a>
-              <a href="#analogies" className="hover:text-foreground">Analogies</a>
-              <a href="#methods" className="hover:text-foreground">Methods</a>
-              <a href="#faq" className="hover:text-foreground">FAQ</a>
+              <a href="#analogies" className="hover:text-foreground">{t("nav.analogies")}</a>
+              <a href="#methods" className="hover:text-foreground">{t("nav.methods")}</a>
+              <a href="#faq" className="hover:text-foreground">{t("nav.faq")}</a>
               <a href="#arabic" className="hover:text-foreground">{t("nav.arabic")}</a>
               <a href="#quiz" className="hover:text-foreground">{t("nav.quiz")}</a>
             </div>
@@ -148,17 +148,17 @@ function Index() {
       </Section>
 
       {/* analogy explorer */}
-      <Section id="analogies" eyebrow="Interactive" title="Word Arithmetic in Action">
+      <Section id="analogies" eyebrow={t("analogies.eyebrow")} title={t("analogies.title")}>
         <p className="mb-8 max-w-2xl text-muted-foreground">
-          Embeddings reveal hidden relationships through vector arithmetic. Select an analogy below to see how subtracting and adding vectors produces semantic insights.
+          {t("analogies.desc")}
         </p>
         <WordAnalogyExplorer />
       </Section>
 
       {/* methods comparison */}
-      <Section id="methods" eyebrow="Learning Evolution" title="From Word2Vec to Modern Methods">
+      <Section id="methods" eyebrow={t("methods.eyebrow")} title={t("methods.title")}>
         <p className="mb-8 max-w-2xl text-muted-foreground">
-          Embedding techniques have evolved dramatically. Compare how different methods handle context, vocabulary growth, and speed. Click any method to explore its strengths and limitations.
+          {t("methods.desc")}
         </p>
         <EmbeddingMethodsComparison />
       </Section>
@@ -187,9 +187,9 @@ function Index() {
       </Section>
 
       {/* faq */}
-      <Section id="faq" eyebrow="Knowledge" title="Common Questions & Misconceptions">
+      <Section id="faq" eyebrow={t("faq.eyebrow")} title={t("faq.title")}>
         <p className="mb-8 max-w-2xl text-muted-foreground">
-          Clear up common misconceptions about word embeddings. Filter by topic to focus on what interests you most.
+          {t("faq.desc")}
         </p>
         <CommonQuestions />
       </Section>

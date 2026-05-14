@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { WORDS, similarity, type WordVec } from "@/lib/embeddings";
+import { useLang } from "@/lib/i18n";
 import { Zap } from "lucide-react";
 
 const ANALOGIES = [
@@ -36,6 +37,7 @@ function performAnalogy(a: string, b: string, c: string) {
 }
 
 export function WordAnalogyExplorer() {
+  const { t, lang } = useLang();
   const [currentIdx, setCurrentIdx] = useState(0);
   const [showResult, setShowResult] = useState(false);
 
@@ -52,11 +54,11 @@ export function WordAnalogyExplorer() {
     <div className="rounded-xl border bg-card p-6 shadow-[var(--shadow-soft)]">
       <div className="mb-4 flex items-center gap-2">
         <Zap className="h-5 w-5 text-primary" />
-        <h3 className="text-lg font-semibold">Vector Arithmetic Explorer</h3>
+        <h3 className="text-lg font-semibold">{t("analogies.title")}</h3>
       </div>
 
       <p className="mb-6 text-sm text-muted-foreground">
-        Embeddings capture relationships through vector arithmetic. Watch how subtracting and adding vectors reveals semantic patterns:
+        {t("analogies.desc")}
       </p>
 
       {/* Analogy Display */}
@@ -79,21 +81,23 @@ export function WordAnalogyExplorer() {
           onClick={() => setShowResult(true)}
           className="w-full rounded-lg bg-primary px-4 py-3 font-medium text-primary-foreground transition hover:opacity-90 mb-4"
         >
-          Reveal Answer
+          {t("analogies.reveal")}
         </button>
       ) : (
         <div className="mb-4 space-y-3 rounded-lg bg-secondary/50 p-4">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">Result:</span>
-            <span className={`font-display text-lg ${isCorrect ? "text-success" : "text-amber-500"}`}>
+            <span className="text-sm font-medium">{t("analogies.result")}</span>
+            <span className={`font-display text-lg capitalize ${isCorrect ? "text-success" : "text-amber-500"}`}>
               {result.word}
             </span>
-            {isCorrect && <span className="text-sm">✓ Correct!</span>}
+            {isCorrect && <span className="text-sm">✓ {t("analogies.correct")}</span>}
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground text-start">
             {isCorrect
-              ? `Perfect! The arithmetic naturally produces "${result.word}" — the model learned this relationship from co-occurrence patterns.`
-              : `Got "${result.word}" instead of "${analogy.expected}". The 2D projection loses some information, but the concept still applies!`}
+              ? t("analogies.learned")
+              : (lang === 'ar' 
+                  ? `حصلنا على "${result.word}" بدلاً من "${analogy.expected}". الإسقاط ثنائي الأبعاد يفقد بعض المعلومات، لكن المفهوم لا يزال سارياً!`
+                  : `Got "${result.word}" instead of "${analogy.expected}". The 2D projection loses some information, but the concept still applies!`)}
           </p>
         </div>
       )}
@@ -107,13 +111,13 @@ export function WordAnalogyExplorer() {
           onClick={handleNext}
           className="rounded-lg border border-border px-4 py-2 text-sm font-medium transition hover:bg-secondary"
         >
-          Next Analogy
+          {t("analogies.next")}
         </button>
       </div>
 
       <div className="mt-4 border-t pt-4">
-        <p className="text-xs text-muted-foreground leading-relaxed">
-          💡 <strong>Key insight:</strong> This vector arithmetic emerges entirely from the training objective — the model was never explicitly told "king means royalty" or "paris means a specific city." It learned these relationships by optimizing co-occurrence predictions!
+        <p className="text-xs text-muted-foreground leading-relaxed text-start">
+          💡 <strong>{lang === 'ar' ? 'فكرة أساسية:' : 'Key insight:'}</strong> {t("analogies.insight")}
         </p>
       </div>
     </div>

@@ -88,7 +88,9 @@ export function Quiz() {
         </div>
       </div>
       <p className="mt-2 text-sm text-muted-foreground">
-        Practice mode draws 5 random questions from the full {totalQuestions}-question bank each run.
+        {lang === "ar" 
+          ? `يقوم وضع التدريب بسحب 5 أسئلة عشوائية من بنك الأسئلة المكون من ${totalQuestions} سؤالاً في كل مرة.`
+          : `Practice mode draws 5 random questions from the full ${totalQuestions}-question bank each run.`}
       </p>
 
       {view === "practice" ? (

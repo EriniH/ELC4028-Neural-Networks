@@ -1,62 +1,53 @@
 import { useState } from "react";
 import { GitCompare } from "lucide-react";
+import { useLang } from "@/lib/i18n";
 
 const METHODS = [
   {
+    id: "word2vec",
     name: "Word2Vec",
     year: "2013",
-    context: "Local Window",
-    training: "Predict context from word",
-    oov: "❌ No",
-    speed: "⚡ Very Fast",
     key: "SGNS (Skip-Gram with Negative Sampling)",
-    pros: ["Simple & fast", "Works well in practice", "Widely available"],
-    cons: ["OOV problem", "Static vectors", "Only local context"],
   },
   {
+    id: "glove",
     name: "GloVe",
     year: "2014",
-    context: "Global Corpus",
-    training: "Reconstruct co-occurrence matrix",
-    oov: "❌ No",
-    speed: "⚙️ Moderate",
     key: "Weighted matrix factorization",
-    pros: ["Uses global statistics", "Explicit similarity objective", "Strong on semantics"],
-    cons: ["OOV problem", "Static vectors", "More complex setup"],
   },
   {
+    id: "fasttext",
     name: "FastText",
     year: "2016",
-    context: "Local Window",
-    training: "Char n-grams + word context",
-    oov: "✅ Yes",
-    speed: "⚡ Fast",
     key: "Sub-word character n-grams",
-    pros: ["Handles OOV", "Morphological awareness", "Good for rich languages"],
-    cons: ["Vectors still static", "Slightly more parameters"],
   },
   {
+    id: "elmo",
     name: "ELMo",
     year: "2018",
-    context: "Full Sentence",
-    training: "BiLSTM language model",
-    oov: "✅ Yes",
-    speed: "🐢 Slower",
     key: "Contextualized (different per sentence)",
-    pros: ["Context-aware", "Handles OOV", "Multi-layer combination"],
-    cons: ["Much slower", "Higher memory", "More complex"],
   },
 ];
 
 export function EmbeddingMethodsComparison() {
+  const { t } = useLang();
   const [selectedIdx, setSelectedIdx] = useState(0);
   const selected = METHODS[selectedIdx];
+
+  const details = {
+    context: t(`methods.${selected.id}.context`),
+    training: t(`methods.${selected.id}.training`),
+    oov: t(`methods.${selected.id}.oov`),
+    speed: t(`methods.${selected.id}.speed`),
+    pros: (t(`methods.${selected.id}.pros`) || "").split(","),
+    cons: (t(`methods.${selected.id}.cons`) || "").split(","),
+  };
 
   return (
     <div className="rounded-xl border bg-card p-6 shadow-[var(--shadow-soft)]">
       <div className="mb-6 flex items-center gap-2">
         <GitCompare className="h-5 w-5 text-primary" />
-        <h3 className="text-lg font-semibold">Embedding Methods Timeline</h3>
+        <h3 className="text-lg font-semibold">{t("methods.title")}</h3>
       </div>
 
       {/* Method Selector Buttons */}
@@ -79,10 +70,10 @@ export function EmbeddingMethodsComparison() {
       {/* Method Details Grid */}
       <div className="grid gap-4 mb-6 md:grid-cols-2">
         {[
-          { label: "Context Type", value: selected.context },
-          { label: "Training Goal", value: selected.training },
-          { label: "Handles OOV", value: selected.oov },
-          { label: "Speed", value: selected.speed },
+          { label: t("methods.contextType"), value: details.context },
+          { label: t("methods.trainingGoal"), value: details.training },
+          { label: t("methods.handlesOOV"), value: details.oov },
+          { label: t("methods.speed"), value: details.speed },
         ].map((item) => (
           <div key={item.label} className="rounded-lg bg-secondary/30 p-3">
             <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
@@ -96,7 +87,7 @@ export function EmbeddingMethodsComparison() {
       {/* Key Innovation */}
       <div className="mb-6 rounded-lg bg-primary/10 border border-primary/30 p-4">
         <div className="text-xs uppercase tracking-wider text-primary font-semibold mb-1">
-          Key Innovation
+          {t("methods.keyInnovation")}
         </div>
         <div className="text-sm text-foreground">{selected.key}</div>
       </div>
@@ -105,10 +96,10 @@ export function EmbeddingMethodsComparison() {
       <div className="grid gap-4 md:grid-cols-2 mb-6">
         <div>
           <h4 className="text-xs uppercase tracking-wider font-semibold text-success mb-3">
-            Strengths
+            {t("methods.strengths")}
           </h4>
           <ul className="space-y-2">
-            {selected.pros.map((pro, idx) => (
+            {details.pros.map((pro, idx) => (
               <li key={idx} className="flex gap-2 text-sm text-foreground/90">
                 <span className="text-success mt-0.5">✓</span>
                 <span>{pro}</span>
@@ -118,10 +109,10 @@ export function EmbeddingMethodsComparison() {
         </div>
         <div>
           <h4 className="text-xs uppercase tracking-wider font-semibold text-amber-600 mb-3">
-            Limitations
+            {t("methods.limitations")}
           </h4>
           <ul className="space-y-2">
-            {selected.cons.map((con, idx) => (
+            {details.cons.map((con, idx) => (
               <li key={idx} className="flex gap-2 text-sm text-foreground/90">
                 <span className="text-amber-600 mt-0.5">✕</span>
                 <span>{con}</span>
@@ -133,8 +124,8 @@ export function EmbeddingMethodsComparison() {
 
       {/* Timeline Context */}
       <div className="border-t pt-4">
-        <p className="text-xs text-muted-foreground leading-relaxed">
-          💡 <strong>Progression:</strong> From static local-context embeddings (Word2Vec/GloVe) → handling out-of-vocab (FastText) → full contextualization (ELMo) → modern transformers like BERT that attend to the entire document and produce different embeddings per context.
+        <p className="text-xs text-muted-foreground leading-relaxed text-start">
+          💡 <strong>Progression:</strong> {t("methods.progression")}
         </p>
       </div>
     </div>

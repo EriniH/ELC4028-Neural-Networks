@@ -89,12 +89,12 @@ export function EmbeddingDemo() {
         </p>
       </div>
 
-      <div className="rounded-xl border bg-card p-5 shadow-[var(--shadow-soft)]" dir="ltr">
+      <div className="rounded-xl border bg-card p-5 shadow-[var(--shadow-soft)]">
         <div className="mb-1 text-xs uppercase tracking-wider text-muted-foreground">
           {t("demo.selected")}
         </div>
-        <div className="font-display text-3xl">{sel.word}</div>
-        <div className="mt-1 text-sm text-muted-foreground">
+        <div className="font-display text-3xl capitalize">{sel.word}</div>
+        <div className="mt-1 text-sm text-muted-foreground" dir="ltr">
           vector ≈ ({sel.x.toFixed(2)}, {sel.y.toFixed(2)})
         </div>
         <div className="mt-5 mb-2 flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground">
