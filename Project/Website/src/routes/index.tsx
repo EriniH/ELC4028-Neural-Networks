@@ -141,7 +141,7 @@ function Index() {
         <p className="mb-6 max-w-2xl text-muted-foreground">{t("arabic.desc")}</p>
         <div className="overflow-hidden rounded-xl border bg-card shadow-[var(--shadow-soft)]">
           <iframe
-            src="/arabic-embeddings-demo.html"
+            src="/ELC4028-Neural-Networks/arabic-embeddings-demo.html"
             title="Arabic Word Embeddings Demo"
             className="block h-[860px] w-full border-0 md:h-[900px]"
             loading="lazy"
@@ -149,7 +149,7 @@ function Index() {
         </div>
         <div className="mt-3 text-right">
           <a
-            href="/arabic-embeddings-demo.html"
+            href="/ELC4028-Neural-Networks/arabic-embeddings-demo.html"
             target="_blank"
             rel="noreferrer"
             className="text-sm text-primary hover:underline"

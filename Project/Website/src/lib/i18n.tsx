@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+export { QUIZ_QUESTIONS } from "./quiz-questions";
 
 type Lang = "en" | "ar";
 
@@ -59,6 +60,11 @@ const translations: Record<Lang, Record<string, string>> = {
     "quiz.try": "Try again",
     "quiz.results": "See results",
     "quiz.next": "Next question",
+    "quiz.tab.play": "Quiz",
+    "quiz.tab.all": "All questions",
+    "quiz.all.title": "Question bank",
+    "quiz.all.answer": "Correct answer",
+    "quiz.all.explain": "Explanation",
     ["footer"]: "Built for ELC4028 Neural Networks.",
   },
   ar: {
@@ -108,79 +114,13 @@ const translations: Record<Lang, Record<string, string>> = {
     "quiz.try": "أعد المحاولة",
     "quiz.results": "عرض النتائج",
     "quiz.next": "السؤال التالي",
+    "quiz.tab.play": "الاختبار",
+    "quiz.tab.all": "كل الأسئلة",
+    "quiz.all.title": "بنك الأسئلة",
+    "quiz.all.answer": "الإجابة الصحيحة",
+    "quiz.all.explain": "الشرح",
     ["footer"]: "تم البناء لمقرر الشبكات العصبية ELC4028.",
   },
-};
-
-type QuizQuestion = {
-  q: string;
-  options: string[];
-  answer: number;
-  explain: string;
-};
-
-export const QUIZ_QUESTIONS: Record<Lang, QuizQuestion[]> = {
-  en: [
-    {
-      q: "What does cosine similarity measure between two word vectors?",
-      options: [
-        "Their distance in meters",
-        "Their angle in vector space",
-        "Their length",
-        "Their frequency",
-      ],
-      answer: 1,
-      explain:
-        "Cosine similarity compares the angle between vectors, capturing semantic similarity.",
-    },
-    {
-      q: "Which operation helps model analogies like king − man + woman?",
-      options: [
-        "Vector addition/subtraction",
-        "Sorting alphabetically",
-        "Counting characters",
-        "Stemming",
-      ],
-      answer: 0,
-      explain: "Vector arithmetic reveals relational patterns in embedding space.",
-    },
-    {
-      q: "Why are embeddings useful?",
-      options: [
-        "They keep words as plain text only",
-        "They allow numeric comparison of meaning",
-        "They guarantee perfect translations",
-        "They remove all ambiguity",
-      ],
-      answer: 1,
-      explain: "Embeddings turn words into vectors so models can compare meanings numerically.",
-    },
-  ],
-  ar: [
-    {
-      q: "ما الذي يقيسه التشابه الكوسيني بين متجهين؟",
-      options: ["المسافة بالأمتار", "الزاوية في الفضاء المتجهي", "الطول", "التكرار"],
-      answer: 1,
-      explain: "تشابه جيب التمام يقارن الزاوية بين المتجهات لقياس التشابه الدلالي.",
-    },
-    {
-      q: "أي عملية تساعد في تمثيل القياسات مثل ملك − رجل + امرأة؟",
-      options: ["جمع/طرح المتجهات", "الترتيب الأبجدي", "عد الحروف", "التجذير"],
-      answer: 0,
-      explain: "حساب المتجهات يكشف العلاقات في فضاء التضمين.",
-    },
-    {
-      q: "لماذا تعد التضمينات مفيدة؟",
-      options: [
-        "لأنها تبقي الكلمات كنص فقط",
-        "لأنها تسمح بمقارنة المعاني رقمياً",
-        "لأنها تضمن ترجمة مثالية",
-        "لأنها تزيل كل الغموض",
-      ],
-      answer: 1,
-      explain: "تحول التضمينات الكلمات إلى متجهات يمكن مقارنتها رقمياً.",
-    },
-  ],
 };
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
