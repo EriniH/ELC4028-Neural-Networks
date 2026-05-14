@@ -24,12 +24,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Prepare Arabic demo artifact
-        run: |
-          mkdir -p Project/Website/dist
-          demo_source="Project/Website/public/arabic-embeddings-demo.html"
-          cp "$demo_source" Project/Website/dist/index.html
-          cp "$demo_source" Project/Website/dist/arabic-embeddings-demo.html
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: Project/Website/package-lock.json
+
+      - name: Install dependencies
+        working-directory: Project/Website
+        run: npm ci
+
+      - name: Build
+        working-directory: Project/Website
+        run: npm run build
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
