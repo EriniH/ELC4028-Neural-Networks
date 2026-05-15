@@ -1,0 +1,108 @@
+% =====================================================
+% style.tex  (Formatting & Style Only)
+% =====================================================
+
+% ================= Basic packages =================
+\usepackage{booktabs}
+\usepackage[colorlinks=true, urlcolor=blue,linkcolor=black]{hyperref}
+\usepackage{float}
+\usepackage{dashrule}
+\usepackage{tocloft}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{fontspec}
+\usepackage{bidi}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage[a4paper, margin=2cm]{geometry}
+\usepackage{longtable}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc}
+
+% ================= Custom blocks (Simplified B&W) =================
+\usepackage{fontawesome5} 
+
+\newtcolorbox{reportblock}[1]{
+  enhanced,
+  colback=white,                % Clean white background
+  colframe=black,               % Black border to match text
+  arc=3pt,                      % Subtle rounding
+  boxrule=0.6pt,                % Thin, elegant line
+  fonttitle=\bfseries\sffamily,
+  coltitle=white,               % White text for the dark label
+  title={\faSearch\hspace{0.5em}#1},
+  attach boxed title to top left={yshift=-2mm, xshift=3mm},
+  boxed title style={
+    colback=black,              % Black header box
+    sharp corners,
+    rounded corners=northwest,
+    arc=2pt,
+    boxrule=0.5pt
+  },
+  left=10pt, right=10pt,        % Balanced padding
+  top=10pt, bottom=8pt,
+  before skip=1.5em,
+  after skip=1.5em
+}
+
+% ================= Fonts =================
+\setmainfont{Times New Roman}
+\IfFontExistsTF{Amiri}{
+  \newfontfamily\arabicfont[Script=Arabic,Scale=0.8]{Amiri}
+}{
+  \IfFontExistsTF{Traditional Arabic}{
+    \newfontfamily\arabicfont[Script=Arabic,Scale=1.1]{Traditional Arabic}
+  }{
+    \newfontfamily\arabicfont[Script=Arabic,Scale=1.1]{Times New Roman}
+  }
+}
+\newcommand{\textarabic}[1]{{\arabicfont\RL{#1}}}
+
+% Improve global line breaking
+\setlength{\emergencystretch}{2em}
+
+% ================= Colors =================
+\definecolor{mainblue}{RGB}{0,60,120}
+\definecolor{lightgray}{RGB}{245,245,245}
+\definecolor{softgray}{RGB}{240,240,240}
+
+% ================= Lists =================
+\setlist[itemize]{
+  leftmargin=1.5em,
+  itemsep=0.4em,
+  topsep=0.4em
+}
+
+% ================= Python Listings =================
+\definecolor{pyblue}{rgb}{0.0,0.0,0.6}
+\definecolor{pygreen}{rgb}{0.0,0.5,0.0}
+\definecolor{pyred}{rgb}{0.6,0.0,0.0}
+\definecolor{pygray}{rgb}{0.95,0.95,0.95}
+
+\lstdefinelanguage{MyPython}{
+  language=Python,
+  morekeywords={self,True,False,None,as,with,yield,async,await,f},
+  keywordstyle=\color{pyblue},
+  commentstyle=\color{pygreen}\itshape,
+  stringstyle=\color{pyred},
+  sensitive=true
+}
+
+\lstset{
+  language=MyPython,
+  backgroundcolor=\color{pygray},
+  basicstyle=\ttfamily\footnotesize,
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  frame=single,
+  breaklines=true,
+  showstringspaces=false,
+  tabsize=4,
+  inputencoding=utf8
+}

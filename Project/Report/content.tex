@@ -1,0 +1,216 @@
+\section{Introduction and Aim of the Work}
+
+This report documents the design, development, and delivery of a project for the ELC4028 Neural Networks course. The project was assigned as a team exercise in which each group selects one concept from Artificial Neural Networks (ANN), develops a deep understanding of it, and communicates that understanding clearly and interactively using AI-assisted tools.
+
+Our team selected Word Embeddings as our concept — a foundational technique in Natural Language Processing (NLP) that enables neural networks to work meaningfully with text by representing words as dense, learned vectors in a continuous geometric space.
+
+\subsection{Why Word Embeddings?}
+Word Embeddings sit at the intersection of representation learning, linear algebra, and language understanding. They are an ideal teaching concept because they:
+\begin{itemize}
+    \item Have a clear, visual intuition — similar words cluster in vector space
+    \item Span multiple algorithms (Word2Vec, GloVe, FastText, ELMo) that illustrate an evolution of ideas
+    \item Connect naturally to broader deep learning concepts: embedding layers, transfer learning, and backpropagation
+    \item Lend themselves to striking interactive demonstrations (vector arithmetic, nearest-neighbor search)
+\end{itemize}
+
+\subsection{Project Objectives}
+The project aimed to achieve the following:
+\begin{itemize}
+    \item Produce a visually clear and structured Arabic-language presentation explaining the concept of word embeddings
+    \item Build an interactive bilingual website that teaches word embeddings with embedded demos, quizzes, comparisons, and limitations sections
+    \item Create an Arabic 2D/3D word-space visualization demo showing how semantically related Arabic words cluster together in embedding space
+    \item Utilize AI assistants to build interactive components that visualize and compare the different embedding architectures (Word2Vec, GloVe, FastText, ELMo)
+    \item Design a 30-question MCQ bank covering all major aspects of the topic
+    \item Document the AI tools used and demonstrate genuine understanding of all generated material
+\end{itemize}
+
+\section{Methodology — Steps Followed}
+
+The project followed a structured pipeline from concept selection through deployment. The following block diagram summarizes the workflow:
+\begin{center}
+\begin{tikzpicture}[
+    node distance = 0.8cm and 0.6cm,
+    stepblock/.style = {rectangle, draw=black!80, thick, fill=softgray, text width=4.8cm, text centered, rounded corners, minimum height=1.6cm, font=\small},
+    line/.style = {draw, -Latex, thick, draw=mainblue}
+]
+
+    % Row 1
+    \node [stepblock] (step1) {\textbf{Step 1}\\Topic Selection \&\\Resource Collection};
+    \node [stepblock, right=of step1] (step2) {\textbf{Step 2}\\Content Mastery \&\\Lecture Study};
+    \node [stepblock, right=of step2] (step3) {\textbf{Step 3}\\Presentation Design\\(Arabic PowerPoint)};
+    
+    % Row 2 (Right to Left)
+    \node [stepblock, below=of step3] (step4) {\textbf{Step 4}\\Arabic Word Embeddings\\Interactive Demo};
+    \node [stepblock, left=of step4] (step5) {\textbf{Step 5}\\Website Generation\\\& Integration};
+    \node [stepblock, left=of step5] (step6) {\textbf{Step 6}\\Content Enrichment\\(Limitations, FAQ, etc.)};
+    
+    % Row 3 (Left to Right)
+    \node [stepblock, below=of step6] (step7) {\textbf{Step 7}\\Arabic Translation\\of All Content};
+    \node [stepblock, right=of step7] (step8) {\textbf{Step 8}\\MCQ Bank Generation\\(30 Questions)};
+    \node [stepblock, right=of step8] (step9) {\textbf{Step 9}\\Deployment on\\GitHub Pages};
+
+    % Paths
+    \path [line] (step1) -- (step2);
+    \path [line] (step2) -- (step3);
+    \path [line] (step3) -- (step4);
+    \path [line] (step4) -- (step5);
+    \path [line] (step5) -- (step6);
+    \path [line] (step6) -- (step7);
+    \path [line] (step7) -- (step8);
+    \path [line] (step8) -- (step9);
+
+\end{tikzpicture}
+\end{center}
+
+Each step is described in detail below.
+
+\subsection{Step 1 — Topic Selection \& Resource Collection}
+The team reviewed the list of ANN concepts available and agreed on Word Embeddings. The primary resource was the lecture material by Dr.\ Ahmad El Sallab (163 slides), supplemented by external references including the Stanford CS224n course notes, Jay Alammar's illustrated blog on Word2Vec, and the original Mikolov et al.\ (2013) Word2Vec paper.
+
+\subsection{Step 2 — Content Mastery}
+Before any generation began, team members studied the lecture slides and references thoroughly. This ensured the team could evaluate, correct, and explain all AI-generated material rather than accepting it blindly. The 163-slide lecture was uploaded to Claude and an 8-page structured summary was generated in both English and Arabic as a study aid.
+
+\subsection{Step 3 — Arabic Presentation}
+The team designed a PowerPoint presentation in Arabic covering the full arc of the topic: the motivation for embeddings, one-hot encoding limitations, Word2Vec (CBOW, Skip-Gram, SGNS), GloVe, FastText, ELMo, and comparisons. The slides were structured for clarity and visual flow, with diagrams, equations, and worked examples. The presentation was later uploaded to the website.
+
+\subsection{Step 4 — Arabic Word Embeddings Interactive Demo}
+Inspired by Word2Vec visualization tools, the team asked Claude to build an Arabic-language interactive demo that visualizes dimensionality-reduced word vectors in a simulated embedding space. The demo offers a comprehensive suite of features to interact with the data:
+\begin{itemize}
+    \item \textbf{3D Visualization}: Users can rotate, zoom, and explore a 3D scatter plot of word vectors.
+    \item \textbf{Dimensionality Reduction}: Toggling between t-SNE and Raw projection views.
+    \item \textbf{Search and Similarity}: A search function that highlights a word and lists its nearest neighbors with cosine similarity percentages.
+    \item \textbf{Semantic Operations (Vector Arithmetic)}: Users can perform classic analogies (e.g., \textarabic{ملك} $-$ \textarabic{رجل} $+$ \textarabic{امرأة} $=$ \textarabic{ملكة}) or input custom operations.
+    \item \textbf{Similarity Map}: A dedicated heatmap to visually analyze the cosine similarity matrix across words.
+    \item \textbf{Concepts Visualization}: Grouping words by semantic categories (e.g., royalty, countries, emotions) using a filterable legend.
+    \item \textbf{Architecture and Pipeline}: Educational panels explaining CBOW, Skip-gram, and the Arabic NLP pipeline.
+\end{itemize}
+
+\textit{Disclaimer:} To ensure smooth browser performance without requiring a backend server, the demo uses a representative sample of mock vector data rather than a full, massive 300-dimensional model (like AraVec). This sample data is carefully crafted to accurately reflect the semantic clustering and vector arithmetic properties of real word embeddings.
+
+This interactive demo was then seamlessly integrated into the project website.
+
+\subsection{Step 5 — Website Generation \& Integration}
+A starter website was generated using Lovable (an AI-powered web application generator). This gave the team a well-structured React-based site with the core layout, learn/demo/quiz sections. GitHub Copilot was then used to integrate the Arabic demo into the website and to wire together the various components. The site was built to be bilingual (Arabic and English).
+
+\subsection{Step 6 — Content Enrichment}
+Antigravity and GitHub Copilot were used to add deeper content sections beyond the starter site, including:
+\begin{itemize}
+    \item Limitations section — covering OOV, static vectors, and the evolution toward contextual models
+    \item Comparison section — Word vs.\ Sentence Embeddings, Word2Vec vs.\ GloVe
+    \item Interactive FAQ / misconceptions section with category filters
+    \item Analogies section with interactive vector arithmetic demonstrations
+    \item Methods timeline comparing Word2Vec, GloVe, FastText, and ELMo interactively
+\end{itemize}
+
+\subsection{Step 7 — Arabic Translation}
+Claude was used to translate the full 8-page English summary into Modern Standard Arabic (\textarabic{الفصحى المعاصرة}). This served as the basis for Arabic content across the website. The translation was reviewed by team members to ensure technical accuracy and natural phrasing, with special care taken over technical terms that are standardized in Arabic academic literature (e.g., \textarabic{تضمين} for embedding, \textarabic{حاصل الضرب الداخلي} for dot product).
+
+\subsection{Step 8 — MCQ Bank Generation}
+Claude was prompted to generate 30 multiple-choice questions based on the lecture content and the 8-page summary. Each question was reviewed and verified by the team against the source material. Questions were designed to cover: limitations, embedding matrix mechanics, Word2Vec variants, GloVe objective, FastText, ELMo, transfer learning rules, and vector arithmetic properties. The MCQ bank was integrated into the website as an interactive quiz with randomized question selection.
+
+\subsection{Step 9 — Deployment}
+GitHub Copilot (agent mode) was used to configure and deploy the website to GitHub Pages. The deployed website is publicly accessible at: \url{https://erinih.github.io/ELC4028-Neural-Networks/}
+
+\section{Project Deliverables}
+
+The project produced all four required deliverables, plus an additional website deliverable:
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|l|p{12cm}|}
+        \hline
+        \textbf{Deliverable 1} & Structured bilingual presentation in Arabic — uploaded to the project website \\
+        \hline
+        \textbf{Deliverable 2} & Interactive Arabic Word Embeddings 2D/3D demo — embedded on the website \\
+        \hline
+        \textbf{Deliverable 3} & 30-question MCQ bank with correct answers — integrated as an interactive quiz \\
+        \hline
+        \textbf{Deliverable 4} & This project report — documenting aim, methodology, AI tool usage, challenges, and conclusions \\
+        \hline
+        \textbf{Bonus} & Full project website deployed on GitHub Pages — \url{https://erinih.github.io/ELC4028-Neural-Networks/} \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\section{AI Tools Used}
+
+The project made extensive use of AI tools as assistants — not substitutes. Every AI-generated output was reviewed, corrected where necessary, and understood by the team before being included in the final deliverables.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|p{3.5cm}|p{7cm}|p{4.5cm}|}
+        \hline
+        \textbf{AI Tool} & \textbf{Role in Project} & \textbf{Outcome / Deliverable} \\
+        \hline
+        Claude (Anthropic) & Generated 8-page English summary from 163-slide lecture; translated full summary into Modern Standard Arabic; generated 30 MCQ questions; built the Arabic interactive word embeddings demo & Summary (EN/AR), Arabic demo, MCQ bank \\
+        \hline
+        Lovable & AI web app generator used to scaffold the starter React website with core structure, layout, and sections & Starter website (React/TypeScript) \\
+        \hline
+        GitHub Copilot & Integrated Arabic demo into website; added content sections (limitations, comparison, FAQ, analogies); handled GitHub Pages deployment configuration & Enriched website, deployment \\
+        \hline
+        Antigravity & Assisted with uploading and displaying presentation slides on the website interactively; additional UI/content edits & Interactive slides on website \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection{How Claude Was Used}
+Claude served as the primary content-generation assistant. Specifically:
+\begin{itemize}
+    \item The resources was uploaded and Claude was asked to produce a structured 8-page summary organized by concept (not just slide-by-slide), requiring synthesis and reorganization of ideas.
+    \item The English summary was then passed back to Claude with a prompt to translate into MSA, with specific instructions to use academic terminology rather than colloquial terms.
+    \item For the MCQ bank, Claude was prompted with the summary and asked to generate 30 questions of varying difficulty, covering all major topics, with clearly marked correct answers and explanations. All questions were then verified against the source material.
+    \item For the Arabic demo, Claude was described the goal (imitate Word2Vec visualization but for Arabic words, using dimensionality reduction to show semantic clusters) and generated the interactive React component.
+    \item To compare architectures, Claude was utilized to generate interactive visual components that contrast the different embedding models (Word2Vec, GloVe, FastText, ELMo) side-by-side.
+\end{itemize}
+
+\subsection{Human Oversight and Validation}
+All AI-generated content was subjected to the following validation process:
+\begin{itemize}
+    \item Technical accuracy: Every MCQ answer and explanation was cross-checked against the lecture material
+    \item Arabic translation: Technical terms were verified against standard Arabic NLP and mathematics textbooks
+    \item Demo behavior: The Arabic word space demo was tested to confirm that semantically related words (\textarabic{ملك/ملكة}, \textarabic{باريس/فرنسا}) correctly clustered together
+    \item Website content: All sections were read and edited by team members for clarity, accuracy, and pedagogical value
+\end{itemize}
+
+\section{Website Overview}
+
+The project website (\url{https://erinih.github.io/ELC4028-Neural-Networks/}) serves as the central hub for all deliverables. It is a fully interactive, bilingual (Arabic/English) educational platform covering word embeddings from first principles to modern methods.
+
+\subsection{Website Sections}
+\begin{description}
+    \item[\textbf{Learn}] Introduces the core problem (why word indices fail), limitations, and what embeddings solve — with expandable concept cards
+    \item[\textbf{Interactive Demo}] 2D word space visualization — click any word to see its nearest neighbors and cosine similarity scores
+    \item[\textbf{Analogies}] Interactive vector arithmetic demos (king $-$ man $+$ woman $\approx$ queen) with step-by-step reveal
+    \item[\textbf{Methods}] Side-by-side interactive comparison of Word2Vec, GloVe, FastText, and ELMo — click any method to see details
+    \item[\textbf{Limitations}] Covers OOV failure cases and the evolution to sub-word (FastText) and contextual (ELMo) models
+    \item[\textbf{FAQ}] Filterable misconceptions section covering 8 common misunderstandings, organized by topic
+    \item[\textbf{Arabic Demo}] Dedicated Arabic word embeddings demo featuring 3D visualization (with zoom and rotate), search, dimensionality reduction, similarity map, semantic operations, and concepts visualization. (Note: Uses sample data to simulate a real model).
+    \item[\textbf{Quiz}] 30-question MCQ bank with randomized 5-question practice mode, scoring, and explanations
+    \item[\textbf{Presentation}] Full Arabic PowerPoint slides displayed interactively on the website
+\end{description}
+
+\section{Challenges Faced and How They Were Managed}
+
+\subsection{Challenge 1 — Arabic Technical Terminology}
+Translating technical NLP concepts into Arabic presented challenges where no single standard translation exists (e.g., `embedding', `dot product', `softmax'). The team cross-referenced multiple Arabic NLP publications and academic textbooks to identify the most widely accepted terms. Where a direct translation was ambiguous, the English term was kept alongside the Arabic in parentheses.
+
+\subsection{Challenge 2 — Integrating the Arabic Demo into the Website}
+The Arabic word embeddings demo was initially built as a standalone React component. Integrating it into the existing website structure (which used a different routing and state management pattern) required careful coordination using Lovable and GitHub Copilot. Some component props and event handlers needed to be refactored, and the embedding coordinate data had to be loaded as a static JSON asset rather than being fetched dynamically.
+
+\subsection{Challenge 3 — GitHub Pages Deployment Configuration}
+The React website required a specific base-path configuration for GitHub Pages (since it is served from a repository subdirectory, not the root). GitHub Copilot agent mode was used to identify and fix the \texttt{vite.config.ts} base URL setting and update the routing accordingly. The deployment was then verified by checking all internal links and assets after going live.
+
+\section{Conclusions}
+
+This project demonstrated that AI tools, when used thoughtfully as assistants rather than substitutes, can dramatically accelerate the production of high-quality educational material. The team was able to:
+\begin{itemize}
+    \item Transform a 163-slide technical lecture into a fully interactive bilingual website in a fraction of the time it would take manually
+    \item Produce an Arabic-language interactive visualization that makes an abstract mathematical concept (vector spaces) concrete and explorable
+    \item Leverage AI to successfully visualize and compare different complex embedding architectures in an accessible, interactive format
+    \item Generate and verify a 30-question assessment bank that covers the topic comprehensively
+    \item Deploy a publicly accessible website that goes beyond the minimum deliverables by including limitations, comparisons, FAQs, and analogies sections
+\end{itemize}
+
+The most important lesson was that effective use of AI tools requires genuine domain understanding. The team's familiarity with the lecture material was essential for evaluating, correcting, and guiding AI outputs. Without that understanding, the AI-generated content would have been accepted uncritically, including the errors that were found and fixed.
+
+Word Embeddings proved to be an excellent choice of concept: visually compelling, mathematically rich, and directly connected to the broader deep learning curriculum. The interactive website format allowed the team to present the concept in a way that is self-paced, engaging, and reusable as a learning resource well beyond the scope of this course.
