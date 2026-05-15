@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Download, ArrowLeft, Languages } from "lucide-react";
 import { useLang } from "@/lib/i18n";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/presentation")({
   head: () => ({
@@ -14,6 +15,23 @@ export const Route = createFileRoute("/presentation")({
 
 function Presentation() {
   const { t, lang, setLang } = useLang();
+  const [isMounted, setIsMounted] = useState(false);
+  const pptxUrl = `${import.meta.env.BASE_URL}WordEmbedding.pptx`;
+  const pdfUrl = `${import.meta.env.BASE_URL}WordEmbedding.pdf`;
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const downloadPresentation = () => {
+    const link = document.createElement("a");
+    link.href = pptxUrl;
+    link.download = "WordEmbedding.pptx";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* nav */}
@@ -41,34 +59,34 @@ function Presentation() {
             <h1 className="text-3xl font-display">{t("presentation.title")}</h1>
             <p className="text-muted-foreground mt-2">{t("presentation.desc")}</p>
           </div>
-          <a
-            href={`${import.meta.env.BASE_URL}WordEmbedding.pptx`}
-            download
+          <button
+            type="button"
+            onClick={downloadPresentation}
             className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 whitespace-nowrap"
           >
             <Download className="h-4 w-4" /> {t("presentation.download")}
-          </a>
+          </button>
         </div>
         
         <div className="flex-1 rounded-xl overflow-hidden border shadow-sm bg-muted/30">
-          <object
-            data={`${import.meta.env.BASE_URL}WordEmbedding.pdf#toolbar=0&view=FitH`}
-            type="application/pdf"
-            className="w-full h-[75vh] min-h-[500px]"
-            title="Word Embeddings Presentation"
-          >
-            <embed 
-              src={`${import.meta.env.BASE_URL}WordEmbedding.pdf#toolbar=0&view=FitH`} 
-              type="application/pdf" 
-              className="w-full h-full" 
-            />
-            <p className="p-6 text-center text-muted-foreground">
-              Your browser does not support inline PDFs. 
-              <a href={`${import.meta.env.BASE_URL}WordEmbedding.pdf`} target="_blank" rel="noreferrer" className="text-primary hover:underline ml-1">
-                Click here to view the PDF
-              </a>
-            </p>
-          </object>
+          {isMounted ? (
+            <object
+              data={`${pdfUrl}#toolbar=0&view=FitH`}
+              type="application/pdf"
+              className="w-full h-[75vh] min-h-[500px]"
+              title="Word Embeddings Presentation"
+            >
+              <embed src={`${pdfUrl}#toolbar=0&view=FitH`} type="application/pdf" className="w-full h-full" />
+              <p className="p-6 text-center text-muted-foreground">
+                Your browser does not support inline PDFs.
+                <a href={pdfUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline ml-1">
+                  Click here to view the PDF
+                </a>
+              </p>
+            </object>
+          ) : (
+            <div className="w-full h-[75vh] min-h-[500px]" />
+          )}
         </div>
       </main>
     </div>
