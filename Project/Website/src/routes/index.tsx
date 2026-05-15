@@ -104,6 +104,12 @@ function Index() {
             >
               <Target className="h-4 w-4" /> {t("hero.skip")}
             </a>
+            <a
+              href="#arabic"
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-5 py-2.5 text-sm font-medium transition hover:bg-secondary"
+            >
+              <Target className="h-4 w-4" /> {t("hero.skipArabic")}
+            </a>
           </div>
         </div>
       </section>

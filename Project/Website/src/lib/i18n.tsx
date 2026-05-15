@@ -18,7 +18,7 @@ const translations: Record<Lang, Record<string, string>> = {
     "nav.methods": "Methods",
     "nav.faq": "FAQ",
     "nav.limitations": "Limitations",
-    "nav.arabic": "Arabic",
+    "nav.arabic": "Arabic Demo",
     "nav.quiz": "Quiz",
     "nav.presentation": "Presentation",
     "nav.lang": "عربي",
@@ -29,6 +29,7 @@ const translations: Record<Lang, Record<string, string>> = {
       "Learn what word embeddings are with clear explanations, an interactive 2D demo, and a quiz to test your understanding.",
     "hero.start": "Start learning",
     "hero.skip": "Skip to demo",
+    "hero.skipArabic": "Skip to Arabic demo",
     "learn.eyebrow": "Concepts",
     "learn.title": "What are word embeddings?",
     "learn.p1":
@@ -187,7 +188,7 @@ const translations: Record<Lang, Record<string, string>> = {
     "nav.methods": "الطرق",
     "nav.faq": "الأسئلة",
     "nav.limitations": "الحدود",
-    "nav.arabic": "عربي",
+    "nav.arabic": "العرض العربي",
     "nav.quiz": "اختبار",
     "nav.presentation": "العرض التقديمي",
     "nav.lang": "English",
@@ -197,6 +198,7 @@ const translations: Record<Lang, Record<string, string>> = {
     "hero.desc": "تعلّم ما هي تضمينات الكلمات مع شرح واضح، عرض تفاعلي ثنائي الأبعاد، واختبار قصير.",
     "hero.start": "ابدأ التعلّم",
     "hero.skip": "اذهب للعرض",
+    "hero.skipArabic": "اذهب للعرض العربي",
     "learn.eyebrow": "المفاهيم",
     "learn.title": "ما هي تضمينات الكلمات؟",
     "learn.p1":
