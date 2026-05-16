@@ -85,7 +85,7 @@ export function Quiz() {
         </div>
         <div className="flex items-center gap-3">
           <a
-            href="/mcq_questions.pdf"
+            href={`${import.meta.env.BASE_URL}mcq_questions.pdf`}
             download="Word_Embeddings_MCQ.pdf"
             className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground"
           >
