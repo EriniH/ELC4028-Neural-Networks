@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Check, X, RotateCcw } from "lucide-react";
+import { Check, X, RotateCcw, Download } from "lucide-react";
 import { useLang, QUIZ_QUESTIONS } from "@/lib/i18n";
 
 const QUIZ_LENGTH = 5;
@@ -83,8 +83,18 @@ export function Quiz() {
             {t("quiz.tab.all")}
           </button>
         </div>
-        <div className="text-xs uppercase tracking-wider text-muted-foreground">
-          {t("quiz.score")} {score}/{activeQuestions.length}
+        <div className="flex items-center gap-3">
+          <a
+            href="/mcq_questions.pdf"
+            download="Word_Embeddings_MCQ.pdf"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground"
+          >
+            <Download className="h-3.5 w-3.5" />
+            {lang === "ar" ? "تحميل PDF" : "Download PDF"}
+          </a>
+          <div className="text-xs uppercase tracking-wider text-muted-foreground">
+            {t("quiz.score")} {score}/{activeQuestions.length}
+          </div>
         </div>
       </div>
       <p className="mt-2 text-sm text-muted-foreground">
