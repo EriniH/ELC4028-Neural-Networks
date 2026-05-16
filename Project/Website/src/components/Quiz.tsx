@@ -67,7 +67,6 @@ export function Quiz() {
     const link = document.createElement("a");
     link.href = mcqPdfUrl;
     link.download = "Word_Embeddings_MCQ.pdf";
-    link.rel = "noopener noreferrer";
     document.body.appendChild(link);
     link.click();
     link.remove();
