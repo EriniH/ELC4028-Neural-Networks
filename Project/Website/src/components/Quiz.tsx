@@ -98,6 +98,7 @@ export function Quiz() {
           <button
             type="button"
             onClick={downloadMcqPdf}
+            aria-label={lang === "ar" ? "تنزيل بنك الأسئلة بصيغة PDF" : "Download question bank as PDF"}
             className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground"
           >
             <Download className="h-3.5 w-3.5" />
