@@ -20,6 +20,7 @@ function pickQuestions<T>(questions: T[], count: number) {
 export function Quiz() {
   const { t, lang } = useLang();
   const QUESTION_POOL = QUIZ_QUESTIONS[lang];
+  const mcqPdfUrl = `${import.meta.env.BASE_URL}mcq_questions.pdf`;
   const [view, setView] = useState<QuizView>("practice");
   const [activeQuestions, setActiveQuestions] = useState(() => pickQuestions(QUESTION_POOL, QUIZ_LENGTH));
 
@@ -62,6 +63,15 @@ export function Quiz() {
     setDone(false);
   }
 
+  function downloadMcqPdf() {
+    const link = document.createElement("a");
+    link.href = mcqPdfUrl;
+    link.download = "Word_Embeddings_MCQ.pdf";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
+
   const pct = Math.round((score / activeQuestions.length) * 100);
 
   return (
@@ -84,14 +94,14 @@ export function Quiz() {
           </button>
         </div>
         <div className="flex items-center gap-3">
-          <a
-            href={`${import.meta.env.BASE_URL}mcq_questions.pdf`}
-            download="Word_Embeddings_MCQ.pdf"
+          <button
+            type="button"
+            onClick={downloadMcqPdf}
             className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground"
           >
             <Download className="h-3.5 w-3.5" />
             {lang === "ar" ? "تحميل PDF" : "Download PDF"}
-          </a>
+          </button>
           <div className="text-xs uppercase tracking-wider text-muted-foreground">
             {t("quiz.score")} {score}/{activeQuestions.length}
           </div>
