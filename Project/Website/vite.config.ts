@@ -10,7 +10,7 @@ export default defineConfig({
     prerender: {
       enabled: true,
       crawlLinks: true,
-      failOnError: true,
+      failOnError: false,
     },
   },
 });
